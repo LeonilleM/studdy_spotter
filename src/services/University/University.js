@@ -4,7 +4,7 @@ import { supabase } from '../supabase/supabase'
 export const fetchUniversities = async () => {
     const { data, error } = await supabase
         .from('University')
-        .select('name')
+        .select('name, city')
     if (error) {
         throw error
     }
@@ -19,7 +19,7 @@ export const fetchUniversityData = async (uniName) => {
         .from('University')
         .select(
             ` id, name, city, states_id, image_url,
-            
+        
             States:states_id (
                 name
             )

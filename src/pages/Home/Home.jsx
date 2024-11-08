@@ -18,7 +18,7 @@ function Home() {
     // Map universities to options for react-select
     const options = universities.map(university => ({
         value: university.name,
-        label: university.name
+        label: university.name + ', ' + university.city
     }));
 
     const handleChange = (selectedOption) => {
@@ -38,6 +38,13 @@ function Home() {
                 border: '2px solid white',
             },
         }), placeholder: (provided) => ({
+            ...provided,
+            color: '#FFFFFF',
+        }), input: (provided) => ({
+            ...provided,
+            color: '#FFFFFF',
+        }),
+        singleValue: (provided) => ({
             ...provided,
             color: '#FFFFFF',
         }),
