@@ -17,7 +17,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
     };
 
     return (
-        <div className="lg:w-1/2">
+        <div>
             <button
                 onClick={toggleFavorite}
                 disabled={isLoading || isOnCooldown}
@@ -31,7 +31,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
                     transition-all duration-200
                 `}
             >
-                <FaRegBookmark className="mr-2 w-4 h-4 " />
+                <FaRegBookmark className="mr-2" />
                 {isLoading ? 'Loading...' : (
                     isOnCooldown ? (
                         `Wait ${formatCooldownTime(cooldownTimeLeft)}`

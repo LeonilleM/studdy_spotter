@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { toggleFavorite, fetchUserFavorites } from '../../../services/StudyLocation/Study';
+import { toggleFavorite, fetchUserFavorites } from '../../../../services/StudyLocation/Study';
 
 
 export const useFavorite = (studyLocationID, userID, initialState = false) => {
@@ -12,7 +12,7 @@ export const useFavorite = (studyLocationID, userID, initialState = false) => {
 
     const COOLDOWN_DURATION = 6000;
 
-    // Check initial favorite status
+    // Check initial favorite status    
     useEffect(() => {
         const checkInitialStatus = async () => {
             if (!userID || !studyLocationID) return;

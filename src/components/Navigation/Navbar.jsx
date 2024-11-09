@@ -16,10 +16,12 @@ function Navbar() {
                 </NavLink>
                 <div className="space-x-4">
                     {isAuthenticated ? (
-                        <div className="flex items-center space-x-4 font-lato">
+                        <NavLink
+                            to={`account/${user.first_name.toLowerCase() + user.last_name.toLowerCase()}`}
+                            className="flex items-center space-x-4 font-lato">
                             <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
                             <span className="text-white font-bold">{user.first_name} {user.last_name}</span>
-                        </div>
+                        </NavLink>
                     ) : (
                         location.pathname === '/' && (
                             <>

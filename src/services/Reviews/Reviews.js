@@ -26,14 +26,14 @@ export const fetchAllReviews = async (studyLocationID) => {
 }
 
 // Let's a user create a review for a given study location 
-export const createReview = async (studyLocationID, userID, rating, description) => {
+export const createReview = async (studyLocationID, userID, rating, review) => {
     const { data, error } = await supabase
         .from('UserReview')
         .insert({
             user_id: userID,
             study_location_id: studyLocationID,
             rating: rating,
-            description: description
+            description: review
         })
 
     if (error) {

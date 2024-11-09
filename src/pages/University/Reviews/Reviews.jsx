@@ -6,9 +6,10 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 import StarRating from '../../../components/StarRating';
 import { loadingComponent } from '../../../components/Loading';
-import ReviewModal from './reviewModal';
+import ReviewModal from './helper/reviewModal';
 import { AuthContext } from '../../../services/Auth/AuthContext';
-import FavoriteButton from './favoriteButton'
+import FavoriteButton from './helper/favoriteButton'
+import BackButton from '../../../components/BackButton';
 
 function Reviews() {
     const { studyLocation } = useParams(); // Get the study location from the URL
@@ -56,17 +57,7 @@ function Reviews() {
         }
     }, [locationDetails]);
 
-    const backButton = () => {
-        return (
-            <button
-                onClick={() => window.history.back()}
-                className="text-primary font-poppins font-bold py-2  rounded-lg flex items-center self-start hover:text-gray-500 transition duration-300 transform hover:-translate-x-2"
-            >
-                <FaArrowLeft className="mr-2" />
-                Back
-            </button>
-        );
-    };
+
 
     if (loading) {
         return loadingComponent();
@@ -82,7 +73,7 @@ function Reviews() {
                 <div style={{ backgroundImage: `url(${locationDetails.image_url})`, backgroundPosition: 'center', height: '45vh' }}>
                     <div className="lg:w-1/3 w-3/5 bg-[#32006e]/75 h-full font-lato flex flex-col py-8 lg:px-14 px-4 gap-4 text-white justify-between">
                         <section className="flex flex-col gap-2">
-                            {backButton()}
+                            <BackButton />
                             <h1 className="lg:text-4xl text-2xl  font-poppins font-bold">{locationDetails.name}</h1>
                             <div className="flex flex-row gap-4 items-center">
                                 <StarRating rating={locationDetails.rating} starSize={14} color="primary" />
@@ -97,7 +88,6 @@ function Reviews() {
                             ))}
                         </div>
                     </div>
-
                 </div>
             )}
             <div className="container mx-auto flex flex-col lg:flex-row lg:justify-between lg:pt-24 sm:px-0 px-6 ">
@@ -106,7 +96,6 @@ function Reviews() {
                     {reviews.length > 0 ? (
                         reviews.map(review => (
                             <div key={review.id} className="flex flex-row pb-24">
-                                <h1>{review.id}</h1>
                                 <div className="flex flex-col font-lato">
                                     <div className="flex flex-row gap-2">
                                         <img src={review.Users.image_url} alt="user" className="w-14 h-14 rounded-full bg-slate-500 object-cover" />
@@ -131,7 +120,7 @@ function Reviews() {
                         </>
                     )}
                 </div>
-                <div className="lg:w-1/4 sticky lg:top-20  lg:h-[calc(100vh-20rem)] overflow-y-auto lg:py-0 py-12 lg:order-2 order-1">
+                <div className="2xl:w-1/4 xl:w-1/3 sticky lg:top-20  lg:h-[calc(100vh-20rem)] overflow-y-auto lg:py-0 py-12 lg:order-2 order-1">
                     <div className="bg-white p-4 rounded-xl  border-2 text-secondary font-lato">
                         <h2 className="text-xl font-bold font-poppins">Address</h2>
                         <a
@@ -143,10 +132,10 @@ function Reviews() {
                         <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
                         <p className="italic text-red-500">CLOSED</p>
                     </div>
-                    <div className="mt-4 flex flex-row gap-4 font-poppins font-bold">
+                    <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal} className="bg-action text-white py-3 px-4 rounded-lg w-full ">Write Review</button>
                         <FavoriteButton studyLocationID={locationDetails.id} userID={user.id} />
-                        <ReviewModal show={showModal} handleClose={() => setShowModal(false)} handleSave={(review) => console.log(review)} />
+                        <ReviewModal show={showModal} locationId={locationDetails.id} userID={user.id} locationName={locationDetails.name} handleClose={() => setShowModal(false)} handleSave={(review) => console.log(review)} />
                     </div>
                     <hr className="h-1 w-full bg-secondary mt-12 rounded block sm:hidden" />
                 </div>

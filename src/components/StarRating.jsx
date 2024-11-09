@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 
+
 const StarRating = ({ rating, starSize = 24, color = "secondary" }) => {  // Add starSize prop with default
     const renderStars = (rating) => {
         const stars = [];

@@ -9,6 +9,7 @@ function University() {
     const [uniData, setUniData] = useState(null);
     const [studyLocations, setStudyLocations] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Extract the university name from the URL
@@ -16,38 +17,56 @@ function University() {
 
         // Fetch university data using the extracted name
         fetchUniversityData(universityNameFromURL).then((data) => {
-            setUniData(data);
-        }).catch(error => console.error(error));
+            if (data.length === 0) {
+                setError('The university you are looking isn\'t currently partnered with us.');
+            } else {
+                setUniData(data);
+            }
+        }).catch(error => {
+            console.error(error);
+            setError('An error occurred while fetching university data.');
+        }).finally(() => {
+            setLoading(false);
+        });
     }, []);
 
     useEffect(() => {
         if (uniData) {
-            // Extract the uni ID to pass to fetchUniversityStudyLocations
             const universityID = uniData ? uniData[0].id : null;
-
             fetchUniversityStudyLocationsWithReviews(universityID).then((data) => {
                 setStudyLocations(data);
-                setLoading(false); // Set loading to false after fetching study locations
             }).catch(error => {
                 console.error(error);
-                setLoading(false); // Set loading to false even if there's an error
             });
         }
     }, [uniData]);
 
-
-
     if (loading) {
         return loadingComponent();
+    }
+
+    if (error) {
+        return (
+            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4  sm:px-0 px-4 flex flex-col items-center justify-center bg-primary text-secondary">
+                <h1 className="text-3xl font-semibold font-poppins lg:w-1/2">{error}</h1>
+                <p className="text-xl font-lato">Want your university to be a part of the website? Send an application.</p>
+                <NavLink to="/allschools" className="mt-4 inline-block bg-action text-white py-2 px-4 rounded-lg hover:scale-110 transition duration-300">
+                    Send Application
+                </NavLink>
+            </div>
+        );
     }
 
     return (
         <div className="pt-20 overflow-x-hidden">
             {uniData && uniData.map((uni) => (
                 <div key={uni.id} style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '45vh', width: '100%' }}>
-                    <div className="lg:w-1/3 w-1/2 bg-[#32006e]/85 h-full font-lato flex flex-col items-center justify-center lg:px-12 px-4 gap-4">
+                    <div
+                        className="lg:w-1/3 w-1/2 h-full font-lato flex flex-col items-center justify-center lg:px-12 px-4 gap-4 opacity-85"
+                        style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
+                    >
                         <h1 className="text-white font-bold lg:text-4xl text-2xl text-center">{uni.name}</h1>
-                        <div className="">
+                        <div>
                             <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.city},</h1>
                             <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.States.name}</h1>
                         </div>
@@ -58,7 +77,7 @@ function University() {
                 <div className="container mx-auto flex flex-col gap-4 py-8">
                     <h1 className="font-poppins font-semibold text-xl">Popular Study Spots</h1>
                     <h1 className="font-poppins font-semibold text-xl">Explore</h1>
-                    <div className="grid lg:grid-cols-3 lg:gap-24 gap-4">
+                    <div className="grid lg:grid-cols-3 2xl:gap-20 gap-16">
                         {studyLocations && studyLocations.map((studyLocation) => {
                             const currentPath = window.location.pathname;
                             const studyLocationPath = `${currentPath}/${studyLocation.name}`;

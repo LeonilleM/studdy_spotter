@@ -7,8 +7,12 @@ import SignUp from './pages/Auth/SignUp';
 import Home from './pages/Home/Home';
 import University from './pages/University/University'
 import Reviews from './pages/University/Reviews/Reviews'
+import About from './pages/About/About';
+import AllSchools from './pages/AllSchools/AllSchools';
+import Account from './pages/Account/Account';
 
 function App() {
+
 
   return (
     <div>
@@ -19,6 +23,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/university/:uniName" element={<University />} />
         <Route path="/university/:uniName/:studyLocation" element={<Reviews />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/allschools" element={<AllSchools />} />
+        <Route path="/account/:userName" element={<Account />} />
       </Routes>
       <Footer />
 
