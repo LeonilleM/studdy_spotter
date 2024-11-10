@@ -10,12 +10,15 @@ import Reviews from './pages/University/Reviews/Reviews'
 import About from './pages/About/About';
 import AllSchools from './pages/AllSchools/AllSchools';
 import Account from './pages/Account/Account';
+import RequestLocation from './pages/University/RequestLocation/RequestLocation';
+import ProtectedRoute from './services/Auth/ProtectedRoute';
 
 function App() {
 
 
   return (
     <div>
+
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -23,9 +26,10 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/university/:uniName" element={<University />} />
         <Route path="/university/:uniName/:studyLocation" element={<Reviews />} />
+        <Route path="/university/request-location" element={<RequestLocation />} />
         <Route path="/about" element={<About />} />
         <Route path="/allschools" element={<AllSchools />} />
-        <Route path="/account/:userName" element={<Account />} />
+        <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
       </Routes>
       <Footer />
 

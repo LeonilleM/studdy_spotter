@@ -3,29 +3,23 @@ import PropTypes from 'prop-types';
 import { FaTimes } from 'react-icons/fa';
 import { Star } from 'lucide-react';
 import { createReview } from '../../../../services/Reviews/Reviews'
-import { loadingComponent } from '../../../../components/Loading'
 
-const StarRating = ({ rating, setRating, starSize = 24, color = "secondary" }) => {
+const StarRating = ({ rating, setRating, starSize = 24 }) => {
     const [hover, setHover] = useState(null);
+
+    const messages = ["Bad", "Poor", "Average", "Good", "Amazing"];
+    const colors = ["text-orange-500", "text-amber-600", "text-yellow-600", "text-green-700", "text-action"];
 
     const renderInteractiveStars = () => {
         const stars = [];
         const totalStars = 5;
 
         for (let i = 1; i <= totalStars; i++) {
-
-            const isFilled = i <= Math.floor(hover || rating);
-            const isHalfFilled = !isFilled && i - 0.5 <= (hover || rating);
+            const isFilled = i <= (hover || rating);
+            const colorClass = colors[(hover || rating) - 1];
 
             stars.push(
                 <label key={i} className="relative cursor-pointer">
-                    <input
-                        type="radio"
-                        name="rating"
-                        value={i - 0.5}
-                        className="hidden"
-                        onClick={() => setRating(i - 0.5)}
-                    />
                     <input
                         type="radio"
                         name="rating"
@@ -33,39 +27,12 @@ const StarRating = ({ rating, setRating, starSize = 24, color = "secondary" }) =
                         className="hidden"
                         onClick={() => setRating(i)}
                     />
-
-                    {isFilled ? (
-                        <Star
-                            size={starSize}
-                            className="fill-yellow-400 text-yellow-400"
-                            onMouseEnter={() => setHover(i)}
-                            onMouseLeave={() => setHover(null)}
-                        />
-                    ) : isHalfFilled ? (
-                        <div className="relative">
-                            <Star
-                                size={starSize}
-                                className="text-gray-300"
-                                onMouseEnter={() => setHover(i - 0.5)}
-                                onMouseLeave={() => setHover(null)}
-                            />
-                            <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-                                <Star
-                                    size={starSize}
-                                    className="fill-yellow-400 text-yellow-400"
-                                    onMouseEnter={() => setHover(i - 0.5)}
-                                    onMouseLeave={() => setHover(null)}
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <Star
-                            size={starSize}
-                            className="text-gray-300"
-                            onMouseEnter={() => setHover(i)}
-                            onMouseLeave={() => setHover(null)}
-                        />
-                    )}
+                    <Star
+                        size={starSize}
+                        className={`${isFilled ? colorClass : "text-gray-300 "} fill-current`}
+                        onMouseEnter={() => setHover(i)}
+                        onMouseLeave={() => setHover(null)}
+                    />
                 </label>
             );
         }
@@ -74,14 +41,19 @@ const StarRating = ({ rating, setRating, starSize = 24, color = "secondary" }) =
     };
 
     return (
-        <div className="flex items-center">
+        <div className="flex flex-row items-center gap-2 absolute top-5 left-4 z-50">
             {renderInteractiveStars()}
-            <span className={`text-xs text-${color} ml-2`}>
-                ({(hover || rating).toFixed(1)})
+            <span className="">
+                ({(hover || rating).toFixed(0)})
+            </span >
+            <span className="font-semibold ">
+                {messages[(hover || rating) - 1]}
             </span>
-        </div>
+        </div >
     );
 };
+
+
 
 
 
@@ -135,7 +107,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                         <div className="relative">
                             <StarRating rating={rating} setRating={setRating} />
                             <textarea
-                                className="w-full h-52 border-2 border-secondary rounded-lg sm:p-10 p-4 pt-12 mt-2 relative"
+                                className="w-full h-52 border-2 border-secondary rounded-md sm:py-10 px-4 p-4 pt-12 mt-2 relative"
                                 value={review}
                                 onChange={e => setReview(e.target.value)}
                                 placeholder="Write your review here..."
@@ -158,9 +130,21 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
 };
 
 ReviewModal.propTypes = {
+    locationId: PropTypes.string,
+    userID: PropTypes.string,
+    locationName: PropTypes.string,
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     handleSave: PropTypes.func.isRequired,
 };
+
+StarRating.propTypes = {
+    rating: PropTypes.number.isRequired,
+    setRating: PropTypes.func.isRequired,
+    starSize: PropTypes.number,
+    color: PropTypes.string,
+};
+
+
 
 export default ReviewModal;

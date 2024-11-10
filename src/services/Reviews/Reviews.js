@@ -21,7 +21,30 @@ export const fetchAllReviews = async (studyLocationID) => {
     if (error) {
         throw error
     }
+    return data
+}
 
+// Returns all the users reviews
+export const fetchUserReviews = async (userID) => {
+    const { data, error } = await supabase
+        .from('UserReview')
+        .select(`
+            id,
+            description,
+            rating,
+            created_at,
+            updated_at,
+            StudyLocation:study_location_id (
+                name,
+                address,
+                University:university_id (name)
+            )
+        `)
+        .eq('user_id', userID)
+
+    if (error) {
+        throw error
+    }
     return data
 }
 

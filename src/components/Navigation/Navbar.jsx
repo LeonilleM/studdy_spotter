@@ -3,10 +3,16 @@ import Logo from '../../assets/studdyspotter.png';
 import { useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
+import { loadingComponent } from '../../components/Loading.jsx'
+import { FaUser } from 'react-icons/fa';
 
 function Navbar() {
     const location = useLocation();
-    const { user, isAuthenticated } = useContext(AuthContext);
+    const { user, isAuthenticated, isLoading } = useContext(AuthContext);
+
+    if (isLoading) {
+        return loadingComponent()
+    }
 
     return (
         <div className="bg-secondary absolute top z-10 w-full">
@@ -17,13 +23,19 @@ function Navbar() {
                 <div className="space-x-4">
                     {isAuthenticated ? (
                         <NavLink
-                            to={`account/${user.first_name.toLowerCase() + user.last_name.toLowerCase()}`}
+                            to={`account/${(user.first_name ? user.first_name.toLowerCase() : 'No Name') + (user.last_name ? user.last_name.toLowerCase() : '')}`}
                             className="flex items-center space-x-4 font-lato">
-                            <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
-                            <span className="text-white font-bold">{user.first_name} {user.last_name}</span>
+                            {user.image_url ? (
+                                <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
+                            ) : (
+                                <FaUser className="w-12 h-12 text-white bg-gray-200 rounded-full" />
+                            )}
+                            <span className="text-white font-bold">
+                                {user.first_name ? user.first_name : 'No Name User'} {user.last_name ? user.last_name : ''}
+                            </span>
                         </NavLink>
                     ) : (
-                        location.pathname === '/' && (
+                        location.pathname !== '/signin' && location.pathname !== '/signup' && !user && (
                             <>
                                 <NavLink to="/signin">
                                     <button className="px-8 py-1 rounded-md text-white font-lato font-bold hover:before:bg-redborder-red-500 relative overflow-hidden border border-red-white shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-white before:transition-all before:duration-500 hover:text-black hover:shadow-primary hover:before:left-0 hover:before:w-full">

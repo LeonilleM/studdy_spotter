@@ -2,36 +2,37 @@ import { supabase } from '../supabase/supabase'
 import { jwtDecode } from 'jwt-decode' // Use named import
 
 // Checking for user persistence within the session
-export const getCurrentUser = () => {
-    const token = sessionStorage.getItem('supabase.auth.token');
-    if (!token) return null;
+export const getCurrentUser = async () => {
+    const { data, error } = await supabase.auth.getSession();
 
+    if (error || !data.session) return null;
+
+    const token = data.session.access_token;
     try {
-        const decodedToken = jwtDecode(token); // Use named import
-        
+        const decodedToken = jwtDecode(token);
         return decodedToken;
     } catch (error) {
-        console.error('Failed to decode token:', error);
+        console.error('Error decoding JWT:', error);
         return null;
     }
-}
+};
+
 
 // Sign in with magic link
 export const signIn = async (email, password) => {
+    console.log("Signing in with email and password")
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
     })
+
     if (error) {
-        throw error
+        throw new Error(`Error signing in: ${error.message}`);
     }
 
     if (!data || !data.session || !data.session.access_token || !data.user) {
         throw new Error('Incomplete data returned from Supabase');
     }
-
-    // Store the JWT in sessionStorage
-    sessionStorage.setItem('supabase.auth.token', data.session.access_token);
 
     return data
 }
@@ -49,7 +50,7 @@ export const fetchUserData = async (userID) => {
             image_url
         `)
         .eq('id', userID)
-        .single() // Returns only one record
+        .single()
     if (error) {
         throw error
     }

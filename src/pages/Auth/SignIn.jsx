@@ -20,6 +20,7 @@ function SignIn() {
 
         try {
             await login(email, password, rememberMe);
+
             console.log("Sign In Successful");
             // Only navigate after we're sure the context has been updated
             setTimeout(() => {
@@ -50,10 +51,10 @@ function SignIn() {
                     )}
 
                     {/* Form */}
-                    <form className="flex flex-col space-y-5 mt-5 font-lato w-full" onSubmit={handleSignIn} noValidate>
+                    <form className="flex flex-col space-y-5 mt-5 font-lato w-full" onSubmit={handleSignIn}>
                         {/* Email field */}
                         <div className="flex flex-col space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium">
+                            <label htmlFor="email" className={`text-sm font-medium` + (error ? ' text-red-500' : '')}>
                                 Email
                             </label>
                             <input
@@ -63,7 +64,7 @@ function SignIn() {
                                 placeholder="Enter your email"
                                 autoComplete="email"
                                 disabled={isLoading}
-                                className="p-2 rounded-md border-action border-2 focus:outline-none focus:ring-2 focus:ring-action focus:border-transparent"
+                                className={`p-2 rounded-md border-action border-2 focus:outline-none focus:ring-2 focus:ring-action focus:border-transparent` + (error ? ' border-red-500 error-shake ' : '')}
                                 required
                                 aria-required="true"
                             />
@@ -71,7 +72,7 @@ function SignIn() {
 
                         {/* Password field */}
                         <div className="flex flex-col space-y-2">
-                            <label htmlFor="password" className="text-sm font-medium">
+                            <label htmlFor="password" className={`text-sm font-medium` + (error ? ' text-red-500' : '')}>
                                 Password
                             </label>
                             <input
@@ -81,12 +82,11 @@ function SignIn() {
                                 placeholder="Enter your password"
                                 autoComplete="current-password"
                                 disabled={isLoading}
-                                className="p-2 rounded-md border-action border-2 focus:outline-none focus:ring-2 focus:ring-action focus:border-transparent"
+                                className={`p-2 rounded-md border-action border-2 focus:outline-none focus:ring-2 focus:ring-action focus:border-transparent` + (error ? ' border-red-500 error-shake ' : '')}
                                 required
                                 aria-required="true"
                             />
                         </div>
-
                         {/* Remember me checkbox */}
                         <div className="flex items-center space-x-2">
                             <input
@@ -103,7 +103,7 @@ function SignIn() {
                         </div>
 
                         {/* Sign in button */}
-                        <div className="flex flex-col py-6 space-y-4">
+                        <div className="flex flex-col py-6 space-y-4 ">
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -143,7 +143,7 @@ function SignIn() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

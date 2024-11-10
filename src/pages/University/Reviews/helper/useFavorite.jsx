@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { toggleFavorite, fetchUserFavorites } from '../../../../services/StudyLocation/Study';
 
 
-export const useFavorite = (studyLocationID, userID, initialState = false) => {
-    const [isFavorite, setIsFavorite] = useState(initialState);
+const useFavorite = (studyLocationID, userID, initialState = false) => {
+const [isFavorite, setIsFavorite] = useState(initialState);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isOnCooldown, setIsOnCooldown] = useState(false);
@@ -94,5 +94,8 @@ export const useFavorite = (studyLocationID, userID, initialState = false) => {
         toggleFavorite: handleToggle
     };
 };
+
+
+export default useFavorite;
 
 

@@ -12,10 +12,5 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 
 // For Remember Me functionality
 export const createPersistentClient = () => {
-    return createClient(supabaseUrl, supabaseKey, {
-        auth: {
-            persistSession: true,
-            storage: window.localStorage
-        }
-    });
+    return createClient(supabaseUrl, supabaseKey, {});
 }

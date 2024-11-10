@@ -1,6 +1,7 @@
 import { fetchUniversities } from '../../services/University/University'
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
+import { NavLink } from 'react-router-dom'
 
 function Home() {
     // Define state to hold universities
@@ -62,8 +63,12 @@ function Home() {
                         onChange={handleChange}
                         placeholder="Search for your university"
                         className="w-[22rem] text-black"
+
                     />
                 </div>
+                <NavLink
+                    to='/allschools'
+                    className="text-sm font-lato italic pt-2">Don&apos;t see your school? request here</NavLink>
             </div>
         </div>
     )

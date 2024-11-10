@@ -1,8 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { fetchStudyLocationData, } from '../../../services/StudyLocation/Study';
 import { fetchAllReviews } from '../../../services/Reviews/Reviews';
-import { FaArrowLeft } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 import StarRating from '../../../components/StarRating';
 import { loadingComponent } from '../../../components/Loading';
@@ -10,9 +9,11 @@ import ReviewModal from './helper/reviewModal';
 import { AuthContext } from '../../../services/Auth/AuthContext';
 import FavoriteButton from './helper/favoriteButton'
 import BackButton from '../../../components/BackButton';
+import { FaUser } from 'react-icons/fa';
+
 
 function Reviews() {
-    const { studyLocation } = useParams(); // Get the study location from the URL
+    const { uniName, studyLocation, } = useParams(); // Get the study location from the URL
     const [locationDetails, setLocationDetails] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -22,49 +23,61 @@ function Reviews() {
 
     // Open the review modal
     const handleOpenModal = () => {
-        setShowModal(true);
+        if (user) {
+            setShowModal(true);
+        } else {
+            alert('Please log in to write a review');
+        }
     };
 
-
-
-    useEffect(() => {
-        // Fetch detailed information for the selected study location
-        fetchStudyLocationData(studyLocation).then((data) => {
-            if (Array.isArray(data) && data.length > 0) {
-                setLocationDetails(data[0]);
-            } else {
-                console.error('Invalid data format or empty data');
-            }
-        }).catch(error => {
-            console.error(error);
-            setError(error);
-        });
-    }, [studyLocation]);
-
-    useEffect(() => {
-        // Fetch all reviews for the selected study location
-        if (locationDetails) {
-            fetchAllReviews(locationDetails.id).then((data) => {
-                // Sort reviews by date
-                data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                setReviews(data);
-                setLoading(false);
-            }).catch(error => {
-                console.error(error);
-                setError(error);
-                setLoading(false);
-            });
+    const handleFavoriteButton = () => {
+        if (user) {
+            console.log('Favorite button clicked');
         }
-    }, [locationDetails]);
+        alert('Please log in to add to favorites');
+    }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const locationData = await fetchStudyLocationData(studyLocation, uniName);
+                setLocationDetails(locationData);
 
+                if (locationData) {
+                    const reviewsData = await fetchAllReviews(locationData.id);
+                    // Sort reviews by date
+                    const sortedReviews = reviewsData.sort((a, b) =>
+                        new Date(b.created_at) - new Date(a.created_at)
+                    );
+                    setReviews(sortedReviews);
+                }
+            } catch (err) {
+                setError(err.message || 'Location you\'ve selected is not available or not associated with the specified university');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [studyLocation, uniName]);
 
     if (loading) {
         return loadingComponent();
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return (
+            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4  sm:px-0 px-4 flex flex-col items-center justify-center bg-primary text-secondary">
+                <h1 className="text-3xl font-semibold font-poppins lg:w-1/2">{error}</h1>
+                <p className="text-xl font-lato">If you think this location should be added, send a location application below</p>
+                <NavLink
+                    to={`/university/request-location`}
+                    className="mt-4 inline-block bg-action text-white py-2 px-4 rounded-lg hover:scale-110 transition duration-300">
+                    Send Application
+                </NavLink>
+            </div>
+        );
     }
 
     return (
@@ -81,11 +94,14 @@ function Reviews() {
                             </div>
                         </section>
                         <div className="flex flex-row flex-wrap gap-2 ">
-                            {locationDetails.LocationTagList.map(tag => (
-                                <span key={tag.tag_id} className="bg-gray-200 text-secondary font-bold md:text-sm text-xs px-3 py-1.5 rounded-full font-poppins">
-                                    {tag.TagTypes.name}
-                                </span>
-                            ))}
+                            {locationDetails.LocationTagList.map((tag, index) => {
+                                const tagName = tag.TagTypes?.name || 'no-name';
+                                return (
+                                    <span key={`tag-${index}-${tagName}`} className="bg-gray-200 text-secondary font-bold md:text-sm text-xs px-3 py-1.5 rounded-full font-poppins">
+                                        {tagName}
+                                    </span>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -94,14 +110,18 @@ function Reviews() {
                 <div className="lg:w-2/5 text-secondary lg:order-1 order-2">
                     <h1 className="pb-12 font-poppins text-4xl font-bold">Reviews</h1>
                     {reviews.length > 0 ? (
-                        reviews.map(review => (
-                            <div key={review.id} className="flex flex-row pb-24">
+                        reviews.map((review, index) => (
+                            <div key={review.id || `review-${index}`} className="flex flex-row pb-24">
                                 <div className="flex flex-col font-lato">
                                     <div className="flex flex-row gap-2">
-                                        <img src={review.Users.image_url} alt="user" className="w-14 h-14 rounded-full bg-slate-500 object-cover" />
+                                        {review.Users.image_url ? (
+                                            <img src={user.image_url} alt="avatar" className="w-14 h-14 rounded-full" />
+                                        ) : (
+                                            <FaUser className="w-14 h-14 text-white bg-gray-300 rounded-full" />
+                                        )}
                                         <div className="flex flex-col justify-center">
                                             <p className="font-bold">{review.Users.first_name} {review.Users.last_name}</p>
-                                            <p className="text-sm text-gray-500">{review.Users.University.name}</p>
+                                            <p className="text-sm text-gray-500"> {review.Users.University ? review.Users.University.name : 'No School Affilation'}</p>
                                         </div>
                                     </div>
                                     <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
@@ -132,10 +152,11 @@ function Reviews() {
                         <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
                         <p className="italic text-red-500">CLOSED</p>
                     </div>
+
                     <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal} className="bg-action text-white py-3 px-4 rounded-lg w-full ">Write Review</button>
-                        <FavoriteButton studyLocationID={locationDetails.id} userID={user.id} />
-                        <ReviewModal show={showModal} locationId={locationDetails.id} userID={user.id} locationName={locationDetails.name} handleClose={() => setShowModal(false)} handleSave={(review) => console.log(review)} />
+                        <FavoriteButton onClick={handleFavoriteButton} studyLocationID={locationDetails.id} userID={user ? user.id : null} />
+                        <ReviewModal show={showModal} locationId={locationDetails.id} userID={user ? user.id : null} locationName={locationDetails.name} handleClose={() => setShowModal(false)} handleSave={(review) => console.log(review)} />
                     </div>
                     <hr className="h-1 w-full bg-secondary mt-12 rounded block sm:hidden" />
                 </div>
