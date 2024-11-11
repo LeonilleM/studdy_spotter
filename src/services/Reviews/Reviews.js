@@ -37,7 +37,9 @@ export const fetchUserReviews = async (userID) => {
             StudyLocation:study_location_id (
                 name,
                 address,
-                University:university_id (name)
+                University:university_id (name),
+                image_url,
+                category
             )
         `)
         .eq('user_id', userID)

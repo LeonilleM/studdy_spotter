@@ -4,6 +4,7 @@ import { FaUser, FaSignOutAlt, FaStar, FaMapMarkerAlt } from 'react-icons/fa';
 import { fetchUserReviews } from '../../services/Reviews/Reviews.js';
 import { fetchUserFavorites } from '../../services/StudyLocation/Study.js';
 import { useState } from 'react';
+import StarRating from '../../components/StarRating.jsx';
 
 
 function Account() {
@@ -44,7 +45,7 @@ function Account() {
     return (
         <div className="h-screen bg-primary pt-20 text-secondary">
             {isAuthenticated ? (
-                <div className="flex flex-row  container mx-auto py-24 lg:px-64 px-4 gap-12">
+                <div className="flex md:flex-row flex-col  container mx-auto py-24 2xl:px-32 px-4 gap-12">
                     <div className="flex flex-col lg:w-1/3 w-full">
                         <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg">
                             {user.image_url ? (
@@ -86,7 +87,7 @@ function Account() {
 
                     <div className="flex flex-col lg:w-2/3 w-full">
                         <div className="flex flex-col items-center bg-secondary text-white rounded-t-md p-8 shadow-lg">
-                            <span className="font-bold text-lg">
+                            <span className="font-bold text-xl font-poppins">
                                 {selectedOption === 'reviews' ? 'Your Reviews' : 'Your Saved Locations'}
                             </span>
                         </div>
@@ -94,19 +95,29 @@ function Account() {
                             {selectedOption === 'reviews' ? (
                                 reviews.length > 0 ? (
                                     reviews.map((review) => (
-                                        <div key={review.id} className="flex flex-col border-2 rounded-md p-4 my-4">
-                                            <div className="flex items-center justify-between">
-                                                <span className="font-bold text-lg">{review.StudyLocation.name}</span>
-                                                <span className="text-sm">{new Date(review.created_at).toLocaleDateString()}</span>
+                                        <div key={review.id} className="flex flex-col  rounded-md p-4 my-4 text-secondary">
+                                            <div className="flex items-center ">
+                                                <img src={review.StudyLocation.image_url} alt="location" className="w-20 h-20 rounded-md" />
+                                                <div className="flex flex-col ml-4 font-lato">
+                                                    <span className="font-bold text-lg">{review.StudyLocation.name}</span>
+                                                    <span className="text-sm font-semibold">{review.StudyLocation.category}</span>
+                                                    <span className="text-sm italic">{review.StudyLocation.University.name}</span>
+                                                </div>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm">{review.rating}</span>
-                                                <span className="text-sm">{review.description}</span>
+                                                <StarRating rating={review.rating} />
+                                                <span className="text-sm">
+                                                    {new Date(review.created_at).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: '2-digit'
+                                                    })}
+                                                </span>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <p>No reviews available</p>
+                                    <p>No reviews Written</p>
                                 )
                             ) : (
                                 favorites.length > 0 ? (
@@ -119,7 +130,7 @@ function Account() {
                                         </div>
                                     ))
                                 ) : (
-                                    <p>No saved locations available</p>
+                                    <p>No saved locations</p>
                                 )
                             )}
                         </div>
