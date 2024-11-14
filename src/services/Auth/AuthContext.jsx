@@ -110,6 +110,7 @@ const AuthProvider = ({ children }) => {
         try {
             await supabase.auth.signOut();
             dispatch({ type: 'LOGOUT, payload: null' });
+            
         } catch (error) {
             console.error('Logout error:', error);
         }

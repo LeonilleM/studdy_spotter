@@ -40,7 +40,7 @@ export const toggleFavorite = async (studyLocationID, userID) => {
 export const fetchUserFavorites = async (userID) => {
     const { data, error } = await supabase
         .from('UserFavorites')
-        .select('study_location_id, StudyLocation:study_location_id (name)')
+        .select('study_location_id, StudyLocation:study_location_id (name, University:university_id (name))')
         .eq('user_id', userID);
 
     if (error) {
@@ -157,4 +157,6 @@ export const requestStudyLocation = async (studyLocationData) => {
     } else {
         console.log("Study Location Requested, wait for approval", data);
     }
+
+    
 }

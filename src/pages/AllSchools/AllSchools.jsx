@@ -32,10 +32,8 @@ function AllSchools() {
                 acc[stateName].push(uni);
                 return acc;
             }, {});
-
-            // Sort states alphabetically
+            
             const sortedStates = Object.keys(groupedData).sort();
-
             setUniData({ groupedData, sortedStates });
         }).catch(error => {
             console.error(error);

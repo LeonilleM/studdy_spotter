@@ -53,64 +53,70 @@ export const fetchStates = async () => {
 }
 
 // Used for Requesting a campus
+// Used for Requesting a campus
 export const sendCampusRequest = async (data, image) => {
-    // First insert the new location
-    const { data: insertedData, error: insertError } = await supabase
-        .from('University')
-        .insert([
-            {
-                name: data.name,
-                city: data.city,
-                states_id: data.states_id,
-                status: 'Pending'
-            }
-        ])
-        .select('id')
-        .single();
+    try {
+        // First insert the new location
+        const { data: insertedData, error: insertError } = await supabase
+            .from('University')
+            .insert([
+                {
+                    name: data.name,
+                    city: data.city,
+                    states_id: data.states_id,
+                    status: 'Pending'
+                }
+            ])
+            .select('id')
+            .single();
 
-    if (insertError) {
-        throw insertError;
+        if (insertError) {
+            throw insertError;
+        }
+
+        const universityId = insertedData.id;
+
+        // Clean up the file name for better url compatibility
+        const sanitizedFileName = `${universityId}/${encodeURIComponent(data.name.replace(/ /g, "_"))}`;
+
+        // Then upload the image to the corresponding university folder
+        const { error: imageError } = await supabase.storage
+            .from('university_images')
+            .upload(sanitizedFileName, image);
+
+        if (imageError) {
+            throw imageError;
+        }
+
+        // Retrieve the public URL of the uploaded image
+        const { data: publicURLData, error: publicURLError } = supabase.storage
+            .from('university_images')
+            .getPublicUrl(sanitizedFileName);
+
+        if (publicURLError) {
+            throw publicURLError;
+        }
+
+        const imageUrl = publicURLData.publicUrl;
+        if (!imageUrl) {
+            throw new Error('Failed to get public URL for image');
+        }
+
+        // Finally update the university record with the image URL
+        const { error: updateError } = await supabase
+            .from('University')
+            .update({ image_url: imageUrl })
+            .eq('id', universityId);
+
+        if (updateError) {
+            console.error('Update Error:', updateError);
+        } else {
+            console.log('University record updated successfully with image URL');
+        }
+
+        return "Campus request sent successfully";
+    } catch (error) {
+        console.error('Error in sendCampusRequest:', error.message);
+        throw error;
     }
-
-    const universityId = insertedData.id;
-
-    // Then upload the image to the follow university
-    const { error: imageError } = await supabase.storage
-        .from('university_images')
-        .upload(`${universityId}/${data.name}`, image);
-    if (imageError) {
-        throw imageError;
-    }
-
-    // Return the following public url of the image
-    const { data: publicURLData, error: publicURLError } = supabase.storage
-        .from('university_images')
-        .getPublicUrl(`${universityId}/${data.name}`);
-    if (publicURLError) {
-        throw publicURLError;
-    }
-
-    const imageUrl = publicURLData.publicUrl;
-    if (!imageUrl) {
-        throw new Error('Failed to get public URL for image');
-    }
-
-
-    console.log('Image URL:', imageUrl);
-    console.log('University ID:', universityId);
-
-    // Finally update the university record with the image URL
-    const { error: updateError } = await supabase
-        .from('University')
-        .update({ image_url: imageUrl })
-        .eq('id', universityId);
-
-    if (updateError) {
-        console.error('Update Error:', updateError);
-    } else {
-        console.log('University record updated successfully with image URL');
-    }
-
-    console.log('University record updated successfully with image URL');
-    return "Campus request sent successfully";
 }

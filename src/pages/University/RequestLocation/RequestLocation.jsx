@@ -8,6 +8,7 @@ import { FaTimes } from 'react-icons/fa';
 
 
 
+
 function RequestLocation() {
     const [states, setStates] = useState([]);
     const [tags, setTags] = useState([]);
@@ -15,6 +16,28 @@ function RequestLocation() {
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+
+
+    const handleRequestSubmit = (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append('name', event.target.name.value);
+        formData.append('address', event.target.address.value);
+        formData.append('city', event.target.city.value);
+        formData.append('state_id', states.find(state => state.abr === event.target.state.value).id);
+        formData.append('tags', selectedTags.map(tag => tag.value).join(','));
+        formData.append('category', event.target.category.value);
+        formData.append('image', selectedFile);
+        if (formData.category === 'On Campus') {
+            formData.append();
+        }
+        requestStudyLocation(formData);
+        if (error) {
+            console.error(error);
+            alert('An error occurred while submitting request');
+        }
+        alert('Request submitted successfully');
+    };
 
 
     const handleTagChange = (selectedOptions) => {
@@ -33,6 +56,7 @@ function RequestLocation() {
                     fetchStates(),
                     fetchTags(),
                     fetchCategory()
+
                 ]);
                 setStates(statesData);
                 setTags(tagsData);
