@@ -143,12 +143,13 @@ export const requestStudyLocation = async (studyLocationData) => {
         .insert([
             {
                 name: studyLocationData.name,
-                state_id: studyLocationData.state_id,
-                city: studyLocationData.city,
                 address: studyLocationData.address,
+                city: studyLocationData.city,
+                state_id: studyLocationData.state_id,
                 university_id: studyLocationData.university_id || null,
                 submitted_by: studyLocationData.user_id,
-                category: studyLocationData.category
+                category: studyLocationData.category,
+                locationtag: studyLocationData.tags,
             }
         ])
 
@@ -158,5 +159,5 @@ export const requestStudyLocation = async (studyLocationData) => {
         console.log("Study Location Requested, wait for approval", data);
     }
 
-    
+
 }

@@ -46,6 +46,7 @@ export const fetchUserData = async (userID) => {
             first_name,
             last_name,
             university_id,
+            role:Roles (name),
             University:university_id (name),
             image_url
         `)
