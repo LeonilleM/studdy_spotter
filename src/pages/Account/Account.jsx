@@ -55,7 +55,7 @@ function Account() {
                                 <FaUser className="w-20 h-20 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}
                             <span className="mt-4 font-bold text-lg">{user.first_name} {user.last_name}</span>
-                            <span className="text-sm font-lato">{user.University.name}</span>
+                            <span className="text-sm font-lato">{user.university_id ? user.University.name : 'No Affiliation'}</span>
                         </div>
                         <div className="flex flex-col border-2 rounded-b-md  border-secondary py-8 shadow-lg ">
                             <button

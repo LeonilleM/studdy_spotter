@@ -1,29 +1,38 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../../assets/studdyspotter.png';
-import { useLocation } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { loadingComponent } from '../../components/Loading.jsx'
 import { FaUser } from 'react-icons/fa';
+import AuthDropDown from './AuthDropDown.jsx'
 
 function Navbar() {
     const location = useLocation();
     const { user, isAuthenticated, isLoading } = useContext(AuthContext);
+    const [showDropDown, setShowDropDown] = useState(false);
+
+    const handleDropDown = () => {
+        setShowDropDown(!showDropDown);
+    }
+
+    const closeDropDown = () => {
+        setShowDropDown(false);
+    }
 
     if (isLoading) {
         return loadingComponent()
     }
 
     return (
-        <div className="bg-secondary absolute top z-10 w-full">
+        <div className="bg-secondary absolute top z-10 w-full sm:px-0 px-4">
             <nav className="container mx-auto flex justify-between items-center font-poppins py-2">
                 <NavLink to="/">
                     <img src={Logo} alt="logo" className="h-16" />
                 </NavLink>
                 <div className="space-x-4">
                     {isAuthenticated ? (
-                        <NavLink
-                            to={`account/${(user.first_name ? user.first_name.toLowerCase() : 'No Name') + (user.last_name ? user.last_name.toLowerCase() : '')}`}
+                        <button
+                            onClick={handleDropDown}
                             className="flex items-center space-x-4 font-lato">
                             {user.image_url ? (
                                 <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
@@ -33,7 +42,7 @@ function Navbar() {
                             <span className="text-white font-bold">
                                 {user.first_name ? user.first_name : 'No Name User'} {user.last_name ? user.last_name : ''}
                             </span>
-                        </NavLink>
+                        </button>
                     ) : (
                         location.pathname !== '/signin' && location.pathname !== '/signup' && !user && (
                             <>
@@ -51,6 +60,7 @@ function Navbar() {
                         )
                     )}
                 </div>
+                {showDropDown && <AuthDropDown closeDropDown={closeDropDown} />}
             </nav>
         </div>
     );
