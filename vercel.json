@@ -1,0 +1,24 @@
+{
+    "rewrites": [
+        {
+            "source": "/university/:uniName",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/university/:uniName/:studyLocation",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/account/:userName",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/setting",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/admin-dashboard",
+            "destination": "/index.html"
+        }
+    ]
+}
