@@ -1,47 +1,7 @@
 {
     "rewrites": [
         {
-            "source": "/",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/signin",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/signup",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/university/:uniName",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/university/:uniName/:studyLocation",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/university/request-location",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/about",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/allschools",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/account/:userName",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/setting",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/admin-dashboard",
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ]
