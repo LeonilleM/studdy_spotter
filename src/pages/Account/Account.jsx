@@ -6,10 +6,8 @@ import { fetchUserFavorites } from '../../services/StudyLocation/Study.js';
 import { useState } from 'react';
 import StarRating from '../../components/StarRating.jsx';
 import { NavLink } from 'react-router-dom';
-import { fetchStudyRequest, fetchUniversityRequest } from '../../services/Admin/Admin.js';
 
-const renderTabContents = (selectedOption, reviews, favorites, studyRequest, universityRequests) => {
-
+const renderTabContents = (selectedOption, reviews, favorites) => {
     switch (selectedOption) {
         case 'reviews':
             return reviews.length > 0 ? (
@@ -80,86 +78,6 @@ const renderTabContents = (selectedOption, reviews, favorites, studyRequest, uni
             ) : (
                 <p>No saved locations</p>
             );
-        case 'admin':
-            return (
-                <div className="flex flex-col text-secondary">
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-2">
-                            <span className="font-bold text-xl">Study Location Requests</span>
-                            {studyRequest.length > 0 ? (
-                                studyRequest.map((request) => {
-                                    return (
-                                        <div key={request.id} className="flex flex-col gap-2 border border-secondary p-4 font-lato">
-                                            <div className="flex flex-row flex-wrap gap-2">
-                                                <span className="font-semibold">Submitted by:</span>
-                                                <span>{request.Users.first_name} {request.Users.last_name},</span>
-                                                <span>{request.Users.University.name}</span>
-                                                <span>ID: {request.submitted_by}</span>
-                                            </div>
-                                            <span className="font-semibold">Study Location Name: {request.name}</span>
-                                            <span className="font-semibold">  University: {request.university_id ? request.University?.name : null}</span>
-                                            <span className="font-semibold">City: {request.University.city}</span>
-                                            <span className="font-semibold">Category: {request.category}</span>
-                                            <a href={`https://www.google.com/maps/search/?api=1&query=${request.name + request.address}`}
-                                                target="_blank"
-                                                className="font-semibold hover:underline hover:text-blue-500">
-                                                Address: {request.address}
-                                            </a>
-                                            <div className="flex flex-row flex-wrap gap-2">
-                                                <span className="font-semibold">Tags:</span>
-                                                {request.tagNames.map((tag, index) => {
-                                                    return (
-                                                        <span key={`tag-${index}`}>{tag}</span>
-                                                    );
-                                                }
-                                                )}
-                                            </div>
-                                            <span className="font-sm">{request.description}</span>
-                                            <div className="flex flex-row gap-2">
-                                                <button className="bg-green-500 text-white px-4 py-2 rounded-md w-full">Approve</button>
-                                                <button className="bg-red-500 text-white px-4 py-2 rounded-md w-full">Reject</button>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <p>No study location requests</p>
-                            )}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <span className="font-bold text-xl">University Requests</span>
-                            {universityRequests.length > 0 ? (
-                                universityRequests.map((request) => {
-                                    return (
-                                        <div key={request.id} className="flex flex-col gap-2 border border-secondary p-4 font-lato font-semibold">
-                                            <span >University Name: {request.name} | <span className="italic font-normal"> {request.city}, {request.States.abr}</span> </span>
-                                            <span >Status: {request.status}</span>
-                                            <span>Link:
-                                                <a
-                                                    href={`https://www.google.com/maps/search/?api=1&query=${request.name}`}
-                                                    target="_blank"
-                                                    className="hover:underline hover:text-blue-500"> {request.name}
-                                                </a>
-                                            </span>
-                                            <div className="flex flex-row gap-2 flex-wrap">
-                                            </div>
-                                            <div className="flex flex-row gap-2">
-                                                <button className="bg-green-500 text-white px-4 py-2 rounded-md w-full">Approve</button>
-                                                <button className="bg-red-500 text-white px-4 py-2 rounded-md w-full">Reject</button>
-                                            </div>
-                                        </div>
-                                    );
-                                }
-                                )
-                            ) : (
-                                <p>No university requests</p>
-                            )}
-
-
-                        </div>
-                    </div>
-                </div>
-            )
         default:
             return null;
     }
@@ -172,8 +90,6 @@ function Account() {
     const [selectedOption, setSelectedOption] = useState('reviews');
     const [reviews, setReviews] = useState([]);
     const [favorites, setFavorites] = useState([]);
-    const [studyRequests, setStudyRequests] = useState([]);
-    const [universityRequests, setUniversityRequests] = useState([]);
 
 
     useEffect(() => {
@@ -184,14 +100,6 @@ function Account() {
                     fetchUserFavorites(user.id)
                 ]);
 
-                if (user.role.name === 'Admin') {
-                    const [studyRequests, universityRequests] = await Promise.all([
-                        fetchStudyRequest(),
-                        fetchUniversityRequest()
-                    ]);
-                    setStudyRequests(studyRequests);
-                    setUniversityRequests(universityRequests);
-                }
                 setReviews(reviewsData);
                 setFavorites(favoritesData);
             } catch (error) {
@@ -213,22 +121,23 @@ function Account() {
     }
 
 
+
     return (
         <div className="2xl:h-screen bg-primary pt-20 text-secondary">
             {isAuthenticated ? (
                 <div className="flex md:flex-row flex-col  container mx-auto py-24 2xl:px-32 px-4 gap-12">
                     <div className="flex flex-col lg:w-1/3 w-full">
-                        <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg">
+                        <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg font-lato">
                             {user.image_url ? (
                                 <img src={user.image_url} alt="user avatar" className="w-20 h-20 rounded-full shadow-md" />
                             ) : (
                                 <FaUser className="w-20 h-20 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}
                             <span className="mt-4 font-bold text-lg">{user.first_name} {user.last_name}</span>
-                            <span className="text-sm">{user.University?.name || "No University"}</span>
+                            <span className="text-sm">{user.University?.name || "No University Affiliation"}</span>
                             {user.role.name === 'Admin' && <span className="text-sm">Admin</span>}
                         </div>
-                        <div className="flex flex-col border-2 rounded-b-md  border-secondary py-8 shadow-lg ">
+                        <div className="flex flex-col border-2 rounded-b-md  border-secondary py-8 shadow-lg font-lato">
                             <button
                                 onClick={() => handleOptionChange('reviews')}
                                 className="flex items-center gap-2 py-2 px-4 hover:bg-action hover:text-white transition duration-300 ">
@@ -241,14 +150,14 @@ function Account() {
                                 <FaMapMarkerAlt />
                                 <span>View Saved Locations</span>
                             </button>
-                            {user.role?.name === 'Admin' && (
-                                <button
-                                    onClick={() => handleOptionChange('admin')}
+                            {user.role.name === 'Admin' && (
+                                <NavLink
+                                    to="/admin-dashboard"
+                                    onClick={() => handleOptionChange('studyRequests')}
                                     className="flex items-center gap-2 py-2 px-4 hover:bg-action hover:text-white transition duration-300 ">
                                     <FaUserShield />
-                                    <span>Admin Panel</span>
-
-                                </button>
+                                    <span>Admin Dashboard</span>
+                                </NavLink>
                             )}
                             <button
                                 onClick={handleSignOut}
@@ -269,11 +178,11 @@ function Account() {
                     <div className="flex flex-col lg:w-2/3 w-full">
                         <div className="flex flex-col text-secondary">
                             <span className="font-bold text-4xl font-poppins">
-                                {selectedOption === 'reviews' ? 'Reviews' : selectedOption === 'locations' ? 'Your Saved Locations' : 'Request Panel'}
+                                {selectedOption === 'reviews' ? 'Reviews' : 'Saved Locations'}
                             </span>
                         </div>
                         <div>
-                            {renderTabContents(selectedOption, reviews, favorites, studyRequests, universityRequests)}
+                            {renderTabContents(selectedOption, reviews, favorites)}
                         </div>
                     </div>
                 </div>

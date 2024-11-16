@@ -64,5 +64,21 @@ export const fetchUniversityRequest = async () => {
     }
     console.log(data)
     return data
+}
 
+
+export const uniRequestCommand = async (id, status, data) => {
+    const { error } = await supabase
+        .from('University')
+        .update({
+            status: status,
+            latitude: data.latitude,
+            longtitude: data.longtitude,
+        })
+        .eq('id', id)
+    if (error) {
+        throw error
+    }
+
+    return "Success"
 }
