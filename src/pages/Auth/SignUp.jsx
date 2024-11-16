@@ -57,7 +57,7 @@ const SignUp = () => {
                         </div>
                     </form>
                     <h1 className="py-10 text-secondary"> Have an account?
-                        <NavLink href="/signin" className="text-action font-bold underline hover:text-black ease-in-out duration-500" > Sign In</NavLink>
+                        <NavLink to="/signin" className="text-action font-bold underline hover:text-black ease-in-out duration-500" > Sign In</NavLink>
                     </h1>
                 </div>
             </div >

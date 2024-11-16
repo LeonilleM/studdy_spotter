@@ -6,8 +6,9 @@ import { fetchUserFavorites } from '../../services/StudyLocation/Study.js';
 import { useState } from 'react';
 import StarRating from '../../components/StarRating.jsx';
 import { NavLink } from 'react-router-dom';
+import { createCollection } from '../../services/Collections/Collections.js';
 
-const renderTabContents = (selectedOption, reviews, favorites) => {
+const renderTabContents = (selectedOption, reviews, collections, handleCreateCollection) => {
     switch (selectedOption) {
         case 'reviews':
             return reviews.length > 0 ? (
@@ -62,24 +63,45 @@ const renderTabContents = (selectedOption, reviews, favorites) => {
                 <p>No reviews written</p>
             );
         case 'locations':
-            return favorites.length > 0 ? (
-                favorites.map((favorite) => {
-                    const studyPage = `/university/${favorite.StudyLocation.University.name}/${favorite.StudyLocation.name}`;
-                    return (
-                        <NavLink
-                            to={studyPage}
-                            key={favorite.id} className="flex flex-row gap-2 rounded-md items-center font-lato hover:underline pt-2">
-                            <span className="font-semibold">{favorite.StudyLocation.name}</span>
-                            <span className="font-sm italic">- {favorite.StudyLocation.University.name}</span>
+            return (
+                <>
+                    <div className="pb-4">
+                        <div className="flex flex-row justify-between items-center ">
+                            <h2 className="text-xl font-bold font-lato">Collection List</h2>
+                            <button
+                                onClick={handleCreateCollection}
+                                className="bg-action text-white px-4 py-2 rounded-md font-lato text-xs">Create Collection</button>
+                        </div>
+                        <hr />
 
-                        </NavLink>
-                    );
-                })
-            ) : (
-                <p>No saved locations</p>
+                    </div>
+                    <div className="grid lg:grid-cols-3 grid-cols-2 gap-12">
+                        {collections.length > 0 ? (
+                            collections.map((collection) => (
+                                <div key={collection.id}>
+                                    <div
+                                        style={{ backgroundImage: `url(${collection.Collectionlist[0]?.UserFavorites?.StudyLocation?.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                                        className="w-full h-[22vh] bg-white rounded relative">
+                                        <div
+                                            className="absolute bottom-0 right-0 flex justify-center items-center bg-gray-300 rounded-md w-1/2 h-1/2">
+                                            <FaMapMarkerAlt className="text-4xl text-white" />
+                                            ({collection.Collectionlist.length})
+                                        </div>
+                                    </div>
+                                    <h2 className="text-xl font-bold pt-2">{collection.name}</h2>
+                                </div>
+
+                            ))
+                        ) : (
+                            <p>No saved locations</p>
+                        )}
+                    </div>
+
+                </>
             );
         default:
             return null;
+
     }
 }
 
@@ -102,12 +124,27 @@ function Account() {
 
                 setReviews(reviewsData);
                 setFavorites(favoritesData);
+
             } catch (error) {
                 console.error(error);
             }
         };
         fetchUserData();
     }, [user]);
+
+    const handleCreateCollection = async () => {
+        const collectionName = prompt('Enter collection name:');
+        if (collectionName) {
+            try {
+                await createCollection(user.id, collectionName);
+                const updatedCollections = await fetchUserFavorites(user.id);
+                setFavorites(updatedCollections);
+            } catch (error) {
+                console.error('Error creating collection:', error);
+            }
+        }
+    };
+
 
 
     const handleOptionChange = (option) => {
@@ -116,7 +153,6 @@ function Account() {
 
 
     const handleSignOut = () => {
-        console.log('Sign out');
         logout();
     }
 
@@ -125,7 +161,8 @@ function Account() {
     return (
         <div className="2xl:h-screen bg-primary pt-20 text-secondary">
             {isAuthenticated ? (
-                <div className="flex md:flex-row flex-col  container mx-auto py-24 2xl:px-32 px-4 gap-12">
+                <div className="flex lg:flex-row flex-col  container mx-auto py-24 2xl:px-40 px-4 gap-24">
+
                     <div className="flex flex-col lg:w-1/3 w-full">
                         <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg font-lato">
                             {user.image_url ? (
@@ -176,14 +213,10 @@ function Account() {
                     </div>
 
                     <div className="flex flex-col lg:w-2/3 w-full">
-                        <div className="flex flex-col text-secondary">
-                            <span className="font-bold text-4xl font-poppins">
-                                {selectedOption === 'reviews' ? 'Reviews' : 'Saved Locations'}
-                            </span>
-                        </div>
-                        <div>
-                            {renderTabContents(selectedOption, reviews, favorites)}
-                        </div>
+                        <span className="font-bold text-4xl font-poppins pb-4">
+                            {selectedOption === 'reviews' ? 'Reviews' : 'Collections'}
+                        </span>
+                        {renderTabContents(selectedOption, reviews, favorites, handleCreateCollection)}
                     </div>
                 </div>
             ) : (

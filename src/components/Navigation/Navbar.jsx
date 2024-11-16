@@ -25,24 +25,28 @@ function Navbar() {
 
     return (
         <div className="bg-secondary absolute top z-10 w-full sm:px-0 px-4">
-            <nav className="container mx-auto flex justify-between items-center font-poppins py-2">
+            <nav className="container mx-auto flex justify-between items-center font-poppins py-2 ">
                 <NavLink to="/">
                     <img src={Logo} alt="logo" className="h-16" />
                 </NavLink>
                 <div className="space-x-4">
                     {isAuthenticated ? (
-                        <button
-                            onClick={handleDropDown}
-                            className="flex items-center space-x-4 font-lato">
-                            {user.image_url ? (
-                                <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
-                            ) : (
-                                <FaUser className="w-12 h-12 text-white bg-gray-200 rounded-full" />
-                            )}
-                            <span className="text-white font-bold">
-                                {user.first_name ? user.first_name : 'No Name User'} {user.last_name ? user.last_name : ''}
-                            </span>
-                        </button>
+                        <div className="relative inline-block">
+                            <button
+                                onClick={handleDropDown}
+                                className="flex items-center space-x-4 font-lato">
+                                {user.image_url ? (
+                                    <img src={user.image_url} alt="avatar" className="w-12 h-12 rounded-full" />
+                                ) : (
+                                    <FaUser className="w-12 h-12 text-white bg-gray-200 rounded-full" />
+                                )}
+                                <span className="text-white font-bold">
+                                    {user.first_name ? user.first_name : 'No Name User'} {user.last_name ? user.last_name : ''}
+                                </span>
+                            </button>
+
+                            {showDropDown && <AuthDropDown closeDropDown={closeDropDown} />}
+                        </div>
                     ) : (
                         location.pathname !== '/signin' && location.pathname !== '/signup' && !user && (
                             <>
@@ -60,7 +64,6 @@ function Navbar() {
                         )
                     )}
                 </div>
-                {showDropDown && <AuthDropDown closeDropDown={closeDropDown} />}
             </nav>
         </div>
     );

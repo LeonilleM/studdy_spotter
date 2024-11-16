@@ -29,7 +29,7 @@ function Footer() {
                         </div>
                         <div className="font-lato space-y-2 ">
                             <hr />
-                            <h1 className="sm:px-0 px-2">© 2021 Study Spotter</h1>
+                            <h1 className="sm:px-0 px-2">© 2024 Study Spotter</h1>
                         </div>
                     </div>
                 </div>

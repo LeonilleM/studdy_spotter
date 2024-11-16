@@ -11,6 +11,7 @@ export const toggleFavorite = async (studyLocationID, userID) => {
         .maybeSingle();
 
     try {
+        // If it exists, delete it, otherwise insert it
         if (existing) {
             const { data } = await supabase
                 .from('UserFavorites')
@@ -18,10 +19,36 @@ export const toggleFavorite = async (studyLocationID, userID) => {
                 .eq('user_id', userID)
                 .eq('study_location_id', studyLocationID)
                 .select();
-
             return { isFavorited: false, data };
         } else {
-            const { data } = await supabase
+
+            let { data: collections, error: collectionError } = await supabase
+                .from('Collections')
+                .select('id')
+                .eq('created_by', userID);
+            if (collectionError) {
+                console.error('Error fetching collections:', collectionError);
+                throw collectionError
+            }
+
+            if (collections.length === 0) {
+                const { data: defaultCollection, error: defaultCollectionError } = await supabase
+                    .from('Collections')
+                    .insert({
+                        created_by: userID,
+                        name: 'My bookmarks'
+                    })
+                    .select();
+                if (defaultCollectionError) {
+                    throw defaultCollectionError
+                }
+
+                collections = defaultCollection;
+            }
+
+            const collectionId = collections[0].id;
+
+            const { data: newFavorite } = await supabase
                 .from('UserFavorites')
                 .insert({
                     user_id: userID,
@@ -29,7 +56,24 @@ export const toggleFavorite = async (studyLocationID, userID) => {
                 })
                 .select();
 
-            return { isFavorited: true, data };
+            try {
+                const { error } = await supabase
+                    .from('Collectionlist')
+                    .insert({
+                        user_favorite_id: newFavorite[0].id,
+                        collection_id: collectionId
+                    });
+
+                if (error) {
+                    console.error('Error inserting into Collectionlist:', error);
+                    throw error;
+                }
+
+            } catch (error) {
+                console.error('Failed to insert into Collectionlist:', error.message);
+            }
+
+            return { isFavorited: true, newFavorite };
         }
     } catch (error) {
         throw new Error(`Failed to toggle favorite: ${error.message}`);
@@ -39,9 +83,26 @@ export const toggleFavorite = async (studyLocationID, userID) => {
 // Fetches the user's favorite study locations
 export const fetchUserFavorites = async (userID) => {
     const { data, error } = await supabase
-        .from('UserFavorites')
-        .select('study_location_id, StudyLocation:study_location_id (name, University:university_id (name))')
-        .eq('user_id', userID);
+        .from('Collections')
+        .select(`
+        id,
+        name,
+        Collectionlist(
+            UserFavorites!inner(
+                id,
+                StudyLocation!inner(
+                    id,
+                    name,
+                    university_id,
+                    image_url,
+                    University!inner(
+                        name
+                    )
+                )
+            )
+        )
+    `)
+        .eq('created_by', userID);
 
     if (error) {
         throw error;

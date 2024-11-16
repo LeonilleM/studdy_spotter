@@ -47,6 +47,15 @@ function RequestLocation() {
 
         requestStudyLocation(studyLocationData).then(() => {
             alert('Study location request sent successfully');
+
+            // Reset the form
+            formData.reset();
+            setSelectedTags([]);
+            setSelectedFile(null);
+            setImagePreview(null);
+            setSelectedState(null);
+            setSelectedCategory(null);
+            setSelectedUniversity(null);
         }).catch(error => {
             console.error(error);
             alert('An error occurred while sending study location request');
@@ -155,7 +164,7 @@ function RequestLocation() {
                                 className="text-base"
                                 onChange={handleTagChange}
                                 options={tags.map(tag => ({ value: tag.id, label: tag.name }))}
-                                isSearchable={false}
+                                isSearchable={true}
                                 placeholder="Select Tags"
                             />
                         </div>

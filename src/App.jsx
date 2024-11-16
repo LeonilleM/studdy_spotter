@@ -13,6 +13,7 @@ import Account from './pages/Account/Account';
 import Setting from './pages/Setting/Setting';
 import RequestLocation from './pages/University/RequestLocation/RequestLocation';
 import ProtectedRoute from './services/Auth/ProtectedRoute';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/allschools" element={<AllSchools />} />
         <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
         <Route path="/setting" element={<ProtectedRoute Component={Setting} />} />
+        <Route path="/admin-dashboard" element={<ProtectedRoute Component={AdminDashboard} />} />
       </Routes>
       <Footer />
 

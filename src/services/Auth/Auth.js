@@ -60,7 +60,7 @@ export const fetchUserData = async (userID) => {
 
 
 export const uploadImage = async (userId, image) => {
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
         .from('profile_images')
         .upload(`${userId}/profile_img`, image, {
             upsert: true
@@ -76,9 +76,7 @@ export const uploadImage = async (userId, image) => {
     if (publicURLError) throw new Error(`Error getting public URL: ${publicURLError.message}`);
 
     await updateUserImage_URL(userId, publicURLData.publicUrl);
-
 }
-
 
 export const updateUserImage_URL = async (userId, imageUrl) => {
     const { error } = await supabase
@@ -88,5 +86,51 @@ export const updateUserImage_URL = async (userId, imageUrl) => {
     if (error)
         throw ("Error updating user image URL: ", error.message)
 
-    return "Image uploaded successfully"
 }
+
+
+export const updateUniversity = async (userId, universityId) => {
+    const { error } = await supabase
+        .from('Users')
+        .update({ university_id: universityId })
+        .eq('id', userId)
+    if (error)
+        throw new Error("Error setting university: ", error.message)
+}
+
+
+export const updateNames = async (userId, firstName, lastName) => {
+    const updateData = {};
+    if (firstName !== undefined) {
+        updateData.first_name = firstName;
+    }
+    if (lastName !== undefined) {
+        updateData.last_name = lastName;
+    }
+
+    const { data, error } = await supabase
+        .from('Users')
+        .update(updateData)
+        .eq('id', userId);
+    if (error) {
+        throw new Error("Error updating profile: " + error.message);
+    }
+
+    return data;
+};
+
+
+export const updateUserProfile = async (userInfo) => {
+    try {
+        if (userInfo.firstName || userInfo.lastName) await updateNames(userInfo.userId, userInfo.firstName, userInfo.lastName);
+
+        if (userInfo.universityId) await updateUniversity(userInfo.userId, userInfo.universityId);
+
+        if (userInfo.image) await uploadImage(userInfo.userId, userInfo.image);
+
+        console.log("Profile updated successfully");
+    } catch (error) {
+        console.error("Error updating profile: ", error.message);
+        throw new Error("Error updating profile: " + error.message);
+    }
+};
