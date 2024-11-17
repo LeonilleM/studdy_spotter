@@ -3,7 +3,7 @@ import { toggleFavorite, fetchUserFavorites } from '../../../../services/StudyLo
 
 
 const useFavorite = (studyLocationID, userID, initialState = false) => {
-const [isFavorite, setIsFavorite] = useState(initialState);
+    const [isFavorite, setIsFavorite] = useState(initialState);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isOnCooldown, setIsOnCooldown] = useState(false);
@@ -20,7 +20,10 @@ const [isFavorite, setIsFavorite] = useState(initialState);
             setIsLoading(true);
             try {
                 const favorites = await fetchUserFavorites(userID);
-                const favoriteIds = favorites.map(fav => fav.study_location_id);
+
+                const favoriteIds = favorites.flatMap(collection =>
+                    collection.Collectionlist.map(item => item.UserFavorites.StudyLocation.id)
+                );
                 setIsFavorite(favoriteIds.includes(studyLocationID));
                 setError(null);
             } catch (err) {
