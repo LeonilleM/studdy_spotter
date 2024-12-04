@@ -6,8 +6,8 @@ import BackButton from "../../../components/BackButton";
 import { requestStudyLocation } from '../../../services/StudyLocation/Study';
 import { fetchUniversities } from '../../../services/University/University';
 import { AuthContext } from '../../../services/Auth/AuthContext';
-import { loadingComponent } from "../../../components/Loading";
-import Modal from "../../../components/FormsModal/popUpModal.jsx";
+import { loadingComponent } from "../../../components/Loading.jsx";
+import Modal from "../../../components/shared/popupModal.jsx";
 
 function RequestLocation() {
     const { user } = useContext(AuthContext);

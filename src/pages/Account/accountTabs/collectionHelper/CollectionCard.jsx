@@ -35,8 +35,8 @@ const CollectionCard = memo(({ collection, onClick, handleDeleteCollection }) =>
                 }}
             >
                 <div
-                    className="absolute bottom-0 right-0 flex justify-center items-center bg-white/70 rounded-tl rounded-br w-1/2 h-1/2 text-black">
-                    <FaMapMarkerAlt className="text-4xl text-primary" />
+                    className="absolute bottom-0 right-0 flex items-center justify-center font-lato text-sm bg-white/70 rounded-tl rounded-br w-1/3 h-1/3 text-black">
+                    <FaMapMarkerAlt className="text-black inline-flex " />
                     ({collection.Collectionlist.length})
                 </div>
             </div>

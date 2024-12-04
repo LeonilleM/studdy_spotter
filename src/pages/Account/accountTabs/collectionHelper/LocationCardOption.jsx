@@ -4,18 +4,31 @@ import { returnUserCollections, moveStudyLocationToCollection } from '../../../.
 
 
 
-const LocationCardOption = ({ collectionName, userFavorite, isOpen, setIsOptionsOpen, userId, onLocationMoved }) => {
+const LocationCardOption = ({ collectionName, item, userFavorite, isOpen, setIsOptionsOpen, userId, onLocationMoved }) => {
     const optionRef = useRef(null)
     const [availableCollections, setAvailableCollections] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [fetching, setFetching] = useState(false);
+    console.log(item);
 
     useEffect(() => {
+        setFetching(true);
+
         const fetchAvailableCollections = async () => {
-            const collections = await returnUserCollections(userId);
-            setAvailableCollections(collections);
-        };
+            try {
+                const collections = await returnUserCollections(userId);
+                setAvailableCollections(collections);
+            }
+
+            catch (error) {
+                console.error(error);
+            }
+            finally {
+                setFetching(false);
+            }
+        }
         fetchAvailableCollections();
-    }, [userId, collectionName]);
+    }, [userId, collectionName])
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -42,6 +55,9 @@ const LocationCardOption = ({ collectionName, userFavorite, isOpen, setIsOptions
         }
     }
 
+    if (fetching) {
+        return null;
+    }
 
 
     return (
@@ -50,34 +66,35 @@ const LocationCardOption = ({ collectionName, userFavorite, isOpen, setIsOptions
             className={`fixed inset-0 w-full   bg-black/75 flex justify-center items-center   ${isOpen ? 'block' : 'hidden'}`}
         >
             <div className="bg-white text-secondary flex flex-col gap-5 rounded-lg  shadow-lg w-[50vh] p-6">
-                <h1 className="font-poppins ">Move Collections</h1>
+                <h1 className="font-poppins font-bold ">Move Collections</h1>
                 <div className="border border-secondary p-4 font-lato flex flex-col gap-4">
                     {availableCollections.map((collection) => (
                         <div key={collection.id} className="flex justify-between p-4  items-center border">
-                            
                             <h1 className="items-center font-semibold"> {collection.name} </h1>
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     setIsOptionsOpen(false);
-                                    handleMoveLocation(userFavorite, collection.id);
+                                    if (collection.name !== collectionName) {
+                                        handleMoveLocation(userFavorite, collection.id);
+                                    } else {
+                                        //delete location
+                                    }
+
 
                                 }}
                                 disabled={isLoading || collection.name === collectionName}
                                 className={`text-sm px-4 py-2 rounded
                                 ${collection.name === collectionName
-                                        ? ' text-red-600  cursor-not-allowed'
+                                        ? ' text-red-600'
                                         : 'bg-action text-white'
                                     }`}
                             >
-                                {collection.name === collectionName ? 'Current' : 'Save'}
-
+                                {collection.name === collectionName ? 'Delete' : 'Save'}
                             </button>
-
                         </div>
                     ))}
-
                 </div>
                 <button
                     onClick={(e) => {
@@ -97,11 +114,12 @@ const LocationCardOption = ({ collectionName, userFavorite, isOpen, setIsOptions
 
 LocationCardOption.propTypes = {
     collectionName: PropTypes.string,
+    item: PropTypes.object,
     userFavorite: PropTypes.number,
     userId: PropTypes.string,
     isOpen: PropTypes.bool,
-    setIsOptionsOpen: PropTypes.func,
-    onLocationMoved: PropTypes.func,
+    setIsOptionsOpen: PropTypes.func.isRequired,
+    onLocationMoved: PropTypes.func.isRequired,
 };
 
 

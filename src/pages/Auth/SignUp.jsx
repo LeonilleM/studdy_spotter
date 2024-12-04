@@ -8,8 +8,8 @@ const SignUp = () => {
     return (
         <div className="bg-secondary ">
             <div className="flex items-center justify-center px-4 h-screen">
-                <div className="pt-20 sm:px-12 px-6 bg-primary rounded-lg flex flex-col items-center justify-center shadow-lg text-action">
-                    <h1 className=" text-center font-poppins text-4xl pb-4 "><span className="font-bold">Welcome</span>, Sign up!</h1>
+                <div className="pt-20 sm:px-12 px-6 bg-white rounded-lg flex flex-col  shadow-lg text-black">
+                    <h1 className="text-start font-poppins text-4xl pb-4 "><span className="font-bold">Welcome</span>, Sign up!</h1>
                     <form className="flex flex-col space-y-5 mt-5 font-lato w-full ">
                         <div className="flex flex-row space-x-5">
                             <div className="flex flex-col">

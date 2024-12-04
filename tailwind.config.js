@@ -8,8 +8,10 @@ export default {
     extend: {
       colors: {
         primary: "#F5EFE7",
-        secondary: "#3B4D61",
-        action: "#215842"
+        secondary: "#4764B9",
+        accent: '#366B9D',
+        background: '#E3F2FD',
+        action: "#5885AF",
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

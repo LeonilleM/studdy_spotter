@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { createCollection } from '../../../services/Collections/Collections';
-import Modal from '../../../components/FormsModal/popUpModal.jsx';
+import Modal from '../../../components/shared/popupModal.jsx';
 import { loadingComponent } from '../../../components/Loading.jsx';
 
 

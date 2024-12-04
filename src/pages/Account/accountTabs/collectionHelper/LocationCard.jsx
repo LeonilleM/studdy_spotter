@@ -45,6 +45,7 @@ const LocationCard = ({ collectionName, item, userId, onLocationMoved }) => {
                 {isOptionsOpen && (
                     <LocationCardOption
                         isOpen={isOptionsOpen}
+                        item={item}
                         setIsOptionsOpen={setIsOptionsOpen}
                         userFavorite={item.UserFavorites.id}
                         userId={userId}

@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import CreateCollectionModal from '../helper/createCollectionModal';
 import { fetchUserFavorites } from '../../../services/StudyLocation/Study';
 import { deleteCollection } from '../../../services/Collections/Collections';
-import { loadingComponent } from '../../../components/Loading';
-import PopupModal from '../../../components/FormsModal/popUpModal.jsx';
+import { loadingComponent } from '../../../components/Loading.jsx';
+import PopupModal from '../../../components/shared/popupModal.jsx';
 import CollectionCard from './collectionHelper/CollectionCard.jsx';
 import LocationCard from './collectionHelper/LocationCard.jsx';
 
