@@ -40,12 +40,10 @@ function Home() {
         )
     }
 
-
-
     const Option = (props) => {
         return (
             <components.Option {...props}>
-                <FaUniversity className="mr-2 text-black inline-flex gap-2" />
+                <FaUniversity className="mr-2 text-gray-500 inline-flex gap-2" />
                 {props.data.label}
             </components.Option>
         );
@@ -61,7 +59,7 @@ function Home() {
             border: 'lightgray 2px solid',
         }), placeholder: (provided) => ({
             ...provided,
-            color: 'lightgray',
+            color: 'gray',
             fontWeight: 'bold',
             fontStyle: 'italic',
             fontSize: '16px'
@@ -81,11 +79,12 @@ function Home() {
     }
 
     return (
-        <div className="bg-gradient-to-br from-[#72D6F2] to-[#5151E5] flex flex-col text-primary ">
-            <div className="flex items-center justify-center h-screen  flex-col gap-12 ">
-                <h1 className="text-center text-6xl font-poppins font-bold">Find new study places</h1>
-                <h1 className="font-lato font-bold text-2xl  text-center w-[30vh] ">Search your campus to get started</h1>
-                <div className="flex flex-col items-center justify-center">
+        <div className="bg-gradient-to-br from-[#72D6F2] to-[#5151E5] flex flex-col text-white ">
+            <div className="flex items-center justify-center h-screen flex-col gap-8 px-4">
+                <h1 className="font-lato text-secondary font-bold text-2xl">Discover the Best Study Spots Near You</h1>
+                <h1 className="text-center sm:text-7xl text-6xl font-poppins font-bold">Find new study places</h1>
+                <h1 className="font-lato font-bold sm:text-3xl text-2xl  text-center md:w-[35vh]">Search your campus to get started!</h1>
+                <div className="flex flex-col items-center justify-center pt-12">
                     <Select
                         styles={customStyles}
                         options={options}
@@ -98,7 +97,7 @@ function Home() {
                     />
                     <NavLink
                         to='/allschools'
-                        className="font-lato  pt-2">Don&apos;t see your school? Request here</NavLink>
+                        className="font-lato pt-2 italic">Don&apos;t see your school? Request here</NavLink>
                 </div>
 
             </div>
