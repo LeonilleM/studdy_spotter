@@ -94,7 +94,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4 sm:px-52 font-semibold">
             <div className="fixed inset-0 bg-black opacity-75" onClick={handleClose}></div>
-            <div className="bg-primary rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-3/4 w-full py-6 px-12">
+            <div className="bg-background rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-3/4 w-full py-6 px-12">
                 <div className="flex flex-col p-6">
                     <div className="flex flex-row justify-between items-center">
                         <h1 className="font-poppins text-2xl text-secondary">{locationName}</h1>

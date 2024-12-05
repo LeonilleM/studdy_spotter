@@ -10,6 +10,7 @@ import { AuthContext } from '../../../services/Auth/AuthContext';
 import FavoriteButton from './helper/favoriteButton'
 import BackButton from '../../../components/BackButton';
 import { FaUser } from 'react-icons/fa';
+import { BsThreeDots } from "react-icons/bs";
 
 
 function Reviews() {
@@ -50,7 +51,11 @@ function Reviews() {
                     const sortedReviews = reviewsData.sort((a, b) =>
                         new Date(b.created_at) - new Date(a.created_at)
                     );
-                    setReviews(sortedReviews);
+
+                    const userReview = sortedReviews.filter(review => review.Users.id === user?.id);
+                    const otherReviews = sortedReviews.filter(review => review.Users.id !== user?.id);
+                    setReviews({ userReview, otherReviews });
+
                 }
             } catch (err) {
                 setError(err.message || 'Location you\'ve selected is not available or not associated with the specified university');
@@ -60,7 +65,9 @@ function Reviews() {
         };
 
         fetchData();
-    }, [studyLocation, uniName]);
+    }, [studyLocation, uniName, user?.id]);
+    const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
+
 
     if (loading) {
         return loadingComponent();
@@ -81,58 +88,97 @@ function Reviews() {
     }
 
     return (
-        <div className="bg-primary pt-20 ">
+        <div className="bg-background pt-32 ">
+
             {locationDetails && (
-                <div style={{ backgroundImage: `url(${locationDetails.image_url})`, backgroundPosition: 'center', height: '45vh' }}>
-                    <div className="lg:w-1/3 w-3/5 bg-[#32006e]/75 h-full font-lato flex flex-col py-8 lg:px-14 px-4 gap-4 text-white justify-between">
-                        <section className="flex flex-col gap-2">
-                            <BackButton />
-                            <h1 className="lg:text-4xl text-2xl  font-poppins font-bold">{locationDetails.name}</h1>
-                            <div className="flex flex-row gap-4 items-center">
-                                <StarRating rating={locationDetails.rating} starSize={14} color="primary" />
-                                <p className="text-xs">({reviews.length} reviews)</p>
+                <div
+                    style={{ backgroundImage: `url(${locationDetails.image_url})`, backgroundPosition: 'center', height: '45vh', }}>
+                    <div className="flex container mx-auto h-full">
+                        <div className="lg:w-1/3  font-lato flex flex-col py-8 text-white justify-between rounded-l-md">
+                            <section className="flex flex-col gap-2">
+                                <BackButton color="white" />
+                                <h1 className="lg:text-4xl text-2xl  font-poppins font-bold">{locationDetails.name}</h1>
+                                <div className="flex flex-row gap-4 items-center">
+                                    <StarRating rating={locationDetails.rating} starSize={14} color="primary" />
+                                    <p className="text-xs">({totalReviews} reviews)</p>
+                                </div>
+                            </section>
+                            <div className="flex flex-row flex-wrap gap-2 ">
+                                {locationDetails.LocationTagList.map((tag, index) => {
+                                    const tagName = tag.TagTypes?.name || 'no-name';
+                                    return (
+                                        <span key={`tag-${index}-${tagName}`} className="bg-gray-200 text-secondary font-bold md:text-sm text-xs px-3 py-1.5 rounded-xl font-poppins">
+                                            {tagName}
+                                        </span>
+                                    );
+                                })}
                             </div>
-                        </section>
-                        <div className="flex flex-row flex-wrap gap-2 ">
-                            {locationDetails.LocationTagList.map((tag, index) => {
-                                const tagName = tag.TagTypes?.name || 'no-name';
-                                return (
-                                    <span key={`tag-${index}-${tagName}`} className="bg-gray-200 text-secondary font-bold md:text-sm text-xs px-3 py-1.5 rounded-full font-poppins">
-                                        {tagName}
-                                    </span>
-                                );
-                            })}
                         </div>
                     </div>
                 </div>
             )}
+
             <div className="container mx-auto flex flex-col lg:flex-row lg:justify-between lg:pt-24 sm:px-0 px-6 ">
-                <div className="lg:w-2/5 text-secondary lg:order-1 order-2">
+                <div className="lg:w-2/5 text-secondary lg:order-1 order-2 relative">
                     <h1 className="pb-12 font-poppins text-4xl font-bold">Reviews</h1>
-                    {reviews.length > 0 ? (
-                        reviews.map((review, index) => (
-                            <div key={review.id || `review-${index}`} className="flex flex-row pb-24">
-                                <div className="flex flex-col font-lato">
-                                    <div className="flex flex-row gap-2">
-                                        {review.Users.image_url ? (
-                                            <img src={user.image_url} alt="avatar" className="w-14 h-14 rounded-full" />
-                                        ) : (
-                                            <FaUser className="w-14 h-14 text-white bg-gray-300 rounded-full" />
-                                        )}
-                                        <div className="flex flex-col justify-center">
-                                            <p className="font-bold">{review.Users.first_name} {review.Users.last_name}</p>
-                                            <p className="text-sm text-gray-500"> {review.Users.University ? review.Users.University.name : 'No School Affilation'}</p>
+                    {reviews.userReview.length > 0 || reviews.otherReviews.length > 0 ? (
+                        <>
+                            {reviews.userReview.map((review, index) => (
+                                <div key={review.id || `user-review-${index}`} className="flex flex-col space-y-2 pb-24">
+                                    <h1 className="font-bold">Your Review</h1>
+                                    <div className="flex flex-col font-lato w-full">
+                                        <div className="flex flex-row justify-between items-center">
+                                            <div className="flex flex-row gap-4">
+                                                {review.Users.image_url ? (
+                                                    <img src={review.Users.image_url} alt="avatar" className="w-14 h-14 rounded-full" />
+                                                ) : (
+                                                    <FaUser className="w-14 h-14 text-white bg-gray-300 rounded-full" />
+                                                )}
+                                                <div className="flex flex-col justify-center">
+                                                    <p className="font-bold">{review.Users.first_name} {review.Users.last_name}</p>
+                                                    <p className="text-sm text-gray-500">{review.Users.University ? review.Users.University.name : 'No School Affiliation'}</p>
+                                                </div>
+                                            </div>
+
+                                            <BsThreeDots
+
+                                                onClick={() => console.log('edit review')}
+                                                className="text-secondary h-5 w-5 hover:cursor-pointer hover:text-black" />
+
                                         </div>
+                                        <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
+                                            <StarRating rating={review.rating} />
+                                            <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
+                                        </div>
+                                        <p className="mt-2">{review.description}</p>
+                                        <hr className="bg-slate-500 h-1 rounded w-full mt-4" />
                                     </div>
-                                    <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
-                                        <StarRating rating={review.rating} />
-                                        <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
-                                    </div>
-                                    <p className="mt-2">{review.description}</p>
-                                    <hr className="bg-slate-500 h-1 rounded w-full mt-12" />
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                            {reviews.otherReviews.map((review, index) => (
+                                <div key={review.id || `review-${index}`} className="flex flex-row pb-24">
+                                    <div className="flex flex-col font-lato w-full">
+                                        <div className="flex flex-row gap-2">
+                                            {review.Users.image_url ? (
+                                                <img src={review.Users.image_url} alt="avatar" className="w-14 h-14 rounded-full" />
+                                            ) : (
+                                                <FaUser className="w-14 h-14 text-white bg-gray-300 rounded-full" />
+                                            )}
+                                            <div className="flex flex-col justify-center">
+                                                <p className="font-bold">{review.Users.first_name} {review.Users.last_name}</p>
+                                                <p className="text-sm text-gray-500">{review.Users.University ? review.Users.University.name : 'No School Affiliation'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
+                                            <StarRating rating={review.rating} />
+                                            <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
+                                        </div>
+                                        <p className="mt-2">{review.description}</p>
+                                        <hr className="bg-slate-500 h-1 rounded w-full mt-4" />
+                                    </div>
+                                </div>
+                            ))}
+                        </>
                     ) : (
                         <>
                             <p className="text-center text-secondary font-bold">No reviews currently</p>
@@ -162,7 +208,7 @@ function Reviews() {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 }
 
