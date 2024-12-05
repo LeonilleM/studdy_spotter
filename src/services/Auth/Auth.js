@@ -37,6 +37,25 @@ export const signIn = async (email, password) => {
     return data
 }
 
+export const signUp = async (email, password, firstName, lastName) => {
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                first_name: firstName,
+                last_name: lastName
+            }
+        }
+    })
+
+    if (error) {
+        throw new Error(`Error signing up: ${error.message}`);
+    }
+
+    return data
+}
+
 // Returns the user data for the current user
 export const fetchUserData = async (userID) => {
     const { data, error } = await supabase
