@@ -96,6 +96,7 @@ const AuthProvider = ({ children }) => {
             if (currentUser && currentUser.sub) {
                 const userData = await fetchUserData(currentUser.sub);
                 dispatch({ type: 'LOGIN', payload: userData });
+                return userData;
             } else {
                 dispatch({ type: 'SET_LOADING', payload: false });
             }
@@ -110,7 +111,7 @@ const AuthProvider = ({ children }) => {
         try {
             await supabase.auth.signOut();
             dispatch({ type: 'LOGOUT, payload: null' });
-            
+
         } catch (error) {
             console.error('Logout error:', error);
         }

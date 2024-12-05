@@ -7,7 +7,7 @@ import BackButton from '../../components/BackButton';
 
 function SignIn() {
     const navigate = useNavigate();
-    const { login, user } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [rememberMe, setRememberMe] = useState(false);
@@ -18,22 +18,21 @@ function SignIn() {
         setIsLoading(true);
         setError(null);
 
-
-
         const email = e.target.email.value.trim();
         const password = e.target.password.value;
 
         try {
-            await login(email, password, rememberMe);
+            const userData = await login(email, password, rememberMe);
             console.log("Sign In Successful");
 
             setTimeout(() => {
-                if (user?.University) {
-                    navigate(`/university/${user.university_id}`);
-                }else{
-                    navigate()
+                if (userData) {
+                    navigate(`/account/${userData.first_name + userData.last_name}`);
+                } else {
+                    navigate('/');
                 }
-            }, 5);
+            }, 100);
+
 
         } catch (error) {
             console.error("Sign in error:", error);
