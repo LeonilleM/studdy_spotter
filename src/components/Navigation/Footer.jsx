@@ -7,7 +7,7 @@ function Footer() {
     return (
         <footer className="w-full">
             {location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/signin' && (
-                <div className="bg-secondary h-[18vh] py-4 text-primary">
+                <div className="bg-secondary h-[18vh] py-4 text-white">
                     <div className="container mx-auto justify-between flex flex-col h-full">
                         <div className="justify-between  flex flex-row items-center sm:px-0 px-4">
                             <img src={Logo} alt="logo" className="w-32 hidden md:block" draggable='false' />

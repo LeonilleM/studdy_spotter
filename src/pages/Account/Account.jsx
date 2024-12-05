@@ -35,7 +35,7 @@ function Account() {
 
 
     return (
-        <div className="2xl:h-screen bg-primary pt-20 text-secondary">
+        <div className="2xl:h-screen bg-background pt-20 text-secondary">
             {isAuthenticated ? (
                 <div className="flex lg:flex-row flex-col  container mx-auto py-24 2xl:px-40 px-4 gap-24">
 

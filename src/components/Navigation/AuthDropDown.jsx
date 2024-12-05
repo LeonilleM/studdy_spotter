@@ -22,11 +22,9 @@ function AuthDropDown({ closeDropDown }) {
     };
 
 
-
-
     return (
         <>
-            <div className="absolute top-16  z-50 xl:w-[11rem] w-full px-2 bg-white rounded-md shadow-lg overflow-x-hidden ">
+            <div className="absolute top-14 z-50  w-full px-2 bg-white rounded-md shadow-lg overflow-x-hidden ">
                 <div className="flex flex-col gap-4 py-4">
                     <NavLink
                         onClick={closeDropDown}

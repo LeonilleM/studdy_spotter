@@ -121,6 +121,9 @@ export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
             image_url,
             UserReview (
                 rating
+            ),
+            LocationTagList (
+                TagTypes:tag_id (name)
             )
         `)
         .eq('university_id', uniID)

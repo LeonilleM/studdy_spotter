@@ -1,10 +1,9 @@
-import React from 'react'
 import Logo from '../../assets/studdyspotter.png'; // Adjust the path to your logo
 import BackButton from '../../components/BackButton';
 
 function About() {
   return (
-    <div className=" bg-primary">
+    <div className=" bg-background">
       <div className="h-[55vh] bg-secondary pt-24 " >
         <div className="container mx-auto flex flex-col items-center justify-center relative">
           <div className="absolute top-0 lg:left-0 left-4">

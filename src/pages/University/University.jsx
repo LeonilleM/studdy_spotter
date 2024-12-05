@@ -1,33 +1,56 @@
 import { fetchUniversityData } from '../../services/University/University';
 import { useEffect, useState } from 'react';
 import { fetchUniversityStudyLocationsWithReviews } from '../../services/StudyLocation/Study';
+import { fetchTags } from '../../services/helper/helper';
 import { NavLink } from 'react-router-dom';
 import StarRating from '../../components/StarRating';
 import { loadingComponent } from '../../components/Loading';
+import { IoSearchOutline } from "react-icons/io5";
+import { FaTimes } from "react-icons/fa";
 
 function University() {
     const [uniData, setUniData] = useState(null);
     const [studyLocations, setStudyLocations] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [locationTags, setLocationTags] = useState([]);
+    const [isSelectVisible, setIsSelectVisible] = useState(false);
+    const [filterMode, setFilterMode] = useState('AND');
 
     useEffect(() => {
-        // Extract the university name from the URL
-        const universityNameFromURL = window.location.pathname.split('/').pop();
-
-        // Fetch university data using the extracted name and it's ID
-
         const fetchData = async () => {
             try {
-                const data = await fetchUniversityData(universityNameFromURL);
-                if (data.length === 0) {
-                    setError('The university you are looking for isn\'t currently partnered with us.');
-                } else {
-                    setUniData(data);
+                // Extract the university name from the URL
+                const universityNameFromURL = window.location.pathname.split('/').pop();
+                const universityData = await fetchUniversityData(universityNameFromURL);
+                const data = await fetchTags();
+
+                if (universityData.length === 0) {
+                    setError(`${decodeURIComponent(universityNameFromURL)} isn't partnered with us`);
+                    setLoading(false);
+                    return;
                 }
+
+                const universityID = universityData[0].id;
+                const studyLocationsData = await fetchUniversityStudyLocationsWithReviews(universityID);
+
+                const sortedByRatingAndName = studyLocationsData.sort((a, b) => {
+                    if (b.rating === a.rating) {
+                        // If ratings are equal, sort by name alphabetically
+                        return a.name.localeCompare(b.name);
+                    }
+                    // Otherwise, sort by rating
+                    return b.rating - a.rating;
+                });
+
+                setUniData(universityData);
+                setLocationTags(data);
+                setStudyLocations(sortedByRatingAndName);
             } catch (error) {
                 console.error(error);
-                setError('An error occurred while fetching university data.');
+                setError('An error occurred while fetching data.');
             } finally {
                 setLoading(false);
             }
@@ -36,36 +59,43 @@ function University() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (uniData) {
-            const universityID = uniData ? uniData[0].id : null;
-            fetchUniversityStudyLocationsWithReviews(universityID).then((data) => {
-                setStudyLocations(data);
-            }).catch(error => {
-                console.error(error);
-            })
-        }
-    }, [uniData]);
 
-    if (loading) {
-        return loadingComponent("Loading Study Spots...");
-    }
+    const filteredStudyLocations = studyLocations ? studyLocations.filter(location => {
+        const matchesSearchQuery = location.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesTags = selectedTags.length === 0 || (
+            filterMode === 'AND'
+                ? selectedTags.every(tag =>
+                    location.LocationTagList.some(tagObj => tagObj.TagTypes.name === tag)
+                )
+                : selectedTags.some(tag =>
+                    location.LocationTagList.some(tagObj => tagObj.TagTypes.name === tag)
+                )
+        );
+
+        return matchesSearchQuery && matchesTags;
+    }) : [];
+
+
+    const handleTagRemove = (tagToRemove) => {
+        setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+    };
 
     if (error) {
         return (
-            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4  sm:px-0 px-4 flex flex-col items-center justify-center bg-primary text-secondary">
+            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4 sm:px-0 px-4 flex flex-col items-center justify-center bg-background text-secondary">
                 <h1 className="text-3xl font-semibold font-poppins lg:w-1/2">{error}</h1>
                 <p className="text-xl font-lato">Want your university to be a part of the website? Send an application.</p>
                 <NavLink to='/allschools' className="mt-4 inline-block bg-action text-white py-2 px-4 rounded-lg hover:scale-110 transition duration-300">
                     Go to Application
                 </NavLink>
-
             </div>
         );
     }
 
     return (
-        <div className="pt-20 overflow-x-hidden">
+        <div className="pt-32 overflow-x-hidden bg-background">
+            {loading && loadingComponent("Loading Study Spots...")}
             {uniData && uniData.map((uni) => (
                 <div key={uni.id} style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '45vh', width: '100%' }}>
                     <div
@@ -80,66 +110,148 @@ function University() {
                     </div>
                 </div>
             ))}
-            <div className="bg-primary font-secondary lg:px-0 px-6 text-secondary pb-32">
+            <section className="font-secondary lg:px-0 px-6 text-secondary pb-32">
                 <div className="container mx-auto flex flex-col gap-4 py-8">
-                    {  /* <h1 className="font-poppins font-semibold text-xl">Popular Study Spots</h1> */}
-                    <div className="flex flex-row justify-between w-full pb-4">
-                        <h1 className="font-poppins font-semibold text-4xl">Explore</h1>
+                    <h1 className="font-poppins font-bold text-4xl">Explore</h1>
+                    <div className="flex sm:flex-row flex-wrap justify-between w-full items-center pb-6">
+                        <div className="flex flex-row items-center gap-1">
+                            <div className="relative flex items-center sm:w-[35vh] ">
+                                <IoSearchOutline className="text-black w-8 h-5 border-r-2 left-2 absolute border-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search for a study spot"
+                                    className="pl-12 bg-white py-2 rounded-l-lg font-lato w-full"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <div className="relative flex gap-2">
+                                <button
+                                    type="button"
+                                    className="bg-white text-sm  px-4 h-[40px] rounded-r-lg font-lato font-bold transition duration-300"
+                                    onClick={() => setIsSelectVisible(!isSelectVisible)}
+                                >
+                                    Filter
+                                </button>
+                                <div className="text-xs flex items-center gap-2">
+                                    <button
+                                        className={`px-2 py-1 rounded ${filterMode === 'AND' ? 'bg-action text-white' : 'bg-gray-200'}`}
+                                        onClick={() => setFilterMode('AND')}
+                                    >
+                                        Match All
+                                    </button>
+                                    <button
+                                        className={`px-2 py-1 rounded ${filterMode === 'OR' ? 'bg-action text-white' : 'bg-gray-200'}`}
+                                        onClick={() => setFilterMode('OR')}
+                                    >
+                                        Match Any
+                                    </button>
+                                </div>
+                                {isSelectVisible && (
+                                    <div className="absolute left-0 top-10 bg-white rounded-md shadow-lg p-2 min-w-[150px] z-50 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                                        {locationTags.map(tag => (
+                                            <div key={tag.id} className="flex items-center gap-2 p-1 hover:bg-gray-100">
+                                                <input
+                                                    type="checkbox"
+                                                    id={`tag-${tag.id}`}
+                                                    value={tag.name}
+                                                    checked={selectedTags.includes(tag.name)}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedTags([...selectedTags, tag.name]);
+                                                        } else {
+                                                            setSelectedTags(selectedTags.filter(t => t !== tag.name));
+                                                        }
+                                                    }}
+                                                />
+                                                <label htmlFor={`tag-${tag.id}`} className="cursor-pointer">
+                                                    {tag.name}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <NavLink
                             to={`/university/request-location`}
-                            className="bg-action text-white px-4 py-2 rounded-lg font-lato hover:scale-105 hover:shadow-lg hover:shadow-action/30 transition ease-in-out duration-300">Request Location</NavLink>
+                            className="bg-action text-white px-4 py-2 rounded-lg font-lato hover:scale-105 hover:shadow-lg hover:shadow-action/30 transition ease-in-out duration-300">
+                            Request Location
+                        </NavLink>
+                    </div>
+                    <div className="pb-4">
+                        <div className="flex flex-row gap-6 pb-2">
+                            <h1 className="font-lato font-bold text-primary">Applied Filters</h1>
+                            {selectedTags.length > 2 && (
+                                <button
+                                    type="button"
+                                    className=" text-red-500 rounded-lg font-lato hover:font-bold hover:underline  transition ease-in-out duration-300"
+                                    onClick={() => setSelectedTags([])}
+                                >
+                                    Clear All
+                                </button>
+                            )}
+                        </div>
+
+                        <ul className="flex flex-row gap-2">
+                            {selectedTags.length > 0 ?
+                                selectedTags.map(tag => (
+                                    <li key={tag}>
+                                        <div className="flex items-center bg-white text-secondary px-2 py-1 rounded-md text-sm">
+
+                                            <button
+                                                type="button"
+                                                className="mr-2"
+                                                onClick={() => handleTagRemove(tag)}
+                                            >
+                                                <FaTimes />
+                                            </button>
+                                            <span>{tag}</span>
+                                        </div>
+                                    </li>
+
+                                ))
+                                :
+                                <h1>No filters Applied</h1>
+                            }
+                        </ul>
                     </div>
 
-                    <div className="grid lg:grid-cols-3 2xl:gap-20 gap-16">
-                        {studyLocations ? (
-                            studyLocations.length > 0 ? (
-                                studyLocations.map((studyLocation) => {
-                                    const studyLocationPath = `/university/${uniData[0].name}/${studyLocation.name}`;
-                                    return (
-                                        <NavLink
-                                            to={studyLocationPath}
-                                            key={studyLocation.id}
-                                            className="grid grid-cols-2 font-poppins text-secondary transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-blue-400/20 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/0 before:to-blue-400/10 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 hover:scale-105 group"
-                                        >
-                                            <img
-                                                src={studyLocation.image_url}
-                                                alt="placeholder"
-                                                className="w-full h-full rounded-l-lg group-hover:opacity-85"
-                                            />
-                                            <div className="bg-white rounded-r-lg items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
-                                                <h1 className="text-2xl px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
-                                                    {studyLocation.name}
-                                                </h1>
-                                                <div className="items-center gap-2 flex flex-row transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
-                                                    <StarRating rating={studyLocation.rating} starSize={12} />
-                                                    <h1 className="text-xs font-light">{studyLocation.review_count} reviews</h1>
-                                                </div>
+                    {filteredStudyLocations.length > 0 ? (
+                        <div className="grid lg:grid-cols-3 2xl:gap-20 gap-16">
+                            {filteredStudyLocations.map((studyLocation) => {
+                                const studyLocationPath = `/university/${uniData[0].name}/${studyLocation.name}`;
+                                return (
+                                    <NavLink
+                                        to={studyLocationPath}
+                                        key={studyLocation.id}
+                                        className="grid grid-cols-2 font-poppins text-secondary transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-blue-400/20 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/0 before:to-blue-400/10 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 hover:scale-105 group"
+                                    >
+                                        <img
+                                            src={studyLocation.image_url}
+                                            alt="placeholder"
+                                            className="w-full h-full rounded-l-lg group-hover:opacity-85"
+                                        />
+                                        <div className="bg-white rounded-r-lg items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
+                                            <h1 className="text-2xl px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
+                                                {studyLocation.name}
+                                            </h1>
+                                            <div className="items-center gap-2 flex flex-row transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
+                                                <StarRating rating={studyLocation.rating} starSize={12} />
+                                                <h1 className="text-xs font-light">{studyLocation.review_count} reviews</h1>
                                             </div>
-                                        </NavLink>
-                                    );
-                                })
-                            ) : (
-                                <h1 className="text-2xl">No study locations found for this university.</h1>
-                            )
-                        ) : (
-                            loadingComponent("Loading Study Locations...")
-                        )}
+                                        </div>
+                                    </NavLink>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <h1 className="text-2xl w-full">No study locations found for this university.</h1>
+                    )}
 
-                    </div>
-                    <div
-                        className="fter:h-px pt-24  w-full flex items-center before:h-px before:flex-1  before:bg-gray-300 before:content-[''] after:h-px after:flex-1 after:bg-gray-300  after:content-['']">
-                        <button type="button"
-                            className="flex items-center rounded-full border border-gray-300 bg-secondary-50 px-3 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="mr-1 h-4 w-4">
-                                <path fillRule="evenodd"
-                                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                    clipRule="evenodd" />
-                            </svg>
-                            View More
-                        </button>
-                    </div>
+
                 </div>
-            </div>
+            </section >
         </div >
     );
 }
