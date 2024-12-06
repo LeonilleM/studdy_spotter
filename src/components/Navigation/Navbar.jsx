@@ -27,7 +27,7 @@ function Navbar() {
         <>
             {location.pathname === '/signin' || location.pathname === '/signup' ? null : (
                 <nav className="absolute top z-10 w-full">
-                    <div className={`flex justify-between items-center font-poppins py-2  bg-[#3C3C3C]  px-12 ${location.pathname === '/' ? 'rounded-full mt-4 mx-12' : 'rounded-2xl mt-8 mx-12'}`}>
+                    <div className={`flex justify-between items-center font-poppins py-2  bg-[#3C3C3C]  px-12 ${location.pathname === '/' ? 'rounded-full mt-4 mx-12' : 'rounded-2xl mt-4 mx-12'}`}>
                         <NavLink to="/">
                             <img src={Logo} alt="logo" className="h-14" />
                         </NavLink>

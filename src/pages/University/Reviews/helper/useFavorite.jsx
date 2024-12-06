@@ -10,7 +10,7 @@ const useFavorite = (studyLocationID, userID, initialState = false) => {
     const [cooldownEndTime, setCooldownEndTime] = useState(null);
     const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
 
-    const COOLDOWN_DURATION = 6000;
+    const COOLDOWN_DURATION = 5000;
 
     // Check initial favorite status    
     useEffect(() => {

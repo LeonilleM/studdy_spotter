@@ -1,5 +1,5 @@
 import Logo from '../../assets/studdyspotter.png'; // Adjust the path to your logo
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/shared/BackButton';
 
 function About() {
   return (

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/shared/BackButton';
 
 function SignIn() {
     const navigate = useNavigate();

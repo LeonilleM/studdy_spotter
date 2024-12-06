@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import Select from 'react-select';
 import { FaCloudUploadAlt, FaTimes } from 'react-icons/fa';
 import { fetchStates, fetchTags, fetchCategory } from '../../../services/helper/helper';
-import BackButton from "../../../components/BackButton";
+import BackButton from "../../../components/shared/BackButton";
 import { requestStudyLocation } from '../../../services/StudyLocation/Study';
 import { fetchUniversities } from '../../../services/University/University';
 import { AuthContext } from '../../../services/Auth/AuthContext';

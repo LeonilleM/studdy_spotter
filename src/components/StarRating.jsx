@@ -5,10 +5,10 @@ const StarRating = ({ rating, starSize = 24 }) => {
     const colors = ["text-orange-500", "text-amber-600", "text-yellow-600", "text-green-700", "text-action"];
 
     const getColorClass = (rating) => {
-        if (rating >= 4.0) return colors[4];
-        if (rating >= 3.0) return colors[3];
-        if (rating >= 2.0) return colors[2];
-        if (rating >= 1.0) return colors[1];
+        if (rating >= 4.5) return colors[4];
+        if (rating >= 3.5) return colors[3];
+        if (rating >= 2.5) return colors[2];
+        if (rating >= 1.5) return colors[1];
         return colors[0];
     };
 

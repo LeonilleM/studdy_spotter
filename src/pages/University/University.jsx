@@ -7,6 +7,7 @@ import StarRating from '../../components/StarRating';
 import { loadingComponent } from '../../components/Loading';
 import { IoSearchOutline } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
+import { VscThreeBars } from "react-icons/vsc";
 
 function University() {
     const [uniData, setUniData] = useState(null);
@@ -128,9 +129,10 @@ function University() {
                             <div className="relative flex gap-2">
                                 <button
                                     type="button"
-                                    className="bg-white text-sm  px-4 h-[40px] rounded-r-lg font-lato font-bold transition duration-300"
+                                    className="bg-white text-sm  px-4 h-[40px] rounded-r-lg font-lato font-bold flex items-center gap-2 active:text-action active:bg-gray-300 transition duration-500 ease-in-out "
                                     onClick={() => setIsSelectVisible(!isSelectVisible)}
                                 >
+                                    <VscThreeBars />
                                     Filter
                                 </button>
                                 <div className="text-xs flex items-center gap-2">

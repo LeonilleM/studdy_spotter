@@ -138,9 +138,10 @@ const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
+            
             await supabase.auth.signOut();
-            dispatch({ type: 'LOGOUT, payload: null' });
-
+            dispatch({ type: 'LOGOUT', payload: null });
+            
         } catch (error) {
             console.error('Logout error:', error);
         }

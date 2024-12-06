@@ -8,9 +8,11 @@ import { loadingComponent } from '../../../components/Loading';
 import ReviewModal from './helper/reviewModal';
 import { AuthContext } from '../../../services/Auth/AuthContext';
 import FavoriteButton from './helper/favoriteButton'
-import BackButton from '../../../components/BackButton';
+import BackButton from '../../../components/shared/BackButton';
 import { FaUser } from 'react-icons/fa';
 import { BsThreeDots } from "react-icons/bs";
+import EditReview from './helper/editReview';
+
 
 
 function Reviews() {
@@ -20,22 +22,26 @@ function Reviews() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const { user } = useContext(AuthContext);
 
-    // Open the review modal
+    const handleEditReview = () => {
+        setShowEditModal(true);
+    };
+
     const handleOpenModal = () => {
         if (user) {
             setShowModal(true);
         } else {
             alert('Please log in to write a review');
+            setShowModal(false);
         }
     };
 
     const handleFavoriteButton = () => {
-        if (user) {
-            console.log('Favorite button clicked');
+        if (!user) {
+            alert('Please log in to add to favorites');
         }
-        alert('Please log in to add to favorites');
     }
 
     useEffect(() => {
@@ -68,6 +74,19 @@ function Reviews() {
     }, [studyLocation, uniName, user?.id]);
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
 
+
+    const handleNewReview = async (newReview) => {
+        if (newReview) {
+
+            const newReviews = await fetchAllReviews(locationDetails.id);
+            const sortedReviews = newReviews.sort((a, b) =>
+                new Date(b.created_at) - new Date(a.created_at)
+            );
+            const userReview = sortedReviews.filter(review => review.Users.id === user?.id);
+            const otherReviews = sortedReviews.filter(review => review.Users.id !== user?.id);
+            setReviews({ userReview, otherReviews });
+        }
+    };
 
     if (loading) {
         return loadingComponent();
@@ -139,18 +158,23 @@ function Reviews() {
                                                     <p className="text-sm text-gray-500">{review.Users.University ? review.Users.University.name : 'No School Affiliation'}</p>
                                                 </div>
                                             </div>
-
                                             <BsThreeDots
-
-                                                onClick={() => console.log('edit review')}
+                                                onClick={() => {
+                                                    console.log('edit review')
+                                                    handleEditReview(review);
+                                                }
+                                                }
                                                 className="text-secondary h-5 w-5 hover:cursor-pointer hover:text-black" />
 
                                         </div>
-                                        <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
+                                        <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2 ">
                                             <StarRating rating={review.rating} />
                                             <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
                                         </div>
                                         <p className="mt-2">{review.description}</p>
+                                        {review.updated_at && ( // Show updated date if review has been updated
+                                            <p className="text-xs text-gray-500 mt-4">Updated {formatDistanceToNow(new Date(review.updated_at))} ago</p>
+                                        )}
                                         <hr className="bg-slate-500 h-1 rounded w-full mt-4" />
                                     </div>
                                 </div>
@@ -174,6 +198,9 @@ function Reviews() {
                                             <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
                                         </div>
                                         <p className="mt-2">{review.description}</p>
+                                        {review.updated_at && ( // Show updated date if review has been updated
+                                            <p className="text-xs text-gray-500 mt-4 italic">Updated {formatDistanceToNow(new Date(review.updated_at))} ago</p>
+                                        )}
                                         <hr className="bg-slate-500 h-1 rounded w-full mt-4" />
                                     </div>
                                 </div>
@@ -196,18 +223,33 @@ function Reviews() {
                         >{locationDetails.address}
                         </a>
                         <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
-                        <p className="italic text-red-500">CLOSED</p>
+                        <p className="italic text-red-500">Not Available</p>
                     </div>
 
                     <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal} className="bg-action text-white py-3 px-4 rounded-lg w-full ">Write Review</button>
                         <FavoriteButton onClick={handleFavoriteButton} studyLocationID={locationDetails.id} userID={user ? user.id : null} />
-                        <ReviewModal show={showModal} locationId={locationDetails.id} userID={user ? user.id : null} locationName={locationDetails.name} handleClose={() => setShowModal(false)} handleSave={(review) => console.log(review)} />
+
                     </div>
                     <hr className="h-1 w-full bg-secondary mt-12 rounded block sm:hidden" />
+
                 </div>
             </div>
-
+            <ReviewModal
+                show={showModal}
+                locationId={locationDetails.id}
+                userID={user ? user.id : null}
+                locationName={locationDetails.name}
+                handleClose={() => setShowModal(false)}
+                handleNewReview={handleNewReview}
+            />
+            <EditReview
+                show={showEditModal}
+                handleClose={() => setShowEditModal(false)}
+                userID={user ? user.id : null}
+                studyLocationID={locationDetails.id}
+                review={reviews.userReview?.[0]}
+            />
         </div >
     );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import BackButton from '../../components/BackButton';
+import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities, sendCampusRequest } from '../../services/University/University';
 import { NavLink } from 'react-router-dom';
 import Select from 'react-select';
@@ -32,7 +32,7 @@ function AllSchools() {
                 acc[stateName].push(uni);
                 return acc;
             }, {});
-            
+
             const sortedStates = Object.keys(groupedData).sort();
             setUniData({ groupedData, sortedStates });
         }).catch(error => {
