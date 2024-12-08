@@ -24,24 +24,26 @@ function AuthDropDown({ closeDropDown }) {
 
     return (
         <>
-            <div className="absolute top-14 z-50  w-full px-2 bg-white rounded-md shadow-lg overflow-x-hidden ">
-                <div className="flex flex-col gap-4 py-4">
+            <div className="fixed inset-0  z-40" onClick={closeDropDown}>
+            </div>
+            <div className="absolute top-10 z-50  w-[11rem] px-2 bg-white rounded-md shadow-lg overflow-x-hidden ">
+                <div className="flex flex-col gap-2 py-4">
                     <NavLink
                         onClick={closeDropDown}
                         to={`account/${(user.first_name ? user.first_name.toLowerCase() : 'No Name') + (user.last_name ? user.last_name.toLowerCase() : '')}`}
-                        className="text-left font-poppins text-secondary font-bold hover:bg-secondary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
+                        className="text-left font-poppins text-secondary font-bold hover:bg-primary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
                         <ImProfile className="w-5 h-5 inline-block mr-2" />
                         Profile
                     </NavLink>
                     <NavLink
                         onClick={closeDropDown}
                         to="/setting"
-                        className="text-left font-poppins text-secondary font-bold hover:bg-secondary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
+                        className="text-left font-poppins text-secondary font-bold hover:bg-primary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
                         <VscSettings className="w-5 h-5 inline-block mr-2" />
                         Settings
                     </NavLink>
                     <hr />
-                    <button onClick={handleLogOut} className="text-left font-poppins text-secondary font-bold hover:bg-secondary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
+                    <button onClick={handleLogOut} className="text-left font-poppins text-secondary font-bold hover:bg-primary hover:text-white transition duration-300 ease-in-out py-2 rounded px-2">
                         <FaSignOutAlt className="w-5 h-5 inline-block mr-2" />
                         Sign out
                     </button>

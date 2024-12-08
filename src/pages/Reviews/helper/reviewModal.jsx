@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaTimes } from 'react-icons/fa';
-import { createReview } from '../../../../services/Reviews/Reviews'
+import { createReview } from '../../../services/Reviews/Reviews'
 import StarRating from './starRating';
 
 

@@ -6,12 +6,12 @@ import SignIn from './pages/Auth/SignIn';
 import SignUp from './pages/Auth/SignUp';
 import Home from './pages/Home/Home';
 import University from './pages/University/University'
-import Reviews from './pages/University/Reviews/Reviews'
+import Reviews from './pages/Reviews/Reviews'
 import About from './pages/About/About';
 import AllSchools from './pages/AllSchools/AllSchools';
 import Account from './pages/Account/Account';
 import Setting from './pages/Setting/Setting';
-import RequestLocation from './pages/University/RequestLocation/RequestLocation';
+import RequestLocation from './pages/RequestLocation/RequestLocation';
 import ProtectedRoute from './services/Auth/ProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 

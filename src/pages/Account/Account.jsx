@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ReviewTab from './accountTabs/reviewTab.jsx';
 import CollectionTab from './accountTabs/collectionTab.jsx';
+import { FaEdit } from 'react-icons/fa';
 
 const renderTabContents = (selectedOption, userId) => {
     switch (selectedOption) {
@@ -41,6 +42,12 @@ function Account() {
 
                     <div className="flex flex-col lg:w-1/3 w-full">
                         <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg font-lato">
+                            <div className="self-start flex flex-col items-center ">
+                                <NavLink to="/setting" className="flex items-center rounded-full bg-white p-2 ">
+                                    <FaEdit className="w-6 h-6 text-secondary" />
+                                </NavLink>
+                                <span className="text-xs font-lato mt-1">Edit Profile</span>
+                            </div>
                             {user.image_url ? (
                                 <img src={user.image_url} alt="user avatar" className="w-20 h-20 rounded-full shadow-md" />
                             ) : (

@@ -1,5 +1,5 @@
 import { FaRegBookmark } from 'react-icons/fa';
-import useFavorite from './useFavorite'; // Correct import path
+import useFavorite from './useFavorite';
 import PropTypes from 'prop-types';
 
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { toggleFavorite, fetchUserFavorites } from '../../../../services/StudyLocation/Study';
+import { toggleFavorite, fetchUserFavorites } from '../../../services/StudyLocation/Study';
 
 
 const useFavorite = (studyLocationID, userID, initialState = false) => {

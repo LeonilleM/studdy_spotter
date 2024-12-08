@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FaTimes } from 'react-icons/fa';
 import { FaTrash } from 'react-icons/fa';
-import { deleteReview, updateReview } from '../../../../services/Reviews/Reviews';
+import { deleteReview, updateReview } from '../../../services/Reviews/Reviews';
 import StarRating from './starRating';
 
 function EditReview({ show, handleClose, userID, studyLocationID, review }) {
@@ -79,7 +79,7 @@ function EditReview({ show, handleClose, userID, studyLocationID, review }) {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4 font-semibold">
             <div className="fixed inset-0 bg-black opacity-75" onClick={handleClose}></div>
-            <div className="bg-background rounded-lg overflow-hidden shadow-xl transform transition-all py-6 sm:px-12">
+            <div className="bg-background rounded-lg overflow-hidden shadow-xl transform transition-all p-2">
                 <button onClick={handleClose} className="text-secondary">
                     <FaTimes className="w-4 h-4 hover:text-red-700 transition duration-500 ease-in-out" />
                 </button>

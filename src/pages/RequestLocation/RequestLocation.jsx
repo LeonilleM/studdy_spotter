@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import Select from 'react-select';
 import { FaCloudUploadAlt, FaTimes } from 'react-icons/fa';
-import { fetchStates, fetchTags, fetchCategory } from '../../../services/helper/helper';
-import BackButton from "../../../components/shared/BackButton";
-import { requestStudyLocation } from '../../../services/StudyLocation/Study';
-import { fetchUniversities } from '../../../services/University/University';
-import { AuthContext } from '../../../services/Auth/AuthContext';
-import { loadingComponent } from "../../../components/Loading.jsx";
-import Modal from "../../../components/shared/popupModal.jsx";
+import { fetchStates, fetchTags, fetchCategory } from '../../services/helper/helper.js';
+import BackButton from "../../components/shared/BackButton.jsx";
+import { requestStudyLocation } from '../../services/StudyLocation/Study.js';
+import { fetchUniversities } from '../../services/University/University.js';
+import { AuthContext } from '../../services/Auth/AuthContext.jsx';
+import { loadingComponent } from "../../components/Loading.jsx";
+import Modal from "../../components/shared/popupModal.jsx";
 
 function RequestLocation() {
     const { user } = useContext(AuthContext);
