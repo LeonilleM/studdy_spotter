@@ -65,11 +65,11 @@ function AllSchools() {
 
 
     return (
-        <div className="flex flex-col bg-primary">
+        <div className="flex flex-col bg-background">
             <div className="bg-secondary h-[50vh] pt-24">
                 <div className="container mx-auto flex flex-col items-center justify-center relative py-24">
                     <div className="absolute top-0 lg:left-0 left-4">
-                        <BackButton />
+                        <BackButton color="white" />
                     </div>
                     <h1 className="font-poppins text-4xl font-bold text-white">Partnered Campuses</h1>
                 </div>
@@ -81,12 +81,13 @@ function AllSchools() {
                             <h2 className="font-poppins text-4xl font-bold text-secondary mb-2">{state}</h2>
                             <div className="flex flex-col">
                                 {uniData.groupedData[state].map((uni, uniIndex) => (
-                                    <div key={uniIndex} className="hover:-translate-y-1 transition duration-300">
-                                        <NavLink to={`/university/${uni.name}`} className="flex flex-row text-secondary items-center">
+                                    <div key={uniIndex} className="group transition duration-300 ease-in-out">
+                                        <NavLink to={`/university/${uni.name}`} className="flex flex-row text-secondary items-center group-hover:text-blue-600 group-hover:underline">
                                             <h1 className="font-bold text-lg">{uni.name}</h1>
                                             <h1 className="italic">, {uni.city}</h1>
                                         </NavLink>
                                     </div>
+
                                 ))}
                             </div>
                         </div>
@@ -150,7 +151,7 @@ function AllSchools() {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 }
 

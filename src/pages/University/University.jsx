@@ -8,6 +8,7 @@ import { loadingComponent } from '../../components/Loading';
 import { IoSearchOutline } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
 import { VscThreeBars } from "react-icons/vsc";
+import ErrorPage from '../../components/shared/ErrorPage';
 
 function University() {
     const [uniData, setUniData] = useState(null);
@@ -82,17 +83,6 @@ function University() {
         setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
     };
 
-    if (error) {
-        return (
-            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4 sm:px-0 px-4 flex flex-col items-center justify-center bg-background text-secondary">
-                <h1 className="text-3xl font-semibold font-poppins lg:w-1/2">{error}</h1>
-                <p className="text-xl font-lato">Want your university to be a part of the website? Send an application.</p>
-                <NavLink to='/allschools' className="mt-4 inline-block bg-action text-white py-2 px-4 rounded-lg hover:scale-110 transition duration-300">
-                    Go to Application
-                </NavLink>
-            </div>
-        );
-    }
 
     return (
         <div className="pt-32 overflow-x-hidden bg-background">
@@ -253,6 +243,14 @@ function University() {
 
 
                 </div>
+                {error && (
+                    <ErrorPage
+                        errorMessage={error}
+                        customMessage="If you think this university should be added, send a university application below"
+                        link="/allschools"
+                        linkText="Send Application"
+                    />
+                )}
             </section >
         </div >
     );

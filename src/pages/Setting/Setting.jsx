@@ -4,40 +4,9 @@ import { FaUser } from 'react-icons/fa';
 import Select from 'react-select';
 import { fetchUniversities } from '../../services/University/University.js';
 import { updateUserProfile } from '../../services/Auth/Auth.js';
+import EditImageButton from './helper/editImage.jsx'
 
-const modalProfileImage = (onClose, user) => {
-    return (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen bg-black/30">
-                <div className="bg-white pt-12 rounded-lg shadow-lg text-center flex flex-col w-[50vh]">
-                    <h2 className="text-xl font-semibold mb-4">Change Profile Image</h2>
-                    <div className="px-24 border-t py-2 hover:bg-slate-300">
-                        <input
-                            type="file"
-                            className="w-full text-slate-500 file:text-action file:cursor-pointer file:bg-transparent file:border-none file:outline-none hover:cursor-pointer"
-                            placeholder="Choose Image"
-                        />
-                    </div>
-                    {user.image_url && (
-                        <button
-                            type="button"
-                            className=" text-red-500 border-t py-2 hover:bg-slate-300"
-                        >
-                            Remove Image
-                        </button>
-                    )}
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="text-secondary border-t px-4 py-2 rounded hover:bg-slate-300 "
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
+
 
 function Profile() {
     const { user } = useContext(AuthContext);
@@ -140,7 +109,8 @@ function Profile() {
                             className="bg-action text-white my-2 py-2 px-2 rounded-lg hover:scale-105 transition duration-300 ease-in-out">
                             Change Image
                         </button>
-                        {modalOpen && modalProfileImage(handleModalClose, user)}
+                        {modalOpen && <EditImageButton onClose={handleModalClose} user={user} />}
+
                     </div>
                     <div className="flex flex-row gap-12">
                         <div className="flex flex-col w-1/2">

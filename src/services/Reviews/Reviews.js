@@ -66,13 +66,12 @@ export const createReview = async (studyLocationID, userID, rating, review) => {
             rating: rating,
             description: review
         })
+        .select('*')
         .single()
 
     if (error) {
         throw error
     }
-
-    console.log("New review", data);
 
     return data
 }
@@ -103,6 +102,8 @@ export const updateReview = async (userId, studyLocationId, rating, review) => {
         })
         .eq('user_id', userId)
         .eq('study_location_id', studyLocationId)
+        .select('*')
+        .single()
 
     if (error) {
         throw error

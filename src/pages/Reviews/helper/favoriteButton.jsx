@@ -1,4 +1,4 @@
-import { FaRegBookmark } from 'react-icons/fa';
+import { FaRegBookmark, FaBookmark } from 'react-icons/fa';
 import useFavorite from './useFavorite';
 import PropTypes from 'prop-types';
 
@@ -35,7 +35,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
                     transition-all duration-200
                 `}
             >
-                <FaRegBookmark className="mr-2" />
+                {isFavorite ? <FaBookmark className="mr-2" /> : <FaRegBookmark className="mr-2" />}
                 {isLoading ? 'Loading...' : (
                     isOnCooldown ? (
                         `Wait ${formatCooldownTime(cooldownTimeLeft)}`
