@@ -6,7 +6,7 @@ function Footer() {
     const location = useLocation();
     return (
         <footer className="w-full">
-            {location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/signin' && (
+            {location.pathname !== '/signup' && location.pathname !== '/signin' && (
                 <div className="bg-secondary h-[18vh] py-4 text-white">
                     <div className="container mx-auto justify-between flex flex-col h-full">
                         <div className="justify-between  flex flex-row items-center sm:px-0 px-4">

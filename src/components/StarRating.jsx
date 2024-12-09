@@ -1,7 +1,7 @@
 import { Star } from 'lucide-react';
 import PropTypes from 'prop-types';
 
-const StarRating = ({ rating, starSize = 24 }) => {
+const StarRating = ({ rating, starSize = 24, noRating = true }) => {
     const colors = ["text-orange-500", "text-amber-600", "text-yellow-600", "text-green-700", "text-action"];
 
     const getColorClass = (rating) => {
@@ -56,13 +56,14 @@ const StarRating = ({ rating, starSize = 24 }) => {
 
     return (
         <div className="flex flex-row items-center justify-center text-center gap-1">
-            {renderStars(rating)} <span className="text-xs">({rating.toFixed(1)})</span>
+            {renderStars(rating)} {noRating && <span className="text-xs">({rating.toFixed(1)})</span>}
         </div>
     );
 };
 StarRating.propTypes = {
     rating: PropTypes.number.isRequired,
     starSize: PropTypes.number,
+    noRating: PropTypes.boolean
 };
 
 export default StarRating;

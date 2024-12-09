@@ -199,6 +199,62 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
     }
 }
 
+// This returns most popular study locations for a given university
+export const fetchPopularLocations = async (universityID) => {
+    const MIN_REVIEWS = 5;
+    const MIN_RATING = 3.5;
+
+    const { data, error } = await supabase
+        .from('StudyLocation')
+        .select(`
+            id,
+            name,
+            image_url,
+            UserReview (
+                rating
+            ),
+            University:university_id!inner (
+                name
+            )   
+        `)
+        .eq('university_id', universityID);
+
+    if (error) {
+        throw error;
+    }
+
+    // Process the results to calculate averages and counts
+    const processedLocations = data.map(location => {
+        const reviews = location.UserReview || [];
+        const review_count = reviews.length;
+        const rating = review_count > 0
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / review_count
+            : 0;
+
+        return {
+            ...location,
+            review_count,
+            rating: rating ? Number(rating.toFixed(1)) : 0 // Round to 1 decimal place
+        };
+    });
+
+    // Filter locations based on criteria
+    const popularLocations = processedLocations.filter(location =>
+        location.review_count >= MIN_REVIEWS && location.rating >= MIN_RATING
+    );
+
+    // Sort by number of reviews and rating
+    popularLocations.sort((a, b) => {
+        if (b.review_count === a.review_count) {
+            return b.rating - a.rating;
+        }
+        return b.rating - a.rating;
+    });
+
+    console.log('Popular locations:', popularLocations);
+    return popularLocations;
+};
+
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
 

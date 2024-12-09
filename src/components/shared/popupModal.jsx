@@ -1,41 +1,49 @@
 
 import PropTypes from 'prop-types';
-import { IoIosClose } from "react-icons/io";
+import { IoCloseCircle } from 'react-icons/io5';
+import { FaCircleCheck } from 'react-icons/fa6'
+import { FaUser } from 'react-icons/fa';
 
-const Modal = ({ type, message, buttonText, onClick }) => {
+
+const Modal = ({ type, message, onClick }) => {
     let title;
     let buttonStyle;
+    let icon;
 
     switch (type) {
         case 'success':
-            title = message || 'Operation Successful';
-            buttonStyle = 'bg-action';
+            icon = <FaCircleCheck className="text-green-700 w-20 h-20" />;
+            title = 'Success';
+            message = message || 'Operation Successful';
             break;
         case 'failed':
-            title = message || 'Operation Failed';
-            buttonStyle = 'bg-red-500';
+            icon = <IoCloseCircle className="text-red-700 w-24 h-24" />;
+            title = 'Failed'
+            message = message || 'Operation Failed';
             break;
         case 'notAuthenticated':
-            title = message || 'Authentication Required';
-            buttonStyle = 'bg-action';
+            icon = <FaUser className="text-action w-20 h-20" />;
+            title = 'Log In!'
+            message = message || 'You need to be logged in to perform this operation';
+            buttonStyle = 'text-red-700';
             break;
         default:
             title = message;
-            buttonStyle = 'bg-primary';
     }
 
     return (
         <div
             onClick={onClick}
-            className=" absolute inset-0  z-50  bg-black/75 flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center  bg-white rounded-md shadow p-2 top-24 left-24">
-                <IoIosClose className="relative text-2xl cursor-pointer self-end mb-4 h-8 w-8" onClick={onClick} />
-                <h1 className="text-2xl font-bold text-center font-poppins text-secondary px-4">{title}</h1>
+            className=" absolute inset-0  z-30  bg-black/30 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow px-8 py-10 gap-3 font-lato  z-50">
+                {icon}
+                <h1 className="text-2xl text-center font-poppins text-secondary px-4">{title}</h1>
+                <h1 className="text-center font-poppins text-secondary px-4 w-2/3">{message}</h1>
                 <button
-                    className={`${buttonStyle} text-white px-4 py-2 my-8 rounded-md w-1/2 `}
+                    className={`text-white py-4 px-10 rounded-lg bg-red-700 font-bold text-lg mt-2 ${buttonStyle ? 'block' : 'hidden'} `}
                     onClick={onClick}
                 >
-                    {buttonText}
+                    Close
                 </button>
             </div>
         </div>
@@ -45,8 +53,7 @@ const Modal = ({ type, message, buttonText, onClick }) => {
 Modal.propTypes = {
     type: PropTypes.oneOf(['success', 'failed', 'notAuthenticated']).isRequired,
     message: PropTypes.string.isRequired,
-    buttonText: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
 };
 
 export default Modal;
