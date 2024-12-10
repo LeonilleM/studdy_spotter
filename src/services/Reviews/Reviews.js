@@ -96,11 +96,12 @@ export const deleteReview = async (userID, studyLocationID) => {
 export const updateReview = async (userId, studyLocationId, rating, review) => {
     const { data, error } = await supabase
         .from('UserReview')
-        .update({
-            rating: rating,
-            description: review,
-            updated_at: new Date().toISOString()
-        })
+        .update([
+            {
+                rating: rating,
+                description: review,
+                updated_at: new Date().toISOString()
+            }])
         .eq('user_id', userId)
         .eq('study_location_id', studyLocationId)
         .select('*')

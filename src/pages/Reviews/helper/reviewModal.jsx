@@ -61,14 +61,23 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     }
 
     const handleInput = (e) => {
-        const text = e.target.value;
-        const wordCount = wordCounter(text);
-        setReviewText(text);
-        if (wordCount < MIN_WORD) {
-            setError("Minimum word limit not met must be at least 50 words");
+        let text = e.target.value;
+        let words = text.trim().split(/\s+/);
+        const wordCount = words.length;
+
+        if (wordCount > MAX_WORD) {
+            words = words.slice(0, MAX_WORD);
+            text = words.join(' ');
         }
-        if (wordCount >= MAX_WORD) {
-            setError("Maximum word limit exceeded");
+
+        setReviewText(text);
+
+        if (wordCount < MIN_WORD) {
+            setError("Minimum word limit not met. Must be at least 50 words.");
+        } else if (wordCount >= MAX_WORD) {
+            setError("Maximum word limit exceeded. Only 250 words allowed.");
+        } else {
+            setError(null);
         }
     };
 
@@ -92,7 +101,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                         <div className="relative">
                             <StarRating rating={rating} setRating={setRating} />
                             <textarea
-                                className="w-full h-52 border-2 border-secondary rounded-md sm:py-10 px-4 p-4 pt-12 mt-2 relative"
+                                className="w-full h-80 border-2 border-secondary rounded-md sm:py-10 px-4 p-4 pt-12 mt-2 relative"
                                 value={reviewText}
                                 onChange={handleInput}
                                 placeholder="Write your review here..."

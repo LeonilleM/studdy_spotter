@@ -116,6 +116,43 @@ function Reviews() {
 
 
     const handleFilterChange = (filter) => {
+        console.log(filter)
+        switch (filter) {
+            case 'Oldest':
+                setReviews(prevReviews => ({
+                    ...prevReviews,
+                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
+                        new Date(a.created_at) - new Date(b.created_at)
+                    )
+                }));
+                break;
+            case 'Newest':
+                setReviews(prevReviews => ({
+                    ...prevReviews,
+                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
+                        new Date(b.created_at) - new Date(a.created_at)
+                    )
+                }));
+                break;
+            case 'Highest':
+                setReviews(prevReviews => ({
+                    ...prevReviews,
+                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
+                        b.rating - a.rating
+                    )
+                }));
+                break;
+            case 'Lowest':
+                setReviews(prevReviews => ({
+                    ...prevReviews,
+                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
+                        a.rating - b.rating
+                    )
+                }));
+                break;
+            default:
+                break;
+        }
     }
 
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);

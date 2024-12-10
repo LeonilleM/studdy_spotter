@@ -81,12 +81,12 @@ function Home() {
 
     return (
         <>
-            <section className="bg-gradient-to-br from-[#72D6F2] to-[#5151E5] flex flex-col text-white">
+            <section className="bg-gradient-to-br from-[#72D6F2] to-[#5151E5] flex flex-col text-white sm:pt-0 pt-10">
                 <div className="flex items-center justify-center h-screen flex-col gap-8 px-4">
-                    <h1 className="font-lato text-secondary font-bold text-2xl">Discover the Best Study Spots Near You</h1>
+                    <h1 className="font-lato text-center text-secondary font-bold text-2xl">Discover the Best Study Spots Near You</h1>
                     <h1 className="text-center sm:text-7xl text-6xl font-poppins font-bold">Find new study places</h1>
                     <h1 className="font-lato font-bold sm:text-3xl text-2xl  text-center md:w-[35vh]">Search your campus to get started!</h1>
-                    <div className="flex flex-col items-center justify-center pt-12">
+                    <div className="flex flex-col items-center justify-center pt-8">
                         <Select
                             styles={customStyles}
                             options={options}

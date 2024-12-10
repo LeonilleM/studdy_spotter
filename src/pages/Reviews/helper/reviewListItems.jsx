@@ -3,8 +3,23 @@ import StarRating from '../../../components/StarRating';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import { BsThreeDots } from 'react-icons/bs';
+import { useState } from 'react';
 
 function reviewListItems({ review, isUserReview, onEditReview }) {
+    const [showFullText, setShowFullText] = useState(false);
+    const MAX_LENGTH = 200; // Character count
+
+    const toggleShowFullText = () => {
+        setShowFullText(!showFullText);
+    };
+
+    const renderText = (text) => {
+        if (showFullText || text.length <= MAX_LENGTH) {
+            return text;
+        }
+        return `${text.substring(0, MAX_LENGTH)}...`;
+    };
+
 
     return (
         <div className="flex flex-col space-y-2 pb-24 ">
@@ -43,7 +58,17 @@ function reviewListItems({ review, isUserReview, onEditReview }) {
                     <StarRating rating={review.rating} starSize={20} />
                     <p className="font-lato text-sm">Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
                 </div>
-                <p className="mt-4">{review.description}</p>
+                <p className="mt-4 whitespace-pre-wrap">
+                    {renderText(review.description)}
+                    {review.description.length > MAX_LENGTH && (
+                        <span
+                            onClick={toggleShowFullText}
+                            className="text-action hover:underline cursor-pointer flex"
+                        >
+                            {showFullText ? ' Show Less' : ' Read More'}
+                        </span>
+                    )}
+                </p>
                 {review.updated_at && (
                     <p className="text-xs text-gray-500 mt-4">
                         Updated {formatDistanceToNow(new Date(review.updated_at))} ago
