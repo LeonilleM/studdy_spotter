@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { IoCloseCircle } from 'react-icons/io5';
 import { FaCircleCheck } from 'react-icons/fa6'
 import { FaUser } from 'react-icons/fa';
+import { useEffect } from 'react';
 
-
-const Modal = ({ type, message, onClick }) => {
+const Modal = ({ type, message, onClick, timeout }) => {
     let title;
     let buttonStyle;
     let icon;
@@ -31,10 +31,23 @@ const Modal = ({ type, message, onClick }) => {
             title = message;
     }
 
+    useEffect(() => {
+        if (timeout) {
+            const timer = setTimeout(() => {
+                if (onClick) {
+                    onClick();
+                }
+            }, timeout);
+
+            return () => clearTimeout(timer);
+        }
+    }, [timeout, onClick]);
+
     return (
         <div
             onClick={onClick}
-            className=" absolute inset-0  z-30  bg-black/30 flex items-center justify-center">
+            className=" absolute inset-0  z-30  bg-black/30 flex flex-col items-center justify-center">
+            <h1 className="text-white font-lato italic my-2">Closes in {timeout / 1000}...</h1>
             <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow px-8 py-10 gap-3 font-lato  z-50">
                 {icon}
                 <h1 className="text-2xl text-center font-poppins text-secondary px-4">{title}</h1>
@@ -54,6 +67,7 @@ Modal.propTypes = {
     type: PropTypes.oneOf(['success', 'failed', 'notAuthenticated']).isRequired,
     message: PropTypes.string.isRequired,
     onClick: PropTypes.func,
+    timeout: PropTypes.number
 };
 
 export default Modal;

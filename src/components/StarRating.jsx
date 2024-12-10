@@ -63,7 +63,7 @@ const StarRating = ({ rating, starSize = 24, noRating = true }) => {
 StarRating.propTypes = {
     rating: PropTypes.number.isRequired,
     starSize: PropTypes.number,
-    noRating: PropTypes.boolean
+    noRating: PropTypes.bool
 };
 
 export default StarRating;

@@ -14,7 +14,8 @@ export const fetchAllReviews = async (studyLocationID) => {
                 id,
                 first_name,
                 last_name,
-                University:university_id (name)
+                University:university_id (name),
+                image_url
             )
         `)
         .eq('study_location_id', studyLocationID)

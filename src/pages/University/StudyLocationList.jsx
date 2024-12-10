@@ -23,7 +23,11 @@ function StudyLocationList({ studyLocations, uniName }) {
                                 {studyLocation.name}
                             </h1>
                             <div className="items-center gap-2 flex flex-row transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
-                                <StarRating rating={studyLocation.rating} starSize={12} />
+                                <StarRating
+                                    rating={studyLocation.rating}
+                                    starSize={12} 
+                                    
+                                    />
                                 <h1 className="text-xs font-light">{studyLocation.review_count} reviews</h1>
                             </div>
                         </div>

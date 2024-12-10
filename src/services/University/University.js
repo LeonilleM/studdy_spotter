@@ -110,10 +110,7 @@ export const sendCampusRequest = async (data, image) => {
 
         if (updateError) {
             console.error('Update Error:', updateError);
-        } else {
-            console.log('University record updated successfully with image URL');
         }
-
         return "Campus request sent successfully";
     } catch (error) {
         console.error('Error in sendCampusRequest:', error.message);

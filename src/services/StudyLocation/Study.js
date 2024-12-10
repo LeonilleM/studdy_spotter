@@ -250,14 +250,11 @@ export const fetchPopularLocations = async (universityID) => {
         }
         return b.rating - a.rating;
     });
-
-    console.log('Popular locations:', popularLocations);
     return popularLocations;
 };
 
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
-
     const { data, error } = await supabase
         .from('studylocationrequest')
         .insert([
@@ -272,12 +269,71 @@ export const requestStudyLocation = async (studyLocationData) => {
                 locationtag: studyLocationData.tags,
             }
         ])
+        .select('id')
+        .single();
 
     if (error) {
+        console.error('Error inserting study location:', error);
         throw error;
-    } else {
-        console.log("Study Location Requested, wait for approval", data);
     }
 
+    const studyLocationId = data.id;
+    const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
 
-}
+    try {
+        const { error: imageError } = await supabase.storage
+            .from('study_location_image')
+            .upload(sanitizedFileName, studyLocationData.image);
+
+        if (imageError) {
+            console.error('Error uploading image:', imageError);
+            throw imageError;
+        }
+
+        const { data: publicURL, error: publicURLError } = await supabase.storage
+            .from('study_location_image')
+            .getPublicUrl(sanitizedFileName);
+        if (publicURLError) {
+            console.error('Error getting public URL:', publicURLError);
+            throw publicURLError;
+        }
+
+        if (!publicURL) {
+            // Delete the inserted study location if the image URL is not available
+            await supabase
+                .from('studylocationrequest')
+                .delete()
+                .eq('id', studyLocationId);
+            console.error('Failed to get public URL for image');
+            throw new Error('Failed to get public URL for image');
+        }
+
+        const image_url = publicURL.publicUrl;
+
+
+        const { error: updateError } = await supabase
+            .from('studylocationrequest')
+            .update({ image_url })
+            .eq('id', studyLocationId);
+
+        if (updateError) {
+            console.error('Error updating study location with image URL:', updateError);
+            throw updateError;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error during requestStudyLocation:', error);
+        // Ensure the original insert is deleted if any error occurs
+        try {
+            await supabase
+                .from('studylocationrequest')
+                .delete()
+                .eq('id', studyLocationId);
+            console.log('Deleted study location due to error:', studyLocationId);
+        } catch (deleteError) {
+            console.error('Error deleting study location after failure:', deleteError);
+        }
+        throw error;
+    }
+};

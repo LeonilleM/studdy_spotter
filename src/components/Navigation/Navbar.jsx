@@ -38,7 +38,7 @@ function Navbar() {
                                         onClick={handleDropDown}
                                         className="flex items-center justify-center text-center gap-4 font-lato">
                                         {user.image_url ? (
-                                            <img src={user.image_url} alt="avatar" className="rounded-full" />
+                                            <img src={user.image_url} alt="avatar" className="rounded-full w-10 h-10" />
                                         ) : (
                                             <FaUser className="w-10 h-10 text-white bg-gray-200 rounded-full" />
                                         )}

@@ -35,7 +35,6 @@ function App() {
         <Route path="/admin-dashboard" element={<ProtectedRoute Component={AdminDashboard} />} />
       </Routes>
       <Footer />
-
     </div>
   )
 }

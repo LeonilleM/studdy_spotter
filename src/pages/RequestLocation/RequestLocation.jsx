@@ -31,9 +31,10 @@ function RequestLocation() {
             setModal({
                 type: 'notAuthenticated',
                 message: 'Please log in to request a new study location',
-                buttonText: 'Log In',
                 onClick: () => setModal(null),
+                timeout: 3000
             })
+
             setIsLoading(false);
             return;
         }
@@ -44,7 +45,7 @@ function RequestLocation() {
             name: formData.get('name'),
             address: formData.get('address'),
             city: formData.get('city'),
-            state_id: selectedState.id,
+            state_id: selectedState ? selectedState.id : null,
             tags: selectedTags.map(tag => tag.value),
             user_id: user.id,
             category: formData.get('category'),
@@ -52,14 +53,23 @@ function RequestLocation() {
             image: selectedFile
         };
 
+        if (!studyLocationData.name || !studyLocationData.address || !studyLocationData.city || !studyLocationData.state_id || !studyLocationData.category) {
+            setModal({
+                type: 'failed',
+                message: 'Please fill in all the required fields',
+                onClick: () => setModal(null),
+            });
+            setIsLoading(false);
+            return;
+        }
 
         try {
             await requestStudyLocation(studyLocationData);
             setModal({
                 type: 'success',
                 message: 'Study location request sent successfully.',
-                buttonText: 'Submit Another',
                 onClick: () => setModal(null),
+                timeout: 3000
             });
             formRef.current.reset();
             setSelectedTags([]);
@@ -72,7 +82,6 @@ function RequestLocation() {
             setModal({
                 type: 'failed',
                 message: error.message || 'Failed to submit request. Please try again.',
-                buttonText: 'Retry',
                 onClick: () => setModal(null),
             });
         } finally {
@@ -99,7 +108,6 @@ function RequestLocation() {
 
     const handleUniversity = (selectedOption) => {
         setSelectedUniversity(selectedOption);
-        console.log(selectedOption);
     };
 
     useEffect(() => {
@@ -130,7 +138,7 @@ function RequestLocation() {
 
     return (
         <>
-            <div className="bg-primary pt-20 relative">
+            <div className="bg-background pt-20 relative">
                 {isLoading && (
                     <>
                         {loadingComponent('Submitting...')}
@@ -141,15 +149,15 @@ function RequestLocation() {
                     <Modal
                         type={modal.type}
                         message={modal.message}
-                        buttonText={modal.buttonText}
                         onClick={modal.onClick}
+                        timeout={modal.timeout}
                     />
                 )}
-                <div className="bg-secondary pb-12 ">
+                <div className=" pb-12 ">
                     <div className="container mx-auto flex flex-col space-y-2 items-center sm:px-0 px-4 py-4">
-                        <BackButton />
-                        <h1 className="lg:text-5xl text-3xl font-bold font-poppins text-center text-white">Request to Add a New Study Spot</h1>
-                        <p className="font-lato text-center text-white pt-4 xl:w-3/4">
+                        <BackButton color="black" />
+                        <h1 className="lg:text-5xl text-3xl font-bold font-poppins text-center text-primary">Request to Add a New Study Spot</h1>
+                        <p className="font-lato text-center text-black pt-4 xl:w-3/4">
                             Please submit new study locations thoughtfully and in good faith. All submissions will be reviewed before they’re visible to other students. Here are a few guidelines to follow:
                             <br /><br />
                             <strong>Location Details:</strong> Double-check that the name and address are accurate to help students find the spot.

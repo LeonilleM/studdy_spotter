@@ -3,13 +3,12 @@ import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser } from 'react-icons/fa';
 import Select from 'react-select';
 import { fetchUniversities } from '../../services/University/University.js';
-import { updateUserProfile } from '../../services/Auth/Auth.js';
 import EditImageButton from './helper/editImage.jsx'
 
 
 
 function Profile() {
-    const { user } = useContext(AuthContext);
+    const { user, profileUpdate } = useContext(AuthContext);
     const [universities, setUniversities] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedUniversity, setSelectedUniversity] = useState(null);
@@ -49,7 +48,7 @@ function Profile() {
             universityId: selectedUniversity?.value
         };
 
-        updateUserProfile(profileData).then(() => {
+        profileUpdate(profileData, false).then(() => {
             alert('Profile updated successfully');
         }).catch(error => {
             console.error(error);
@@ -109,7 +108,11 @@ function Profile() {
                             className="bg-action text-white my-2 py-2 px-2 rounded-lg hover:scale-105 transition duration-300 ease-in-out">
                             Change Image
                         </button>
-                        {modalOpen && <EditImageButton onClose={handleModalClose} user={user} />}
+                        {modalOpen && <EditImageButton
+                            onClose={handleModalClose}
+                            user={user}
+                            profileUpdate={profileUpdate}
+                        />}
 
                     </div>
                     <div className="flex flex-row gap-12">

@@ -13,7 +13,6 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const [success, setSuccess] = useState(false);
 
     const isEditMode = !!review;
-    console.log(review)
 
     useEffect(() => {
         if (review) {
