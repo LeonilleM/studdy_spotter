@@ -12,6 +12,7 @@ export default {
         accent: '#366B9D',
         secondary: '#3C3C3C',
         action: "#5885AF",
+        darkBlue: "#3B4D61",
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

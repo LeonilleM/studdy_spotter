@@ -28,7 +28,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
                 className={`border 
                     ${isFavorite
                         ? 'border-action text-white font-bold bg-action'
-                        : 'border-secondary text-secondary'
+                        : 'border-gray-300 text-secondary bg-white'
                     }
                     ${isOnCooldown ? 'opacity-75 cursor-not-allowed' : 'hover:opacity-90'}
                     py-3 px-4 rounded-lg flex items-center justify-center

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 function StudyLocationList({ studyLocations, uniName }) {
     return (
-        <div className="grid lg:grid-cols-3 2xl:gap-20 gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-14 ">
             {studyLocations.map((studyLocation) => {
                 const studyLocationPath = `/university/${uniName}/${studyLocation.name}`;
                 return (
@@ -16,19 +16,18 @@ function StudyLocationList({ studyLocations, uniName }) {
                         <img
                             src={studyLocation.image_url}
                             alt="placeholder"
-                            className="w-full h-full rounded-l-lg group-hover:opacity-85"
+                            className="w-full sm:h-52 h-40 object-cover rounded-l-lg group-hover:opacity-85"
                         />
                         <div className="bg-white rounded-r-lg items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
-                            <h1 className="text-2xl px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
+                            <h1 className="sm:text-2xl  px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
                                 {studyLocation.name}
                             </h1>
-                            <div className="items-center gap-2 flex flex-row transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
+                            <div className="items-center gap-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
                                 <StarRating
                                     rating={studyLocation.rating}
-                                    starSize={12} 
-                                    
-                                    />
-                                <h1 className="text-xs font-light">{studyLocation.review_count} reviews</h1>
+                                    starSize={12}
+                                />
+                                <h1 className="text-xs font-light inline-flex">{studyLocation.review_count} reviews</h1>
                             </div>
                         </div>
                     </NavLink>

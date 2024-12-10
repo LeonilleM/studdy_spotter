@@ -12,6 +12,8 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
+    const MAX_WORD = 250
+    const MIN_WORD = 50
     const isEditMode = !!review;
 
     useEffect(() => {
@@ -61,12 +63,12 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const handleInput = (e) => {
         const text = e.target.value;
         const wordCount = wordCounter(text);
-        if (wordCount <= 500) {
-            setReviewText(text);
-            setError(null);
-            return;
-        } else {
-            setError("Word limit exceeded");
+        setReviewText(text);
+        if (wordCount < MIN_WORD) {
+            setError("Minimum word limit not met must be at least 50 words");
+        }
+        if (wordCount >= MAX_WORD) {
+            setError("Maximum word limit exceeded");
         }
     };
 
@@ -95,7 +97,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                                 onChange={handleInput}
                                 placeholder="Write your review here..."
                             />
-                            <span className={`text-sm ${error ? 'text-red-500' : 'text-gray-500'}`}>{wordCounter(reviewText)} / 500 words</span>
+                            <span className={`text-sm ${error ? 'text-red-500' : 'text-gray-500'}`}>{wordCounter(reviewText)} / {MAX_WORD}</span>
                         </div>
                         {error && <div className="text-red-500 mt-2">{error}</div>}
                         {success && <div className="text-green-500 mt-2">Review submitted successfully!</div>}

@@ -39,9 +39,9 @@ function reviewListItems({ review, isUserReview, onEditReview }) {
                         />
                     )}
                 </div>
-                <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-2">
-                    <StarRating rating={review.rating} />
-                    <p>Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
+                <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-4 md:justify-normal justify-between">
+                    <StarRating rating={review.rating} starSize={20} />
+                    <p className="font-lato text-sm">Posted {formatDistanceToNow(new Date(review.created_at))} ago</p>
                 </div>
                 <p className="mt-4">{review.description}</p>
                 {review.updated_at && (

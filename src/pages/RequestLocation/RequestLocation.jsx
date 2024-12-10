@@ -32,7 +32,7 @@ function RequestLocation() {
                 type: 'notAuthenticated',
                 message: 'Please log in to request a new study location',
                 onClick: () => setModal(null),
-                timeout: 3000
+                timeout: 5000
             })
 
             setIsLoading(false);

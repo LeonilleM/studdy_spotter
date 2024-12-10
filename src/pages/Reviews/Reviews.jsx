@@ -10,7 +10,7 @@ import EditReview from './helper/reviewSettings';
 import LocationDetails from './LocationDetails';
 import ReviewList from './ReviewList';
 import ErrorPage from '../../components/shared/ErrorPage';
-import PopupModal from '../../components/shared/popupModal';
+
 
 function Reviews() {
     const { uniName, studyLocation, } = useParams(); // Get the study location from the URL

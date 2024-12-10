@@ -101,14 +101,14 @@ function University() {
                     </div>
                 </div>
             ))}
-            <section className="font-secondary lg:px-0 px-6 text-secondary pb-32">
-                <div className="container mx-auto flex flex-col gap-4 py-8 relative">
-                    <h1 className="font-poppins font-bold text-4xl">Popular</h1>
+            <section className="font-secondary lg:px-0 px-4 text-darkBlue mb-32">
+                <div className="container mx-auto flex flex-col gap-4 py-8 mt-12 relative">
+                    <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
                     {uniData && uniData[0] && (
                         <PopularLocations universityID={uniData[0].id} />
                     )}
-                    <h1 className="font-poppins font-bold text-4xl">Explore</h1>
-                    <div className="flex sm:flex-row flex-wrap justify-between w-full items-center pb-6">
+
+                    <div className="flex sm:flex-row flex-wrap justify-between w-full items-center mt-8 mb-2">
                         <Filter
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
@@ -129,7 +129,6 @@ function University() {
                     ) : (
                         <h1 className="text-2xl w-full">No study locations found for this university.</h1>
                     )}
-
 
                 </div>
                 {error && (

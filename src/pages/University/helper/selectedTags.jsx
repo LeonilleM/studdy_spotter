@@ -6,7 +6,7 @@ const SelectedTags = ({ selectedTags, handleTagRemove, clearAllTags }) => {
     return (
         < div className="pb-4" >
             <div className="flex flex-row gap-6 pb-2">
-                <h1 className="font-lato font-bold text-secondary">Applied Filters</h1>
+                <h1 className="font-lato font-bold text-black">Applied Filters</h1>
                 {selectedTags.length > 2 && (
                     <button
                         type="button"
@@ -17,7 +17,7 @@ const SelectedTags = ({ selectedTags, handleTagRemove, clearAllTags }) => {
                     </button>
                 )}
             </div>
-            <ul className="flex flex-row gap-2">
+            <ul className="flex flex-wrap gap-2">
                 {selectedTags.length > 0 ?
                     selectedTags.map(tag => (
                         <li key={tag}>
