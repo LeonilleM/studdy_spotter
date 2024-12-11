@@ -6,8 +6,8 @@ function LocationDetails({ locationDetails, totalReviews }) {
     return (
         <div
             style={{ backgroundImage: `url(${locationDetails.image_url})`, backgroundPosition: 'center', height: '45vh', }}>
-            <div className="flex container mx-auto h-full">
-                <div className="lg:w-1/3  font-lato flex flex-col py-8 text-white justify-between rounded-l-md">
+            <div className="flex h-full">
+                <div className={`lg:w-1/3 w-[60%] xl:px-36 lg:px-20 px-4 font-lato flex flex-col py-8 text-white justify-between  opacity-85`} style={{ backgroundColor: locationDetails.University.school_hex_color }}>
                     <section className="flex flex-col gap-2">
                         <BackButton color="white" />
                         <h1 className="lg:text-4xl text-2xl  font-poppins font-bold">{locationDetails.name}</h1>
@@ -16,16 +16,6 @@ function LocationDetails({ locationDetails, totalReviews }) {
                             <p className="text-xs">({totalReviews} reviews)</p>
                         </div>
                     </section>
-                    <div className="flex flex-row flex-wrap gap-2 ">
-                        {locationDetails.LocationTagList.map((tag, index) => {
-                            const tagName = tag.TagTypes?.name || 'no-name';
-                            return (
-                                <span key={`tag-${index}-${tagName}`} className="bg-gray-200 text-secondary font-bold md:text-sm text-xs px-3 py-1.5 rounded-xl font-poppins">
-                                    {tagName}
-                                </span>
-                            );
-                        })}
-                    </div>
                 </div>
             </div>
         </div>

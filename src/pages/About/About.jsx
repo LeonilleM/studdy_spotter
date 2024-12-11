@@ -9,7 +9,7 @@ function About() {
           <div className="absolute top-0 lg:left-0 left-4">
             <BackButton />
           </div>
-          <img src={Logo} alt="logo" className="w-[400px] h-[200px] mt-6 " draggable='false' />
+          <img src={Logo} alt="logo" className="w-[400px] h-[200px] mt-6 " />
         </div>
 
       </div>

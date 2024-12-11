@@ -10,7 +10,7 @@ function Footer() {
                 <div className="bg-secondary h-[18vh] py-4 text-white">
                     <div className="container mx-auto justify-between flex flex-col h-full">
                         <div className="justify-between  flex flex-row items-center sm:px-0 px-4">
-                            <img src={Logo} alt="logo" className="w-32 hidden md:block" draggable='false' />
+                            <img src={Logo} alt="logo" className="w-32 hidden md:block" />
                             <div className="flex flex-row lg:gap-32 items-center justify-center font-lato">
                                 <NavLink to="/about" className="text-white flex items-center ">
                                     <FaChevronRight className="ml-1" />About

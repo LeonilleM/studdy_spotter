@@ -11,6 +11,21 @@ import LocationDetails from './LocationDetails';
 import ReviewList from './ReviewList';
 import ErrorPage from '../../components/shared/ErrorPage';
 
+import { FaWifi, FaVolumeMute, FaPlug, FaUsers, FaDoorClosed, FaParking, FaUniversity } from 'react-icons/fa';
+
+const IconSize = ({ Icon }) => {
+    return <Icon className="w-5 h-5" />;
+};
+
+const iconMap = {
+    'Wifi': <IconSize Icon={FaWifi} />,
+    'Quiet': <IconSize Icon={FaVolumeMute} />,
+    'Outlet': <IconSize Icon={FaPlug} />,
+    'Group Friendly': <IconSize Icon={FaUsers} />,
+    'Private Rooms': <IconSize Icon={FaDoorClosed} />,
+    'Paid Parking': <IconSize Icon={FaParking} />,
+    'On-Campus': <IconSize Icon={FaUniversity} />
+};
 
 function Reviews() {
     const { uniName, studyLocation, } = useParams(); // Get the study location from the URL
@@ -20,6 +35,7 @@ function Reviews() {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [address, setAddress] = useState('');
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
@@ -30,6 +46,8 @@ function Reviews() {
             try {
                 setLoading(true);
                 const locationData = await fetchStudyLocationData(studyLocation, uniName);
+                setAddress(locationData.address + " " + locationData.city + " " + locationData.State.abr + " " + locationData.zipcode + " " + locationData.name);
+
                 setLocationDetails(locationData);
                 if (locationData) {
                     const reviewsData = await fetchAllReviews(locationData.id);
@@ -116,44 +134,33 @@ function Reviews() {
 
 
     const handleFilterChange = (filter) => {
-        console.log(filter)
-        switch (filter) {
-            case 'Oldest':
-                setReviews(prevReviews => ({
-                    ...prevReviews,
-                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
-                        new Date(a.created_at) - new Date(b.created_at)
-                    )
-                }));
-                break;
-            case 'Newest':
-                setReviews(prevReviews => ({
-                    ...prevReviews,
-                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
-                        new Date(b.created_at) - new Date(a.created_at)
-                    )
-                }));
-                break;
-            case 'Highest':
-                setReviews(prevReviews => ({
-                    ...prevReviews,
-                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
-                        b.rating - a.rating
-                    )
-                }));
-                break;
-            case 'Lowest':
-                setReviews(prevReviews => ({
-                    ...prevReviews,
-                    otherReviews: prevReviews.otherReviews.sort((a, b) =>
-                        a.rating - b.rating
-                    )
-                }));
-                break;
-            default:
-                break;
-        }
-    }
+        setReviews(prevReviews => {
+            let sortedReviews = [...prevReviews.otherReviews];
+            switch (filter) {
+                case 'Oldest':
+                    sortedReviews = sortedReviews.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    console.log("Oldest", sortedReviews);
+                    break;
+                case 'Newest':
+                    sortedReviews = sortedReviews.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    console.log("Newest", sortedReviews);
+                    break;
+                case 'Highest':
+                    sortedReviews = sortedReviews.slice().sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'Lowest':
+                    sortedReviews = sortedReviews.slice().sort((a, b) => a.rating - b.rating);
+                    break;
+                default:
+                    break;
+            }
+            return {
+                ...prevReviews,
+                otherReviews: sortedReviews
+            };
+        });
+    };
+
 
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
 
@@ -177,30 +184,53 @@ function Reviews() {
                         <p className="text-center text-secondary font-bold">No reviews currently</p>
                     )}
                 </div>
-                <div className="2xl:w-1/4 xl:w-1/3 sticky lg:top-20  lg:h-[calc(100vh-20rem)] overflow-y-auto lg:py-0 py-12 lg:order-2 order-1">
-                    <div className="bg-white p-4 rounded-xl  border-2 text-secondary font-lato">
-                        <h2 className="text-xl font-bold font-poppins">Address</h2>
+                <div className="2xl:w-[27%] xl:w-1/3 sticky lg:top-6 lg:h-[calc(100vh)]  lg:py-0 py-12 lg:order-2 order-1">
+                    <div className="bg-white p-4 rounded-xl border-2 text-darkBlue font-lato">
+                        <iframe
+                            className="w-full h-48 border-1 rounded-lg shadow-lg"
+                            src={`https://www.google.com/maps/embed?origin=mfe&pb=!1m3!2m1!1s${encodeURIComponent(address)}!6i13`
+                            }
+                        >
+                        </iframe>
+                        <h2 className="text-xl font-bold font-poppins mt-4">Address</h2>
                         <a
-                            className="italic hover:underline hover:text-blue-500 transition duration-300 ease-in-out"
+                            className="text-black italic hover:underline hover:text-blue-500 transition duration-300 ease-in-out"
                             target="_blank"
-                            href={`https://www.google.com/maps/search/?api=1&query=${locationDetails.address}`}
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
                         >{locationDetails.address}
                         </a>
                         <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
                         <p className="italic text-red-500">Not Available</p>
                     </div>
-
                     <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal}
-                            className={`bg-action text-white py-3 px-4 rounded-lg w-full ${reviews.userReview.length > 0 ? 'bg-[#A41414] hover:bg-red-500 transition duration-300 ease-in-out' : 'bg-action'}`}>
+                            className={`bg-accent text-white py-3 px-4 rounded-lg w-full ${reviews.userReview.length > 0 ? 'bg-red-700 hover:bg-red-600 transition duration-300 ease-in-out' : 'bg-accent'}`}>
                             {reviews.userReview.length > 0 ? 'Edit Review' : 'Write Review'}
                         </button>
-                        <FavoriteButton onClick={handleFavoriteButton} studyLocationID={locationDetails.id} userID={user ? user.id : null} />
-
+                        <FavoriteButton
+                            onClick={handleFavoriteButton}
+                            studyLocationID={locationDetails.id}
+                            userID={user ? user.id : null} />
                     </div>
-                    <hr className="h-1 w-full bg-secondary mt-12 rounded block sm:hidden" />
+                    <div className="bg-white  w-full lg:mt-16 mt-10 rounded-xl border-2 border-b-gray-300 p-8 font-lato">
+                        <h1 className="text-darkBlue font-poppins font-bold text-xl mb-6">Amenities</h1>
+                        <div className="grid grid-cols-2 pb-2 gap-y-2 text-lato font-normal sm:text-base text-xs">
+                            <span className=" text-black  py-2 font-poppins border-b flex items-center gap-2">
+                                {iconMap[locationDetails.category]}{locationDetails.category}
+                            </span>
+                            {locationDetails.LocationTagList.map((Amenities, index) => {
+                                const tagName = Amenities.TagTypes?.name || 'no-name';
+                                const isLastItem = index === locationDetails.LocationTagList.length - 1;
+                                return (
+                                    <span key={`tag-${index}-${tagName}`} className={`text-secondary py-2 font-poppins flex items-center ${!isLastItem ? 'border-b' : ''}`}>
+                                        <span className="mr-2">{iconMap[tagName]}</span>{tagName}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div >
             <ReviewModal
                 show={showModal}
                 locationId={locationDetails.id}
@@ -223,14 +253,16 @@ function Reviews() {
                 handleDeleteReview={handleDeleteReview}
                 updateModal={handleUpdateReviewModal}
             />
-            {error && (
-                <ErrorPage
-                    errorMessage={error}
-                    customMessage=">If you think this location should be added, send a location application below"
-                    link="/university/request-location"
-                    linkText="Send Application"
-                />
-            )}
+            {
+                error && (
+                    <ErrorPage
+                        errorMessage={error}
+                        customMessage=">If you think this location should be added, send a location application below"
+                        link="/university/request-location"
+                        linkText="Send Application"
+                    />
+                )
+            }
         </div >
     );
 }

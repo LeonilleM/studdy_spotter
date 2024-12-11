@@ -93,7 +93,9 @@ function Profile() {
                     <div className="flex flex-row justify-between bg-white rounded-xl p-4">
                         <div className="flex flex-row gap-4">
                             {user.image_url ? (
-                                <img src={user.image_url} alt="user avatar" className="w-14 h-14 rounded-full shadow-md" />
+                                <img src={user.image_url}
+                                    draggable="false"
+                                    alt="user avatar" className="w-14 h-14 rounded-full shadow-md" />
                             ) : (
                                 <FaUser className="w-14 h-14 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}

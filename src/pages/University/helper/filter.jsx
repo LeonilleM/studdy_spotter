@@ -82,7 +82,7 @@ const Filter = ({ searchQuery, setSearchQuery, selectedTags, setSelectedTags, lo
                 </div>
                 <NavLink
                     to={`/university/request-location`}
-                    className="bg-action sm:block hidden text-white px-4 py-2 rounded-lg font-lato hover:scale-105 hover:shadow-lg hover:shadow-action/30 transition ease-in-out duration-300">
+                    className="bg-accent sm:block hidden text-white px-4 py-2 rounded-lg font-lato hover:scale-105 hover:shadow-lg hover:shadow-action/30 transition ease-in-out duration-300">
                     Request Location
                 </NavLink>
             </div>

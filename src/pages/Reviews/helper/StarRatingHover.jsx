@@ -6,7 +6,7 @@ const StarRating = ({ rating, setRating, starSize = 24 }) => {
     const [hover, setHover] = useState(null);
 
     const messages = ["Bad", "Poor", "Average", "Good", "Amazing"];
-    const colors = ["text-orange-500", "text-amber-600", "text-yellow-600", "text-green-700", "text-action"];
+    const colors = ["text-starColor1", "text-starColor2", "text-starColor3", "text-starColor4", "text-starColor5"];
 
     const renderInteractiveStars = () => {
         const stars = [];
@@ -39,7 +39,7 @@ const StarRating = ({ rating, setRating, starSize = 24 }) => {
     };
 
     return (
-        <div className="flex flex-row items-center gap-2 absolute top-5 left-4 z-50">
+        <div className="flex flex-row items-center gap-2 absolute top-5 left-4 z-50 bg-white/95 pr-4 rounded-lg">
             {renderInteractiveStars()}
             <span className="">
                 ({(hover || rating).toFixed(0)})

@@ -99,7 +99,7 @@ function Home() {
                         />
                         <NavLink
                             to='/allschools'
-                            className="font-lato pt-2 italic">Don&apos;t see your school? Request here</NavLink>
+                            className="font-lato pt-3 italic">Don&apos;t see your school? <span className='font-bold text-accent2'>Request here</span></NavLink>
                     </div>
                 </div>
             </section >

@@ -1,22 +1,17 @@
-import { useState } from 'react'
-
 function ReviewFilter({ onFilterChange }) {
-    const [selectedFilter, setSelectedFilter] = useState('recent');
-
     const handleFilterChange = (e) => {
-        setSelectedFilter(e.target.value);
-        console.log(e.target.value);
-        onFilterChange(e.target.value);
+        const newFilter = e.target.value;
+        onFilterChange(newFilter);
+        console.log(newFilter);
     }
 
     return (
         <div>
-            <div className="review-filter font-lato flex gap-2">
+            <div className="review-filter font-lato flex gap-2 mb-4">
                 <label htmlFor="filter">Filter by:</label>
                 <select
                     name="filter"
                     id="filter"
-                    value={selectedFilter}
                     onChange={handleFilterChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w p-1 w-20 "
                 >

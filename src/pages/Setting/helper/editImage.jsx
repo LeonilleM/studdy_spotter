@@ -5,9 +5,14 @@ import { useState } from 'react'
 function EditImage({ onClose, user, profileUpdate }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
+        if (file.size > 5024 * 1024) {
+            setError("File is too large. Max size is 5MB");
+            return;
+        }
         // Only accept jpg
         setSelectedFile(file);
         await handleUpload(file);
@@ -16,11 +21,13 @@ function EditImage({ onClose, user, profileUpdate }) {
     const handleUpload = async (file) => {
         if (!file) return;
         setIsUploading(true);
+        setError(null);
         try {
             await profileUpdate({ userId: user.id, image: file }, false);
             onClose();
         } catch (error) {
             console.error(error);
+            setError("Failed to upload image");
         }
         setIsUploading(false);
     };
@@ -38,6 +45,7 @@ function EditImage({ onClose, user, profileUpdate }) {
         <div className="fixed z-10 inset-0">
             <div className="flex items-center justify-center min-h-screen bg-black/30">
                 <div className="bg-white pt-12 rounded-lg shadow-lg text-center flex flex-col w-[50vh]">
+                    {error && <div className="text-red-500">{error}</div>}
                     <h2 className="text-xl font-semibold mb-4">Change Profile Image</h2>
                     <div className="px-24 border-t py-2 hover:bg-slate-300">
                         <div className="w-full text-center">
@@ -77,6 +85,7 @@ function EditImage({ onClose, user, profileUpdate }) {
                         Close
                     </button>
                 </div>
+
             </div>
         </div>
     )

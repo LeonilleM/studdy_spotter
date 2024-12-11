@@ -24,7 +24,7 @@ function reviewListItems({ review, isUserReview, onEditReview }) {
     return (
         <div className="flex flex-col space-y-2 pb-24 ">
             {isUserReview && <h1 className="font-bold text-3xl font-poppins">Your Review</h1>}
-            <div className="flex flex-col font-lato w-full py-4 px-2">
+            <div className="flex flex-col font-lato w-full py-4">
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-row gap-4">
                         {review.Users.image_url ? (
@@ -75,7 +75,7 @@ function reviewListItems({ review, isUserReview, onEditReview }) {
                     </p>
                 )}
             </div>
-            <hr className="w-full border-secondary" />
+            {!isUserReview && ( <hr className="w-full border-secondary" />)}
         </div>
     );
 }

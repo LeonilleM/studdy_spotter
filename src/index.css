@@ -20,3 +20,8 @@
 .error-shake {
     animation: error-shake 0.5s ease-in-out;
 }
+
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
+}

@@ -17,7 +17,7 @@ const BackButton = ({ location, color = 'black' }) => {
         <div className="relative">
             <button
                 onClick={handleBackClick}
-                className={`text-${color} font-lato font-bold py-2   rounded-lg flex items-center  hover:text-action transition duration-300 transform hover:-translate-x-2`}
+                className={`text-${color} font-lato font-bold py-2   rounded-lg flex items-center transition duration-300 transform hover:-translate-x-2`}
             >
                 <FaArrowLeft className="mr-2" />
                 Back

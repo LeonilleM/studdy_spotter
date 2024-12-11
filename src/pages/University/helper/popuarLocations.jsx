@@ -36,7 +36,7 @@ const PopularLocations = ({ universityID }) => {
     };
 
     return (
-        <div className="w-full relative px-2">
+        <div className="w-full relative">
             <button
                 className="absolute top-1/2 sm:-left-10 -left-5 transform -translate-y-1/2"
                 onClick={scrollLeft}

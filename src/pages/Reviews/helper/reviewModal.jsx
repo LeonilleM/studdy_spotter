@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FaTimes } from 'react-icons/fa';
 import { createReview, updateReview } from '../../../services/Reviews/Reviews'
-import StarRating from './starRating';
+import StarRating from './StarRatingHover';
 
 
 const ReviewModal = ({ locationId, userID, locationName, show, handleClose, handleNewReview, handleUpdateReview, review }) => {
@@ -12,8 +12,8 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    const MAX_WORD = 250
     const MIN_WORD = 50
+    const MAX_CHAR = 1250
     const isEditMode = !!review;
 
     useEffect(() => {
@@ -64,18 +64,20 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
         let text = e.target.value;
         let words = text.trim().split(/\s+/);
         const wordCount = words.length;
+        const charCount = text.length;
 
-        if (wordCount > MAX_WORD) {
-            words = words.slice(0, MAX_WORD);
-            text = words.join(' ');
+
+        if (charCount > MAX_CHAR) {
+            text = text.slice(0, MAX_CHAR);
         }
 
         setReviewText(text);
 
         if (wordCount < MIN_WORD) {
             setError("Minimum word limit not met. Must be at least 50 words.");
-        } else if (wordCount >= MAX_WORD) {
-            setError("Maximum word limit exceeded. Only 250 words allowed.");
+        }
+        else if (charCount > MAX_CHAR) {
+            setError(`Maximum character limit exceeded. Only ${MAX_CHAR} characters allowed.`);
         } else {
             setError(null);
         }
@@ -84,6 +86,10 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const wordCounter = (text) => {
         return text.trim().split(/\s+/).filter(word => word !== '').length;
     };
+
+    const charCounter = (text) => {
+        return text.length;
+    }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4 font-semibold">
@@ -106,7 +112,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                                 onChange={handleInput}
                                 placeholder="Write your review here..."
                             />
-                            <span className={`text-sm ${error ? 'text-red-500' : 'text-gray-500'}`}>{wordCounter(reviewText)} / {MAX_WORD}</span>
+                            <span className={`text-xs inline-flex ${error ? 'text-red-500' : 'text-gray-500'}`}>{charCounter(reviewText)} / {MAX_CHAR} Charactars</span>
                         </div>
                         {error && <div className="text-red-500 mt-2">{error}</div>}
                         {success && <div className="text-green-500 mt-2">Review submitted successfully!</div>}

@@ -2,7 +2,7 @@ import { Star } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 const StarRating = ({ rating, starSize = 24, noRating = true }) => {
-    const colors = ["text-orange-500", "text-amber-600", "text-yellow-600", "text-green-700", "text-action"];
+    const colors = ["text-starColor1", "text-starColor2", "text-starColor3", "text-starColor4", "text-starColor5"];
 
     const getColorClass = (rating) => {
         if (rating >= 4.5) return colors[4];

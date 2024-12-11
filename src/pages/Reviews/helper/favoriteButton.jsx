@@ -27,7 +27,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
                 disabled={isLoading || isOnCooldown}
                 className={`border 
                     ${isFavorite
-                        ? 'border-action text-white font-bold bg-action'
+                        ? 'border-action text-white font-bold bg-action '
                         : 'border-gray-300 text-secondary bg-white'
                     }
                     ${isOnCooldown ? 'opacity-75 cursor-not-allowed' : 'hover:opacity-90'}

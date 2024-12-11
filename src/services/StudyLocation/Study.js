@@ -158,6 +158,8 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
             image_url,
             address,
             city,
+            category,
+            zipcode,
             LocationTagList (
                 TagTypes:tag_id (name)
             ),
@@ -165,8 +167,10 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
                 rating
             ),
             University:university_id!inner (
-                name
-            )
+                name,
+                school_hex_color
+            ),
+            State:state_id(abr)
         `)
         .eq('name', studyName)
         .eq('University.name', universityName)
