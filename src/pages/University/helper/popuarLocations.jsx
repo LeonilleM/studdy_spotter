@@ -43,7 +43,7 @@ const PopularLocations = ({ universityID }) => {
             >
                 <FaChevronLeft className="w-8 h-8" />
             </button>
-            <div className="bg-white rounded-lg shadow-md flex items-center p-10 overflow-x-auto border border-gray-300" ref={scrollContainerRef}>
+            <div className="bg-white rounded-3xl shadow-md flex items-center p-10 overflow-x-auto border border-gray-300" ref={scrollContainerRef}>
                 <div className="flex gap-4 sm:gap-8">
                     {popularLocations && popularLocations.map(location => (
                         <NavLink
