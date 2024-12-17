@@ -7,7 +7,7 @@ import { requestStudyLocation } from '../../services/StudyLocation/Study.js';
 import { fetchUniversities } from '../../services/University/University.js';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { loadingComponent } from "../../components/Loading.jsx";
-import Modal from "../../components/shared/popupModal.jsx";
+import Modal from "../../components/shared/popupModal";
 
 function RequestLocation() {
     const { user } = useContext(AuthContext);
@@ -29,7 +29,7 @@ function RequestLocation() {
         event.preventDefault();
         if (!user) {
             setModal({
-                type: 'notAuthenticated',
+                type: 'noAuth',
                 message: 'Please log in to request a new study location',
                 onClick: () => setModal(null),
                 timeout: 5000

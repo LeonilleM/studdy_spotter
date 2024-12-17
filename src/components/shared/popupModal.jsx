@@ -21,7 +21,7 @@ const Modal = ({ type, message, onClick, timeout }) => {
             title = 'Failed'
             message = message || 'Operation Failed';
             break;
-        case 'notAuthenticated':
+        case 'noAuth':
             icon = <FaUser className="text-action w-20 h-20" />;
             title = 'Log In!'
             message = message || 'You need to be logged in to perform this operation';
@@ -64,7 +64,7 @@ const Modal = ({ type, message, onClick, timeout }) => {
 };
 
 Modal.propTypes = {
-    type: PropTypes.oneOf(['success', 'failed', 'notAuthenticated']).isRequired,
+    type: PropTypes.oneOf(['success', 'failed', 'noAuth']).isRequired,
     message: PropTypes.string.isRequired,
     onClick: PropTypes.func,
     timeout: PropTypes.number

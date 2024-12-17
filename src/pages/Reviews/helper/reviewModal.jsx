@@ -5,6 +5,7 @@ import { createReview, updateReview } from '../../../services/Reviews/Reviews'
 import StarRating from './StarRatingHover';
 
 
+
 const ReviewModal = ({ locationId, userID, locationName, show, handleClose, handleNewReview, handleUpdateReview, review }) => {
     const [reviewText, setReviewText] = useState(review?.description || '');
     const [rating, setRating] = useState(review?.rating || 0);
@@ -12,7 +13,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    const MIN_WORD = 50
+    const MIN_CHAR = 85
     const MAX_CHAR = 1250
     const isEditMode = !!review;
 
@@ -62,29 +63,23 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
 
     const handleInput = (e) => {
         let text = e.target.value;
-        let words = text.trim().split(/\s+/);
-        const wordCount = words.length;
         const charCount = text.length;
-
-
         if (charCount > MAX_CHAR) {
             text = text.slice(0, MAX_CHAR);
         }
 
+        if (charCount < MIN_CHAR) {
+            setError(`Minimum character limit not met. At least ${MIN_CHAR} characters required.`);
+        }
+
         setReviewText(text);
 
-        if (wordCount < MIN_WORD) {
-            setError("Minimum word limit not met. Must be at least 50 words.");
-        }
-        else if (charCount > MAX_CHAR) {
+
+        if (charCount > MAX_CHAR) {
             setError(`Maximum character limit exceeded. Only ${MAX_CHAR} characters allowed.`);
         } else {
             setError(null);
         }
-    };
-
-    const wordCounter = (text) => {
-        return text.trim().split(/\s+/).filter(word => word !== '').length;
     };
 
     const charCounter = (text) => {
@@ -132,7 +127,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
 
 ReviewModal.propTypes = {
     locationId: PropTypes.string.isRequired,
-    userID: PropTypes.string.isRequired,
+    userID: PropTypes.string,
     locationName: PropTypes.string.isRequired,
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,

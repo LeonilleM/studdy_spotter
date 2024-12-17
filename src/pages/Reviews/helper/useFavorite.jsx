@@ -68,6 +68,7 @@ const useFavorite = (studyLocationID, userID, initialState = false) => {
     const handleToggle = useCallback(async () => {
         if (!userID) {
             setError(new Error('User must be logged in'));
+
             return;
         }
 

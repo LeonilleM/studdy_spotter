@@ -11,14 +11,19 @@ function Footer() {
                     <div className="container mx-auto justify-between flex flex-col h-full">
                         <div className="justify-between  flex flex-row items-center sm:px-0 px-4">
                             <img src={Logo} alt="logo" className="w-32 hidden md:block" />
-                            <div className="flex flex-row lg:gap-32 items-center justify-center font-lato">
-                                <NavLink to="/about" className="text-white flex items-center ">
-                                    <FaChevronRight className="ml-1" />About
+                            <div className="flex flex-row flex-wrap lg:gap-32 gap-4  font-lato">
+                                <NavLink to="/about" className="text-white flex items-center gap-1">
+                                    <FaChevronRight />About
                                 </NavLink>
-                                <NavLink to="/allschools" className="text-white flex items-center">
-                                    <FaChevronRight className="ml-1" /> All Schools
+                                <NavLink to="/allschools" className="text-white flex items-center gap-1">
+                                    <FaChevronRight /> All Schools
                                 </NavLink>
-                                {/* <NavLink to="/" className="text-white">Privacy Policy</NavLink> */}
+                                <NavLink to="/" className="text-white flex items-center gap-1">
+                                    <FaChevronRight /> Privacy Policy
+                                </NavLink>
+                                <NavLink to="/" className="text-white flex items-center gap-1">
+                                    <FaChevronRight /> Privacy Policy
+                                </NavLink>
                             </div>
                             <div className="flex flex-col">
                                 <h1 className="font-poppins font-lg">Contact</h1>

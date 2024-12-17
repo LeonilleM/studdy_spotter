@@ -10,21 +10,35 @@ import EditReview from './helper/reviewSettings';
 import LocationDetails from './LocationDetails';
 import ReviewList from './ReviewList';
 import ErrorPage from '../../components/shared/ErrorPage';
+import PropTypes from 'prop-types';
+import PopUpModal from '../../components/shared/popupModal';
 
-import { FaWifi, FaVolumeMute, FaPlug, FaUsers, FaDoorClosed, FaParking, FaUniversity } from 'react-icons/fa';
+
+import { FaWifi, FaVolumeMute, FaPlug, FaUsers, FaDoorClosed, FaParking, FaUniversity, FaHamburger } from 'react-icons/fa';
 
 const IconSize = ({ Icon }) => {
     return <Icon className="w-5 h-5" />;
 };
+
+IconSize.propTypes = {
+    Icon: PropTypes.elementType.isRequired
+};
+
 
 const iconMap = {
     'Wifi': <IconSize Icon={FaWifi} />,
     'Quiet': <IconSize Icon={FaVolumeMute} />,
     'Outlet': <IconSize Icon={FaPlug} />,
     'Group Friendly': <IconSize Icon={FaUsers} />,
+    // 'Aesthetic': <IconSize Icon={FaDoorClosed} />,
+    'Late Night Access': <IconSize Icon={FaDoorClosed} />,
     'Private Rooms': <IconSize Icon={FaDoorClosed} />,
-    'Paid Parking': <IconSize Icon={FaParking} />,
-    'On-Campus': <IconSize Icon={FaUniversity} />
+    'Near By Food': <IconSize Icon={FaHamburger} />,
+    'Food Services': <IconSize Icon={FaHamburger} />,
+    'Free Parking': <IconSize Icon={FaParking} />,
+    'Paid Parking': < IconSize Icon={FaParking} />,
+    'On-Campus': <IconSize Icon={FaUniversity} />,
+    'Off-Campus': <IconSize Icon={FaUniversity} />,
 };
 
 function Reviews() {
@@ -35,6 +49,7 @@ function Reviews() {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [popUp, setShowPopUp] = useState(null);
     const [address, setAddress] = useState('');
     const { user } = useContext(AuthContext);
 
@@ -47,7 +62,6 @@ function Reviews() {
                 setLoading(true);
                 const locationData = await fetchStudyLocationData(studyLocation, uniName);
                 setAddress(locationData.address + " " + locationData.city + " " + locationData.State.abr + " " + locationData.zipcode + " " + locationData.name);
-
                 setLocationDetails(locationData);
                 if (locationData) {
                     const reviewsData = await fetchAllReviews(locationData.id);
@@ -86,16 +100,27 @@ function Reviews() {
             setShowModal(true);
             sessionStorage.setItem('showModalReview', 'true');
         } else {
-            alert('Please log in to write a review');
-            setShowModal(false);
+            console.log("Opening")
+            setShowPopUp({
+                type: 'noAuth',
+                message: 'Please log in to write a review',
+                onClick: () => setShowPopUp(null),
+                timeout: 5000
+            })
         }
     };
 
     const handleFavoriteButton = () => {
         if (!user) {
-            alert('Please log in to add to favorites');
+            setShowPopUp({
+                type: 'noAuth',
+                message: 'Please log in to save this location',
+                onClick: () => setShowPopUp(null),
+                timeout: 5000
+            })
         }
-    }
+    };
+
 
     const handleDeleteReview = () => {
         setReviews(prevReviews => ({
@@ -165,15 +190,19 @@ function Reviews() {
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
 
     return (
-        <div className="bg-background pt-32 ">
+        <div className="bg-background ">
             {locationDetails && (
                 <LocationDetails locationDetails={locationDetails} totalReviews={totalReviews} />
             )}
-
+            {popUp && <PopUpModal
+                type={popUp.type}
+                message={popUp.message}
+                onClick={popUp.onClick}
+                timeout={popUp.timeout}
+            />
+            }
             <div className="container mx-auto flex flex-col lg:flex-row lg:justify-between lg:pt-24 sm:px-0 px-6 ">
-
                 <div className="lg:w-2/5 text-secondary lg:order-1 order-2 relative">
-
                     {reviews.userReview.length > 0 || reviews.otherReviews.length > 0 ? (
                         <ReviewList
                             reviews={reviews}
@@ -184,7 +213,7 @@ function Reviews() {
                         <p className="text-center text-secondary font-bold">No reviews currently</p>
                     )}
                 </div>
-                <div className="2xl:w-[27%] xl:w-1/3 sticky lg:top-6 lg:h-[calc(100vh)]  lg:py-0 py-12 lg:order-2 order-1">
+                <div className="2xl:w-[27%] xl:w-1/3 sticky lg:top-10 lg:h-[calc(100vh)]  lg:py-0 py-12 lg:order-2 order-1">
                     <div className="bg-white p-4 rounded-xl border-2 text-darkBlue font-lato">
                         <iframe
                             className="w-full h-48 border-1 rounded-lg shadow-lg"
@@ -212,7 +241,7 @@ function Reviews() {
                             studyLocationID={locationDetails.id}
                             userID={user ? user.id : null} />
                     </div>
-                    <div className="bg-white  w-full lg:mt-16 mt-10 rounded-xl border-2 border-b-gray-300 p-8 font-lato">
+                    <div className="bg-white  w-full lg:mt-14 mt-10 rounded-xl border-2 border-b-gray-300 p-8 font-lato">
                         <h1 className="text-darkBlue font-poppins font-bold text-xl mb-6">Amenities</h1>
                         <div className="grid grid-cols-2 pb-2 gap-y-2 text-lato font-normal sm:text-base text-xs">
                             <span className=" text-black  py-2 font-poppins border-b flex items-center gap-2">

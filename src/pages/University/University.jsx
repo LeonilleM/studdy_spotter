@@ -85,18 +85,18 @@ function University() {
 
 
     return (
-        <div className="pt-32 overflow-x-hidden bg-background">
+        <div className="overflow-x-hidden bg-background">
             {loading && loadingComponent("Loading Study Spots...")}
             {uniData && uniData.map((uni) => (
-                <div key={uni.id} style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '45vh', width: '100%' }}>
+                <div key={uni.id} style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '50vh', width: '100%' }}>
                     <div
-                        className="lg:w-1/3 w-1/2 h-full font-lato flex flex-col items-center justify-center lg:px-12 px-4 gap-4 opacity-85"
+                        className="lg:w-1/3 w-[60%] h-full font-lato flex flex-col items-center justify-center lg:px-12 px-4 gap-4 opacity-85"
                         style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
                     >
                         <h1 className="text-white font-bold lg:text-4xl text-2xl text-center">{uni.name}</h1>
                         <div>
-                            <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.city},</h1>
-                            <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.States.name}</h1>
+                            <h1 className="text-white font-bold lg:text-2xl text-center italic">{uni.city},</h1>
+                            <h1 className="text-white font-bold lg:text-2xl text-center">{uni.States.name}</h1>
                         </div>
                     </div>
                 </div>

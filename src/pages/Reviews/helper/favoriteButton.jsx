@@ -2,18 +2,23 @@ import { FaRegBookmark, FaBookmark } from 'react-icons/fa';
 import useFavorite from './useFavorite';
 import PropTypes from 'prop-types';
 
-
-const FavoriteButton = ({ studyLocationID, userID }) => {
-
+const FavoriteButton = ({ studyLocationID, userID, onClick }) => {
     const {
         isFavorite,
         isLoading,
-        error,
         isOnCooldown,
         cooldownTimeLeft,
         toggleFavorite
     } = useFavorite(studyLocationID, userID);
-
+    
+    const handleToggleFavorite = async () => {
+        if (!userID) {
+            onClick();
+        }
+        else {
+            toggleFavorite();
+        }
+    }
 
 
     const formatCooldownTime = (ms) => {
@@ -23,7 +28,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
     return (
         <div>
             <button
-                onClick={toggleFavorite}
+                onClick={handleToggleFavorite}
                 disabled={isLoading || isOnCooldown}
                 className={`border 
                     ${isFavorite
@@ -44,10 +49,6 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
                     )
                 )}
             </button>
-            {error && (
-                alert(error.message)
-
-            )}
         </div>
     );
 };
@@ -55,6 +56,7 @@ const FavoriteButton = ({ studyLocationID, userID }) => {
 FavoriteButton.propTypes = {
     studyLocationID: PropTypes.string,
     userID: PropTypes.string,
+    onClick: PropTypes.func
 };
 
 export default FavoriteButton;
