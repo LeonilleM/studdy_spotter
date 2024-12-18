@@ -30,7 +30,7 @@ const iconMap = {
     'Quiet': <IconSize Icon={FaVolumeMute} />,
     'Outlet': <IconSize Icon={FaPlug} />,
     'Group Friendly': <IconSize Icon={FaUsers} />,
-    // 'Aesthetic': <IconSize Icon={FaDoorClosed} />,
+    'Aesthetic': <IconSize Icon={FaDoorClosed} />,
     'Late Night Access': <IconSize Icon={FaDoorClosed} />,
     'Private Rooms': <IconSize Icon={FaDoorClosed} />,
     'Near By Food': <IconSize Icon={FaHamburger} />,
@@ -142,7 +142,7 @@ function Reviews() {
     };
 
     if (loading) {
-        return loadingComponent();
+        return loadingComponent("Loading Reviews...");
     }
 
     const handleUpdateReview = (updatedReview) => {
@@ -213,7 +213,7 @@ function Reviews() {
                         <p className="text-center text-secondary font-bold">No reviews currently</p>
                     )}
                 </div>
-                <div className="2xl:w-[27%] xl:w-1/3 sticky lg:top-10 lg:h-[calc(100vh)]  lg:py-0 py-12 lg:order-2 order-1">
+                <div className="2xl:w-[27%] xl:w-1/3 sticky lg:top-10 lg:h-[calc(100vh)]  lg:py-0 py-12 lg:order-2 order-1 mb-24">
                     <div className="bg-white p-4 rounded-xl border-2 text-darkBlue font-lato">
                         <iframe
                             className="w-full h-48 border-1 rounded-lg shadow-lg"
@@ -241,7 +241,7 @@ function Reviews() {
                             studyLocationID={locationDetails.id}
                             userID={user ? user.id : null} />
                     </div>
-                    <div className="bg-white  w-full lg:mt-14 mt-10 rounded-xl border-2 border-b-gray-300 p-8 font-lato">
+                    <div className="bg-white  w-full lg:mt-14 mt-10 rounded-xl border-2 border-b-gray-300 p-8 font-lato ">
                         <h1 className="text-darkBlue font-poppins font-bold text-xl mb-6">Amenities</h1>
                         <div className="grid grid-cols-2 pb-2 gap-y-2 text-lato font-normal sm:text-base text-xs">
                             <span className=" text-black  py-2 font-poppins border-b flex items-center gap-2">

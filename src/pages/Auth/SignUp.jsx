@@ -60,16 +60,16 @@ const SignUp = () => {
                 <BackButton location="/" />
             </div>
             <div className="flex flex-col items-center justify-center px-4 h-screen">
-                <div className="pt-20 sm:px-12 px-6 bg-white rounded-lg flex flex-col  shadow-2xl text-black items-center">
+                <div className="w-full max-w-md pt-16 sm:px-12 px-6 bg-white rounded-xl flex flex-col shadow-2xl text-black">
                     <h1 className="text-start font-poppins text-3xl pb-4 font-bold self-start">Register </h1>
                     {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 self-start w-full" role="alert"> {error} </div>}
-                    <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-sm font-bold" onSubmit={handleSignUp}>
-                        <div className="flex flex-row space-x-5 ">
-                            <div className="flex flex-col">
+                    <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-lato font-bold" onSubmit={handleSignUp}>
+                        <div className="flex flex-row space-x-5">
+                            <div className="flex flex-col w-1/2">
                                 <label>First Name<span className="text-red-500">*</span></label>
                                 <input type="text" name="firstName" placeholder="First Name" className="p-2 rounded-md border-action border-2" />
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col w-1/2">
                                 <label>Last Name<span className="text-red-500">*</span></label>
                                 <input type="text" name="lastName" placeholder="Last Name" className="p-2 rounded-md border-action border-2" />
                             </div>

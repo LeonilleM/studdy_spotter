@@ -52,15 +52,14 @@ function SignIn() {
 
     return (
         <div className="bg-background min-h-screen">
-            <div className="absolute md:translate-x-12 translate-x-6 translate-y-12 ">
+            <div className="absolute md:translate-x-12 translate-x-6 sm:translate-y-12 translate-y-6 ">
                 <BackButton location="/" />
             </div>
             <div className="flex items-center justify-center min-h-screen px-4 ">
-                <div className="w-full max-w-md py-16 sm:px-12 px-6 bg-white rounded-xl  flex flex-col  shadow-2xl text-black ">
+                <div className="w-full max-w-md pt-16 sm:px-12 px-6 bg-white rounded-xl  flex flex-col  shadow-2xl text-black ">
                     <h1 className="font-poppins text-3xl pb-4 font-bold">
                         Log In
                     </h1>
-
                     {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 " role="alert"> {error} </div>}
                     {/* Form */}
                     <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-lato font-bold" onSubmit={handleSignIn}>

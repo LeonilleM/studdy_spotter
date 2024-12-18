@@ -39,7 +39,6 @@ function Account() {
         <div className="2xl:h-screen bg-background pt-20 text-secondary">
             {isAuthenticated ? (
                 <div className="flex lg:flex-row flex-col  container mx-auto py-24 2xl:px-40 px-4 gap-24">
-
                     <div className="flex flex-col lg:w-1/3 w-full">
                         <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg font-lato">
                             <div className="self-start flex flex-col items-center ">
