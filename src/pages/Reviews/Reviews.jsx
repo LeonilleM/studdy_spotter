@@ -42,7 +42,7 @@ const iconMap = {
 };
 
 function Reviews() {
-    const { uniName, studyLocation, } = useParams(); // Get the study location from the URL
+    const { uniName, studyLocation, } = useParams();
     const [locationDetails, setLocationDetails] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);

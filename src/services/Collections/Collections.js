@@ -20,12 +20,9 @@ export const createCollection = async (newCollection) => {
 // Mass Delete all UserFavorites in a given Collection, then delete the Collection
 export const deleteAllUserFavoritesInCollection = async (userFavorites) => {
     if (!userFavorites.isArray) {
-        throw new Error("deleteAllUserFavoritesInCollection expects an array of UserFavorites")
+        throw new Error("Cannot delete all UserFavorites in a Collection.")
     }
 
-    const { data, error } = await supabase
-    
-    
 }
 
 export const deleteCollection = async (collectionID, userID) => {

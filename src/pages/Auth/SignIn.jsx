@@ -28,7 +28,6 @@ function SignIn() {
 
         try {
             const userData = await login(email, password);
-            console.log("Sign In Successful");
 
             setTimeout(() => {
                 if (userData) {
@@ -65,7 +64,7 @@ function SignIn() {
                     <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-lato font-bold" onSubmit={handleSignIn}>
                         {/* Email field */}
                         <div className="flex flex-col space-y-2">
-                            <label htmlFor="email" className={`text-sm ` + (error ? ' text-red-500' : '')}>
+                            <label htmlFor="email" className={(error ? ' text-red-500' : '')}>
                                 Email<span className="text-red-500">*</span>
                             </label>
                             <input
@@ -83,7 +82,7 @@ function SignIn() {
 
                         {/* Password field */}
                         <div className="flex flex-col space-y-2">
-                            <label htmlFor="password" className={`text-sm ` + (error ? ' text-red-500' : '')}>
+                            <label htmlFor="password" className={(error ? ' text-red-500' : '')}>
                                 Password<span className="text-red-500">*</span>
                             </label>
                             <div className="relative flex items-center">
@@ -110,36 +109,21 @@ function SignIn() {
                                 />
                             </div>
                         </div>
-                        {/* Remember me checkbox
-                        <div className="flex items-center space-x-2">
-                            <input
-                                id="remember"
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-gray-800 accent-gray-600"
-                                disabled={isLoading}
-                            />
-                            <label htmlFor="remember" className="text-sm  select-none">
-                                Remember me?
-                            </label>
-                        </div> */}
 
                         {/* Sign in button */}
                         <div className="flex flex-col py-6 space-y-4 ">
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="relative inline-flex items-center justify-center h-10 overflow-hidden  transition duration-300 ease-out border-2 bg-primary rounded-lg group disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="relative mt-14 inline-flex items-center justify-center h-10 overflow-hidden  transition duration-300 ease-out border-2 bg-primary rounded-lg group disabled:opacity-50 disabled:cursor-not-allowed"
                                 aria-busy={isLoading}
                             >
                                 <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-500 -translate-x-full bg-primary group-hover:translate-x-0 ease">
                                     <FaArrowRight />
                                 </span>
-                                <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">
-                                    {isLoading ? 'Signing in...' : 'Sign in'}
+                                <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease mt">
+                                    {isLoading ? 'Signing in...' : 'Log in'}
                                 </span>
-                                <span className="relative invisible">Log In</span>
                             </button>
 
                             {/* Forgot password link */}

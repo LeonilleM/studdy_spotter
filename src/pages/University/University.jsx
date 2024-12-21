@@ -89,15 +89,15 @@ function University() {
             {loading && loadingComponent("Loading Study Spots...")}
             {uniData && uniData.map((uni) => (
                 <div key={uni.id}
-                    className="2xl:h-[50vh] h-[60vh]"
+                    className="2xl:h-[50vh] h-[55vh]"
                     style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', width: '100%' }}>
                     <div
-                        className="lg:w-1/3 w-[60%] h-full font-lato flex flex-col  justify-center lg:px-14 px-4 gap-4 opacity-85"
+                        className="lg:w-1/3 w-[60%] h-full font-lato flex flex-col  justify-center lg:px-14 px-4 gap-2  opacity-[90%]"
                         style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
                     >
                         <h1 className="text-white font-bold lg:text-3xl text-xl ">{uni.name}</h1>
                         <div>
-                            <h1 className="text-white font-bold lg:text-xl">{uni.city}, {uni.States.name}</h1>
+                            <h1 className="text-white  lg:text-xl">{uni.city}, {uni.States.name}</h1>
                         </div>
                     </div>
                 </div>

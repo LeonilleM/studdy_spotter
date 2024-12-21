@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
-import { FaTrash } from 'react-icons/fa'
+import { FaTrash, FaUpload } from 'react-icons/fa'
 import { useState } from 'react'
+
 
 function EditImage({ onClose, user, profileUpdate }) {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -46,9 +47,9 @@ function EditImage({ onClose, user, profileUpdate }) {
             <div className="flex items-center justify-center min-h-screen bg-black/30">
                 <div className="bg-white pt-12 rounded-lg shadow-lg text-center flex flex-col w-[50vh]">
                     {error && <div className="text-red-500">{error}</div>}
-                    <h2 className="text-xl font-semibold mb-4">Change Profile Image</h2>
-                    <div className="px-24 border-t py-2 hover:bg-slate-300">
-                        <div className="w-full text-center">
+                    <h2 className="text-xl font-semibold mb-4 text-secondary">Change Profile Image</h2>
+                    <div className="px-24 border-t py-3.5 hover:bg-slate-300">
+                        <div className="w-full text-center ">
                             <input
                                 onChange={handleImageUpload}
                                 id="file-upload"
@@ -59,9 +60,10 @@ function EditImage({ onClose, user, profileUpdate }) {
                             />
                             <label
                                 htmlFor="file-upload"
-                                className={`inline-block cursor-pointer text-action py-2 px-4 rounded-md ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={` cursor-pointer text-action flex items-center justify-center  rounded-md ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 disabled={isUploading}
                             >
+                                <FaUpload className="mr-2" />
                                 {selectedFile ? `Change Image ${selectedFile.name}` : "Upload Image"}
                                 {isUploading && <span className="font-bold" >uploading...</span>}
                             </label>
@@ -71,16 +73,16 @@ function EditImage({ onClose, user, profileUpdate }) {
                         <button
                             type="button"
                             onClick={handleDelete}
-                            className=" text-red-500 border-t py-2 hover:bg-slate-300"
+                            className=" text-red-500 border-t py-3.5 hover:bg-slate-300 flex items-center justify-center"
                         >
-                            <FaTrash className="inline-block" />
+                            <FaTrash className="mr-2" />
                             Remove Image
                         </button>
                     )}
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-red-500 border-t px-4 py-2 rounded hover:bg-slate-300 "
+                        className="text-secondary border-t px-4 py-2 rounded hover:bg-slate-300 "
                     >
                         Close
                     </button>

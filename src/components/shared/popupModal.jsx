@@ -46,14 +46,14 @@ const Modal = ({ type, message, onClick, timeout }) => {
     return (
         <div
             onClick={onClick}
-            className="fixed inset-0  z-30  bg-black/30 flex flex-col items-center justify-center">
+            className="fixed inset-0  z-30  bg-black/30 flex flex-col items-center justify-center ">
             <h1 className="text-red-700 font-lato italic my-2">Closes in {timeout / 1000} seconds...</h1>
-            <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow px-8 py-10 gap-3 font-lato  z-50">
+            <div className="flex flex-col items-center justify-center bg-white rounded-lg  px-8 py-10 gap-3 font-lato  z-50 shadow-lg shadow-white/50 ">
                 {icon}
-                <h1 className="text-2xl text-center font-poppins text-secondary px-4">{title}</h1>
-                <h1 className="text-center font-poppins text-secondary px-4 w-2/3">{message}</h1>
+                <h1 className="text-2xl text-center font-poppins  px-4">{title}</h1>
+                <h1 className="text-center font-poppins y px-4 w-2/3">{message}</h1>
                 <button
-                    className={`text-white py-4 px-10 rounded-lg bg-red-700 font-bold text-lg mt-2 ${buttonStyle ? 'block' : 'hidden'} `}
+                    className={`text-white py-2 px-10 rounded-lg bg-red-700 font-bold mt-2 ${buttonStyle ? 'block' : 'hidden'} `}
                     onClick={onClick}
                 >
                     Close

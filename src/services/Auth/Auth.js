@@ -1,8 +1,6 @@
 import { supabase } from '../supabase/supabase'
 import { jwtDecode } from 'jwt-decode' // Use named import
 
-
-
 // Checking for user persistence within the session
 export const getCurrentUser = async () => {
     const { data, error } = await supabase.auth.getSession();
@@ -20,7 +18,6 @@ export const getCurrentUser = async () => {
 };
 
 export const signIn = async (email, password) => {
-    console.log("Signing in with email and password")
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,

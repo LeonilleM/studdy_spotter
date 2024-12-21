@@ -14,6 +14,7 @@ export default {
         action: '#366B9D',
         darkBlue: "#3B4D61",
         accent2: "#FFF600",
+        heading: "#3B4D61",
         black: "#252525",
         starColor1: "#FF6200",
         starColor2: "#FF8900",

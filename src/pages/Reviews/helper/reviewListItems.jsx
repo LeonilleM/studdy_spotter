@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { BsThreeDots } from 'react-icons/bs';
 import { useState } from 'react';
 
-function reviewListItems({ review, isUserReview, onEditReview }) {
+function ReviewListItems({ review, isUserReview, onEditReview }) {
     const [showFullText, setShowFullText] = useState(false);
     const MAX_LENGTH = 200; // Character count
 
@@ -75,15 +75,15 @@ function reviewListItems({ review, isUserReview, onEditReview }) {
                     </p>
                 )}
             </div>
-            {!isUserReview && ( <hr className="w-full border-secondary" />)}
+            {!isUserReview && (<hr className="w-full border-secondary" />)}
         </div>
     );
 }
 
-reviewListItems.propTypes = {
+ReviewListItems.propTypes = {
     review: PropTypes.object.isRequired,
     isUserReview: PropTypes.bool,
     onEditReview: PropTypes.func
 }
 
-export default reviewListItems
+export default ReviewListItems

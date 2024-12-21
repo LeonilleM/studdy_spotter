@@ -3,9 +3,7 @@ import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser } from 'react-icons/fa';
 import Select from 'react-select';
 import { fetchUniversities } from '../../services/University/University.js';
-import EditImageButton from './helper/editImage.jsx'
-
-
+import EditImageButton from './helper/editImage.jsx';
 
 function Profile() {
     const { user, profileUpdate } = useContext(AuthContext);
@@ -84,80 +82,83 @@ function Profile() {
     ];
 
     return (
-        <div className="h-screen flex justify-center items-center bg-background">
-            <div className="container mx-auto xl:px-96 md:px-44 px-4 text-secondary">
-                <h1 className="text-2xl font-semibold font-poppins">Edit Profile</h1>
+        <div className="xl:h-screen flex justify-center items-center bg-background">
+            <div className="container mx-auto md:px-44 px-4 py-32 text-secondary">
                 <form
                     onSubmit={handleSubmitForm}
-                    className="mt-4 font-lato space-y-6 ">
-                    <div className="flex flex-row justify-between bg-white rounded-xl p-4">
-                        <div className="flex flex-row gap-4">
-                            {user.image_url ? (
-                                <img src={user.image_url}
-                                    draggable="false"
-                                    alt="user avatar" className="w-14 h-14 rounded-full shadow-md" />
-                            ) : (
-                                <FaUser className="w-14 h-14 bg-gray-300 text-white rounded-full shadow-md border-2" />
-                            )}
-                            <div className="flex flex-col">
-                                <h1 className="text-sm font-semibold mt-2">{user.first_name} {user.last_name}</h1>
-                                <span className="text-sm">{user.University?.name || "No University Affiliation"}</span>
-                            </div>
-                        </div>
+                    className="mt-4 font-lato gap-4 flex xl:flex-row flex-col justify-center">
+                    <div className="flex flex-col justify-center items-center bg-secondary rounded-xl py-32 text-white 2xl:w-[30%] xl:w-[35%] w-full">
+                        {user.image_url ? (
+                            <img
+                                src={user.image_url}
+                                draggable="false"
+                                alt="user avatar"
+                                className="w-24 h-24 rounded-full shadow-md"
+                            />
+                        ) : (
+                            <FaUser className="w-24 h-24 bg-gray-300 text-white rounded-full shadow-md border-2" />
+                        )}
+                        <h1 className="text-lg font-semibold mt-4">{user.first_name} {user.last_name}</h1>
+                        <span>{user.University?.name || "No University Affiliation"}</span>
                         <button
                             type="button"
                             onClick={handleModalOpen}
-                            className="bg-action text-white my-2 py-2 px-2 rounded-lg hover:scale-105 transition duration-300 ease-in-out">
-                            Change Image
+                            className="bg-action text-white p-2 mt-4 rounded-lg hover:scale-105 transition duration-300 ease-in-out w-36"
+                        >
+                            Change Photo
                         </button>
-                        {modalOpen && <EditImageButton
-                            onClose={handleModalClose}
-                            user={user}
-                            profileUpdate={profileUpdate}
-                        />}
-
+                        {modalOpen && (
+                            <EditImageButton
+                                onClose={handleModalClose}
+                                user={user}
+                                profileUpdate={profileUpdate}
+                            />
+                        )}
                     </div>
-                    <div className="flex flex-row gap-12">
-                        <div className="flex flex-col w-1/2">
-                            <label htmlFor="firstName" className="text-sm font-semibold">First Name</label>
-                            <input
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                type="text"
-                                name="firstName"
-                                className="border border-gray-300 rounded-md p-2 mt-1"
+                    <div className="flex flex-col gap-4 bg-white rounded-xl xl:w-7/12 px-10 py-16">
+                        <h1 className="font-poppins font-semibold text-2xl pb-6">Edit Profile</h1>
+                        <div className="flex lg:flex-row gap-4 flex-col">
+                            <div className="flex flex-col w-full">
+                                <label htmlFor="firstName" className="text-sm font-semibold">First Name</label>
+                                <input
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    type="text"
+                                    name="firstName"
+                                    className="border border-gray-300 rounded-md p-2 mt-1"
+                                />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <label htmlFor="lastName" className="text-sm font-semibold">Last Name</label>
+                                <input
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    type="text"
+                                    name="lastName"
+                                    className="border border-gray-300 rounded-md p-2 mt-1"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col pb-6">
+                            <label htmlFor="university" className="text-sm font-semibold">University</label>
+                            <Select
+                                name='university'
+                                placeholder={university}
+                                onChange={handleUniversity}
+                                options={universityOptions}
+                                styles={customStyles}
+                                className="mt-1"
                             />
                         </div>
-                        <div className="flex flex-col w-1/2">
-                            <label htmlFor="lastName" className="text-sm font-semibold">Last Name</label>
-                            <input
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                type="text"
-                                name="lastName"
-                                className="border border-gray-300 rounded-md p-2 mt-1"
-                            />
-                        </div>
+                        <button
+                            type="submit"
+                            className="bg-action text-white p-2 rounded-md w-36 font-bold">
+                            Update Profile
+                        </button>
                     </div>
-                    <div className="flex flex-col pb-12">
-                        <label htmlFor="university" className="text-sm font-semibold">University</label>
-                        <Select
-                            name='university'
-                            placeholder={university}
-                            onChange={handleUniversity}
-                            options={universityOptions}
-                            styles={customStyles}
-                            className="mt-1"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="bg-action text-white py-2 px-4 rounded-md">
-                        Update Profile
-                    </button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

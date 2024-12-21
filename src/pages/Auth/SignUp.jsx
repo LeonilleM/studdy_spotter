@@ -59,9 +59,11 @@ const SignUp = () => {
             <div className="absolute md:translate-x-12 translate-x-6 translate-y-12 ">
                 <BackButton location="/" />
             </div>
-            <div className="flex flex-col items-center justify-center px-4 h-screen">
-                <div className="w-full max-w-md pt-16 sm:px-12 px-6 bg-white rounded-xl flex flex-col shadow-2xl text-black">
-                    <h1 className="text-start font-poppins text-3xl pb-4 font-bold self-start">Register </h1>
+            <div className="flex items-center justify-center min-h-screen px-4 ">
+                <div className="w-full max-w-md pt-16 sm:px-12 px-6 bg-white rounded-xl  flex flex-col  shadow-2xl text-black ">
+                    <h1 className="font-poppins text-3xl pb-4 font-bold">
+                        Register
+                    </h1>
                     {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 self-start w-full" role="alert"> {error} </div>}
                     <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-lato font-bold" onSubmit={handleSignUp}>
                         <div className="flex flex-row space-x-5">
@@ -115,7 +117,7 @@ const SignUp = () => {
                             </button>
                         </div>
                     </form>
-                    <h1 className="py-10 text-secondary"> Have an account?
+                    <h1 className="py-10 text-secondary text-center"> Have an account?
                         <NavLink to="/signin" className="text-action font-bold underline hover:text-black ease-in-out duration-500"> Sign In</NavLink>
                     </h1>
                 </div>
