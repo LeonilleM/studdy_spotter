@@ -28,7 +28,7 @@ function Footer() {
                                     </NavLink>
                                 </div>
                                 <h1 className="font-lato flex items-center">
-                                    <FaEnvelope className="mr-1" /> support@studdy_spotter.com
+                                    <FaEnvelope className="mr-1" /> support_studdyspotter@gmail.com
                                 </h1>
                             </div>
 

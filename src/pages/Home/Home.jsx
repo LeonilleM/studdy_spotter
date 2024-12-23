@@ -44,12 +44,11 @@ function Home() {
     const Option = (props) => {
         return (
             <components.Option {...props}>
-                <FaUniversity className="mr-2 text-gray-500 inline-flex gap-2" />
-                {props.data.label}
+                <FaUniversity className="mb-1 mr-2 inline-flex" />
+                <span>{props.data.label}</span>
             </components.Option>
         );
     };
-
 
     const customStyles = {
         control: (provided) => ({
@@ -74,8 +73,8 @@ function Home() {
         }),
         option: (provided, state) => ({
             ...provided,
-            backgroundColor: state.isFocused ? '#72D6F2' : 'white',
-            color: state.isFocused ? 'white' : 'black',
+            backgroundColor: state.isFocused ? '#DEEAF9' : 'white',
+            color: state.isFocused ? '#15529C' : 'black',
         }),
     }
 

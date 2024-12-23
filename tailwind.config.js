@@ -13,6 +13,8 @@ export default {
         accent: '#366B9D',
         action: '#366B9D',
         darkBlue: "#3B4D61",
+        blueAlt: '#15529C',
+        lightBlue: '#DEEAF9',
         accent2: "#FFF600",
         heading: "#3B4D61",
         black: "#252525",
@@ -21,6 +23,8 @@ export default {
         starColor3: "#FFA033",
         starColor4: "#FFB223",
         starColor5: "#FFC300",
+        error: "#A41414",
+        borderColor: "#D3D3D3",
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

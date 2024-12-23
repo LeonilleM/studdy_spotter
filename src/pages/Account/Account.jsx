@@ -36,19 +36,19 @@ function Account() {
 
 
     return (
-        <div className="2xl:h-screen bg-background pt-20 text-secondary">
+        <div className="2xl:h-screen bg-background pt-20 text-darkBlue">
             {isAuthenticated ? (
                 <div className="flex lg:flex-row flex-col  container mx-auto py-24 2xl:px-40 px-4 gap-24">
                     <div className="flex flex-col lg:w-1/3 w-full">
-                        <div className="flex flex-col items-center bg-secondary text-white  rounded-t-md p-8 shadow-lg font-lato">
-                            <div className="self-start flex flex-col items-center ">
-                                <NavLink to="/setting" className="flex items-center rounded-full bg-white p-2 ">
-                                    <FaEdit className="w-6 h-6 text-secondary" />
+                        <div className="flex flex-col items-center bg-white text-black rounded-t-lg pb-16 shadow-lg font-lato border-[1px] border-borderColor">
+                            <div className="self-end flex items-center  mt-3 mr-3 mb-6">
+                                <NavLink to="/setting" className="flex items-center bg-action rounded-lg py-2 px-5">
+                                    <FaEdit className="w-4 h-4 text-white mr-2" />
+                                    <span className="text-xs font-lato text-white">Edit Profile</span>
                                 </NavLink>
-                                <span className="text-xs font-lato mt-1">Edit Profile</span>
                             </div>
                             {user.image_url ? (
-                                <img src={user.image_url} alt="user avatar" className="w-20 h-20 rounded-full shadow-md" />
+                                <img src={user.image_url} alt="user avatar" className="w-20 h-20 bg-fill rounded-full shadow-md" />
                             ) : (
                                 <FaUser className="w-20 h-20 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}
@@ -56,16 +56,16 @@ function Account() {
                             <span className="text-sm">{user.University?.name || "No University Affiliation"}</span>
                             {user.role.name === 'Admin' && <span className="text-sm">Admin</span>}
                         </div>
-                        <div className="flex flex-col border-2 rounded-b-md  border-secondary py-8 shadow-lg font-lato">
+                        <div className="flex flex-col border-r-[1px] border-b-[1px] border-l-[1px] rounded-b-lg  border-borderColor pt-2  pb-8 shadow-lg font-lato bg-white">
                             <button
                                 onClick={() => handleOptionChange('reviews')}
-                                className="flex items-center gap-2 py-2 px-4 hover:bg-action hover:text-white transition duration-300 ">
+                                className="flex items-center gap-2 py-4 px-6 hover:bg-lightBlue hover:text-blueAlt transition duration-300 ">
                                 <FaStar />
                                 <span>View Reviews</span>
                             </button>
                             <button
                                 onClick={() => handleOptionChange('locations')}
-                                className="flex items-center gap-2 py-2 px-4 hover:bg-action hover:text-white transition duration-300 ">
+                                className="flex items-center gap-2 py-4 px-6 hover:bg-lightBlue hover:text-blueAlt transition duration-300 ">
                                 <FaMapMarkerAlt />
                                 <span>View Collections</span>
                             </button>
@@ -73,14 +73,14 @@ function Account() {
                                 <NavLink
                                     to="/admin-dashboard"
                                     onClick={() => handleOptionChange('studyRequests')}
-                                    className="flex items-center gap-2 py-2 px-4 hover:bg-action hover:text-white transition duration-300 ">
+                                    className="flex items-center gap-2 py-2 px-6 hover:bg-lightBlue hover:text-blueAlt transition duration-300">
                                     <FaUserShield />
                                     <span>Admin Dashboard</span>
                                 </NavLink>
                             )}
                             <button
                                 onClick={handleSignOut}
-                                className="m-4 inline-flex items-center py-2 justify-center overflow-hidden rounded-lg bg-secondary text-white hover:scale-105 transition duration-300"
+                                className="mx-6 inline-flex items-center py-2 justify-center overflow-hidden rounded-lg bg-error text-white hover:scale-105 transition duration-300 mt-6"
                                 aria-label="Sign out"
                             >
                                 <FaSignOutAlt className="text-white mr-2" />
