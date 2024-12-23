@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser, FaSignOutAlt, FaStar, FaUserShield, FaMapMarkerAlt } from 'react-icons/fa';
+import BackButton from '../../components/shared/BackButton';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ReviewTab from './accountTabs/reviewTab.jsx';
@@ -36,9 +37,13 @@ function Account() {
 
 
     return (
-        <div className="2xl:h-screen bg-background pt-20 text-darkBlue">
+
+        <div className="bg-background pt-20 text-darkBlue">
+            <div className="absolute top-32 sm:left-14 left-4" >
+                <BackButton />
+            </div>
             {isAuthenticated ? (
-                <div className="flex lg:flex-row flex-col  container mx-auto py-24 2xl:px-40 px-4 gap-24">
+                <div className="flex lg:flex-row flex-col container mx-auto mt-36 2xl:px-40 px-4 gap-24">
                     <div className="flex flex-col lg:w-1/3 w-full">
                         <div className="flex flex-col items-center bg-white text-black rounded-t-lg pb-16 shadow-lg font-lato border-[1px] border-borderColor">
                             <div className="self-end flex items-center  mt-3 mr-3 mb-6">
@@ -90,7 +95,7 @@ function Account() {
                     </div>
 
                     <div className="flex flex-col lg:w-2/3 w-full">
-                        <span className="font-bold text-4xl font-poppins pb-4">
+                        <span className="font-bold text-4xl font-poppins">
                             {selectedOption === 'reviews' ? 'Reviews' : 'Collections'}
                         </span>
                         {renderTabContents(selectedOption, user.id)}

@@ -56,7 +56,7 @@ const StarRating = ({ rating, starSize = 24, noRating = true }) => {
 
     return (
         <div className="flex flex-row items-center justify-center text-center gap-1">
-            {renderStars(rating)} {noRating && <span className="text-xs">({rating.toFixed(1)})</span>}
+            {renderStars(rating)} {noRating && <span className="text-xs ml-2">({rating.toFixed(1)})</span>}
         </div>
     );
 };

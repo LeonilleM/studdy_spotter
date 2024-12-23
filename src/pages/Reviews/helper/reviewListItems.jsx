@@ -65,7 +65,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                             onClick={toggleShowFullText}
                             className="text-action hover:underline cursor-pointer flex"
                         >
-                            {showFullText ? ' Show Less' : ' Read More'}
+                            {showFullText ? 'Show Less' : 'Read More'}
                         </span>
                     )}
                 </p>

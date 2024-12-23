@@ -67,7 +67,7 @@ function AllSchools() {
                     </div>
                 </section>
                 <hr className="border-black border-2 rounded-full" />
-                <h1 className="font-poppins text-3xl font-bold text-heading py-10 text-center">PARTNERED CAMPUSES</h1>
+                <h1 className="font-poppins text-3xl font-bold text-heading mb-10 mt-16 text-center">Partnered Campuses</h1>
                 <section className="grid sm:grid-cols-3 grid-cols-1 gap-4 pb-36">
                     {uniData && uniData.sortedStates.map(state => {
                         return (

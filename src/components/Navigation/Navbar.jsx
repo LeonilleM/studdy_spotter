@@ -42,7 +42,7 @@ function Navbar() {
                                         ) : (
                                             <FaUser className="w-10 h-10 text-white bg-gray-200 rounded-full" />
                                         )}
-                                        <span className="text-white font-bold">
+                                        <span className="text-white font-bold max-sm:hidden">
                                             {user.first_name ? user.first_name : 'No Name User'} {user.last_name ? user.last_name : ''}
                                         </span>
                                     </button>
