@@ -5,7 +5,6 @@ import { fetchStates } from '../../../services/helper/helper';
 import PropTypes from 'prop-types';
 import PopUpModal from '../../../components/shared/popupModal';
 
-
 function RequestSchoolModal({ isOpen, onClose }) {
     const [states, setStates] = useState([]);
     const [selectedStateId, setSelectedStateId] = useState(null);
@@ -33,28 +32,34 @@ function RequestSchoolModal({ isOpen, onClose }) {
             city: city,
             states_id: selectedStateId
         }, image).then(() => {
-            alert('Campus request sent successfully');
-            onClose();
-        }).catch(error => {
-            console.error(error);
-            if (error === 'duplicate key value violates unique constraint "University_name_key"') {
-                alert('University already exists');
-            } else {
-                setPopUp({
-                    type: 'noAuth',
-                    message: 'Please log in to save this location',
-                    onClick: () => setPopUp(null),
-                    timeout: 5000
-                });
-            }
+            setPopUp({
+                type: 'success',
+                message: 'Campus request sent successfully',
+                onClick: () => {
+                    setPopUp(null);
+                    onClose();
+                },
+                timeout: 5000
+            });
+        }).catch(() => {
+            setPopUp({
+                type: 'failed',
+                message: 'An error occurred while sending the campus request. Please try again.',
+                onClick: () => setPopUp(null),
+                timeout: 5000
+            });
         });
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg py-8 px-12 border-2 text-secondary flex flex-col font-poppins">
+        <div
+            onClick={onClose}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-lg py-8 px-12 border-2 text-secondary flex flex-col font-poppins">
                 <h1 className="text-2xl font-bold font-poppins text-center">Request your Campus</h1>
                 <div className="flex flex-col mt-4">
                     <label htmlFor="university_name" className="text-sm font-medium rounded-lg">
@@ -109,7 +114,7 @@ function RequestSchoolModal({ isOpen, onClose }) {
                 </button>
             </div>
             {popUp && <PopUpModal {...popUp} />}
-        </div>
+        </div >
 
     );
 }
