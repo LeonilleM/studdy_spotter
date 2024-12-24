@@ -138,7 +138,7 @@ function RequestLocation() {
 
     return (
         <>
-            <div className="bg-background pt-20 relative">
+            <div className="flex flex-col bg-background ">
                 {isLoading && (
                     <>
                         {loadingComponent('Submitting...')}
@@ -153,24 +153,40 @@ function RequestLocation() {
                         timeout={modal.timeout}
                     />
                 )}
-                <div className=" pb-12 ">
-                    <div className="container mx-auto flex flex-col space-y-2 items-center sm:px-0 px-4 py-4">
-                        <BackButton color="black" />
-                        <h1 className="lg:text-5xl text-3xl font-bold font-poppins text-center text-primary">Request to Add a New Study Spot</h1>
-                        <p className="font-lato text-center text-black pt-4 xl:w-3/4">
-                            Please submit new study locations thoughtfully and in good faith. All submissions will be reviewed before they’re visible to other students. Here are a few guidelines to follow:
-                            <br /><br />
-                            <strong>Location Details:</strong> Double-check that the name and address are accurate to help students find the spot.
-                            <br />
-                            <strong>Tag Accuracy:</strong> Use tags that genuinely reflect the study spot’s qualities for better search results.
-                            <br />
-                            <strong>Complete Information:</strong> Provide as many details as possible to help others understand the space.
-                            <br /><br />
-                            Thank you for helping make StudySpotter reliable and useful for everyone!
-                        </p>
-                    </div>
+                <div className="absolute top-28 sm:left-14 left-4" >
+                    <BackButton />
                 </div>
-                <div className="container mx-auto pt-24 pb-48 xl:px-36 px-4 flex flex-col space-y-4 font-poppins text-secondary">
+                <div className="pt-24 container mx-auto sm:px-0 px-4">
+                    <section className="flex flex-row flex-wrap container justify-between mx-auto  text-secondary space-y-4 py-32">
+                        <div className="lg:w-[43%] space-y-4 flex flex-col justify-center">
+                            <h1 className="font-poppins ">REQUEST A STUDY SPOT</h1>
+                            <h1 className="font-poppins text-4xl font-bold text-heading">Help expand our ever growing study network!</h1>
+                            <p>
+                                Please submit new study locations thoughtfully and in good faith. All submissions will be reviewed before they’re visible to other students.
+                            </p>
+                            <p className="font-bold">
+                            Here are a few guidelines to follow: 
+                            </p>
+                            <p><span className="font-bold">🏷️ Tag Accuracy:</span> Use tags that genuinely reflect the study spot’s qualities for better search results.
+                            </p>
+                            <p><span className="font-bold">💯 Complete Information:</span> Provide as many details as possible to help others understand the space.
+                            </p>
+                            <p><span className="font-bold">📍 Location Details:</span> Double-check that the name and address are accurate to help students find the spot.
+                            </p>
+                            <div className="pt-6">
+                                <p className="font-bold">Thank you for helping make Study Spotter reliable and useful for everyone!</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
+                            <div className="h-[363px] w-[381px] bg-gray-200 flex flex-col items-center py-12 rounded-lg">
+                            </div>
+                        </div>
+                    </section>
+                    <hr className="border-[1px] border-black" />
+                </div >
+                
+                <div className="container mx-auto pt-24 pb-48 flex flex-col space-y-4 font-poppins text-secondary">
+                <h1 className="font-poppins text-4xl font-bold text-heading mb-12">Request New Location</h1>
                     <form className="flex flex-row flex-wrap gap-4 text-xl"
                         ref={formRef}
                         onSubmit={handleRequestSubmit}>
@@ -267,7 +283,7 @@ function RequestLocation() {
                     </form>
                 </div>
 
-            </div>
+            </div >
         </>
 
     );

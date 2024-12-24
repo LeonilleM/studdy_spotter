@@ -56,7 +56,7 @@ function AllSchools() {
                             <button
                                 onClick={handleModalOpen}
                                 aria-label="Register for Studdy Spotter"
-                                className="bg-accent text-white font-poppins  py-3 rounded-lg w-32 text-sm ">
+                                className="bg-accent text-white font-poppins py-4 px-6 rounded-lg text-sm ">
                                 Request School
                             </button>
                         </div>
