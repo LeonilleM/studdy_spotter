@@ -7,13 +7,13 @@ function ReviewFilter({ onFilterChange }) {
 
     return (
         <div>
-            <div className="review-filter font-lato flex gap-2 mb-4">
+            <div className="review-filter font-lato flex gap-2 mt-4">
                 <label htmlFor="filter">Filter by:</label>
                 <select
                     name="filter"
                     id="filter"
                     onChange={handleFilterChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w p-1 w-20 "
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w p-1 w-auto"
                 >
                     <option value="Newest">Recent</option>
                     <option value="Oldest">Oldest</option>

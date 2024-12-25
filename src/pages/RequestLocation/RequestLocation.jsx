@@ -196,7 +196,7 @@ function RequestLocation() {
                         </div>
                         <div className="flex flex-col gap-1 lg:w-1/3 w-1/2">
                             <label htmlFor="address" className="font-semibold ">Address</label>
-                            <input type="text" id="address" name="address" placeholder="ex. 1234 University Ave NE, Seattle, WA 98105" className="p-2 rounded-md hover:outline hover:outline-2 placeholder:italic hover:outline-action  focus:outline-none focus:ring-2 focus:ring-action lg:text-base text-sm " required />
+                            <input type="text" id="address" name="address" placeholder="ex. 1234 University Ave NE" className="p-2 rounded-md hover:outline hover:outline-2 placeholder:italic hover:outline-action  focus:outline-none focus:ring-2 focus:ring-action lg:text-base text-sm " required />
                         </div>
                         <div className="flex flex-col gap-1">
                             <label htmlFor="city" className="font-semibold ">City</label>

@@ -19,7 +19,7 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
                     onEditReview={handleEditReview}
                 />
             ))}
-            <h1 className="font-bold text-3xl font-poppins mb-2">Reviews</h1>
+            <h1 className="font-bold text-3xl font-poppins text-heading mt-24">Reviews</h1>
             <ReviewFilter
                 onFilterChange={onFilterChange}
             />

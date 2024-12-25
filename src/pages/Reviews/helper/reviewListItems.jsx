@@ -22,10 +22,10 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
 
 
     return (
-        <div className="flex flex-col space-y-2 pb-24 ">
-            {isUserReview && <h1 className="font-bold text-3xl font-poppins">Your Review</h1>}
-            <div className="flex flex-col font-lato w-full py-4">
-                <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-col space-y-2">
+            {isUserReview && <h1 className="font-bold text-3xl font-poppins text-heading">Your Review</h1>}
+            <div className="flex flex-col font-lato w-full">
+                <div className="flex flex-row justify-between items-center mt-6">
                     <div className="flex flex-row gap-4">
                         {review.Users.image_url ? (
                             <img
@@ -74,8 +74,8 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                         Updated {formatDistanceToNow(new Date(review.updated_at))} ago
                     </p>
                 )}
+                {!isUserReview && (<hr className="w-full border-black mt-14 mb-4" />)}
             </div>
-            {!isUserReview && (<hr className="w-full border-secondary" />)}
         </div>
     );
 }

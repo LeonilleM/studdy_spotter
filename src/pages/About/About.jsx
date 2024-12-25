@@ -35,9 +35,9 @@ function About() {
           </div>
 
           <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-            <div className="h-[471px] w-[387px] bg-white flex flex-col items-center py-12">
+            <div className="h-[471px] w-[350px] bg-white flex flex-col items-center py-8 border-[1px] border-borderColor">
               <img src={Creators} alt="Creators" />
-              <h1 className="font-poppins text-xl font-semibold mt-5">Leonille & Ethan</h1>
+              <h1 className="font-poppins text-xl font-semibold mt-8">Leonille & Ethan</h1>
             </div>
           </div>
         </div>
