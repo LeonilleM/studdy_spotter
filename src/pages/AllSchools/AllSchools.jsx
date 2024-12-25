@@ -50,14 +50,11 @@ function AllSchools() {
                         <p>
                             Please submit new study locations thoughtfully and in good faith. All submissions will be reviewed before theyre visible to other students.
                         </p>
-                        <p>
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s.
-                        </p>
                         <div className="pt-6">
                             <button
                                 onClick={handleModalOpen}
                                 aria-label="Register for Studdy Spotter"
-                                className="bg-accent text-white font-poppins py-4 px-6 rounded-lg text-sm ">
+                                className="bg-accent text-white font-poppins py-3 px-4 rounded-lg text-sm ">
                                 Request School
                             </button>
                         </div>

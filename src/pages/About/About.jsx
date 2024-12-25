@@ -1,5 +1,8 @@
 import BackButton from '../../components/shared/BackButton';
 import Creators from '../../assets/littlemonkey.png'
+import { NavLink} from 'react-router-dom';
+
+
 
 function About() {
   return (
@@ -12,7 +15,7 @@ function About() {
         <div className="flex flex-row flex-wrap container justify-between mx-auto  text-secondary space-y-4 py-32">
           <div className="lg:w-[43%] space-y-4 flex flex-col justify-center">
             <h1 className="font-poppins">ABOUT US</h1>
-            <h1 className="font-poppins text-4xl font-bold">Helping students find the <span>best</span> study spots in the nation</h1>
+            <h1 className="font-poppins text-4xl font-bold text-heading">Helping students find the <span>best</span> study spots in the nation</h1>
             <p>
               Studdy Spotter was a small project that I created within a two-week time frame for one my (Leo) classes during Summer of 2024.
             </p>
@@ -25,12 +28,15 @@ function About() {
             <p >
               The repository for the original application is open, and I do plan to publicize the repository for this project after I’m happy with what I’ve done.
             </p>
+            
             <div className="pt-6">
-              <button
-                aria-label="Register for Studdy Spotter"
-                className="bg-accent text-white font-poppins  py-3 rounded-lg w-24 text-sm ">
-                Register
-              </button>
+              <NavLink to="/signup" className="text-white flex items-center gap-1">
+                <button
+                  aria-label="Register for Studdy Spotter"
+                  className="bg-accent text-white font-poppins py-3 px-4 rounded-lg text-sm">
+                  Register
+                </button>
+              </NavLink>
             </div>
           </div>
 
