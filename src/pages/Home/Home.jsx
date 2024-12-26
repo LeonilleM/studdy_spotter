@@ -5,10 +5,8 @@ import { NavLink } from 'react-router-dom'
 import { IoSearchOutline } from "react-icons/io5";
 import { FaUniversity } from "react-icons/fa";
 import PropTypes from 'prop-types';
-import PopupModal from '../../components/shared/popupModal'
 
 function Home() {
-    // Define state to hold universities
     const [universities, setUniversities] = useState([]);
 
     useEffect(() => {
@@ -19,8 +17,6 @@ function Home() {
             .catch(error => console.error(error));
     }, []);
 
-
-    // Map universities to options for react-select
     const options = universities.map(university => ({
         value: university.name,
         label: university.name + ', ' + university.city

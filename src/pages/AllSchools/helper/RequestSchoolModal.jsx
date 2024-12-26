@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Select from 'react-select';
 import { sendCampusRequest } from '../../../services/University/University';
 import { fetchStates } from '../../../services/helper/helper';
 import PropTypes from 'prop-types';
@@ -56,7 +55,7 @@ function RequestSchoolModal({ isOpen, onClose }) {
     return (
         <div
             onClick={onClose}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
             <div
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white rounded-lg py-8 px-12 border-2 text-secondary flex flex-col font-poppins">
@@ -90,10 +89,15 @@ function RequestSchoolModal({ isOpen, onClose }) {
                         <label htmlFor="state" className="text-sm font-medium">
                             State
                         </label>
-                        <Select
-                            onChange={handleStateChange}
-                            options={states.map(state => ({ value: state.name, label: state.abr }))}
-                        />
+                        <select
+                            className="border border-secondary rounded-lg p-2"
+                            onChange={(e) => handleStateChange(e.target.value)}
+                        >
+                            <option value="">Select State</option>
+                            {states.map(state => (
+                                <option key={state.id} value={state.abr}>{state.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
                 <div className="flex flex-col mt-4">
@@ -107,7 +111,7 @@ function RequestSchoolModal({ isOpen, onClose }) {
                     />
                 </div>
                 <button
-                    className="w-full bg-action text-white rounded-xl mt-4 p-2"
+                    className=" bg-action text-white rounded-xl mt-4 p-2"
                     onClick={handleRequestCampus}
                 >
                     Submit
