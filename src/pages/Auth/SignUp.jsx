@@ -100,7 +100,7 @@ const SignUp = () => {
                                 />
                             </div>
                         </div>
-                        <div className="flex flex-col py-6">
+                        <div className="flex flex-col">
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -117,9 +117,11 @@ const SignUp = () => {
                             </button>
                         </div>
                     </form>
-                    <h1 className="py-10 text-secondary text-center"> Have an account?
-                        <NavLink to="/signin" className="text-action font-bold underline hover:text-black ease-in-out duration-500"> Sign In</NavLink>
-                    </h1>
+                    <NavLink to='/signin'>
+                    <p className="py-10 text-secondary text-center">Have an account?{' '} 
+                         <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Sing Up</span>
+                    </p>
+                    </NavLink>
                 </div>
             </div>
         </div>

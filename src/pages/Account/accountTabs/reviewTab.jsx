@@ -53,7 +53,7 @@ function ReviewTab({ userId }) {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 pt-2">
+                    <div className="flex items-center gap-2 pt-5">
                         <StarRating rating={review.rating} />
                         <span className="text-sm">
                             {new Date(review.created_at).toLocaleDateString('en-US', {

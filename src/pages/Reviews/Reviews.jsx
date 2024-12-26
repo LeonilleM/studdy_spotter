@@ -201,7 +201,7 @@ function Reviews() {
                 timeout={popUp.timeout}
             />
             }
-            <div className="container mx-auto flex flex-col lg:flex-row lg:justify-between lg:pt-24 sm:px-0 px-6 ">
+            <div className="container mx-auto flex flex-col lg:flex-row lg:justify-between lg:pt-24 sm:px-0 px-6 pb-32 ">
                 <div className="lg:w-2/5 text-secondary lg:order-1 order-2 relative">
                     {reviews.userReview.length > 0 || reviews.otherReviews.length > 0 ? (
                         <ReviewList

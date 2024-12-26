@@ -23,7 +23,7 @@ function Footer() {
                                     <NavLink to="/allschools" className="text-white flex items-center gap-1">
                                         All Schools
                                     </NavLink>
-                                    <NavLink to="/" className="text-white flex items-center gap-1">
+                                    <NavLink to="/privacy-policy" className="text-white flex items-center gap-1">
                                         Privacy Policy
                                     </NavLink>
                                 </div>

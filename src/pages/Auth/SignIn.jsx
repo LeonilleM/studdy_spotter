@@ -111,7 +111,7 @@ function SignIn() {
                         </div>
 
                         {/* Sign in button */}
-                        <div className="flex flex-col py-6 space-y-4 ">
+                        <div className="flex flex-col space-y-4 ">
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -136,15 +136,11 @@ function SignIn() {
                         </div>
                     </form>
                     {/* Sign up link */}
-                    <div className="pt-4 pb-8 text-secondary text-center">
-                        Need an account?{' '}
-                        <NavLink
-                            to="/signup"
-                            className="text-action font-bold underline hover:text-black transition-colors duration-300"
-                        >
-                            Sign Up
-                        </NavLink>
-                    </div>
+                    <NavLink to='/signup'>
+                    <p className="py-10 text-secondary text-center">Need an account?{' '} 
+                         <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Register</span>
+                    </p>
+                    </NavLink>
                 </div>
             </div>
         </div >

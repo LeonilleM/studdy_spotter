@@ -1,6 +1,9 @@
 import BackButton from '../../components/shared/BackButton';
 import Creators from '../../assets/littlemonkey.png'
 import { NavLink } from 'react-router-dom';
+import { NavLink} from 'react-router-dom';
+
+
 
 function About() {
   return (
@@ -13,7 +16,7 @@ function About() {
         <div className="flex flex-row flex-wrap container justify-between mx-auto  text-secondary space-y-4 py-32">
           <div className="lg:w-[43%] space-y-4 flex flex-col justify-center">
             <h1 className="font-poppins">ABOUT US</h1>
-            <h1 className="font-poppins text-4xl font-bold">Helping students find the <span>best</span> study spots in the nation</h1>
+            <h1 className="font-poppins text-4xl font-bold text-heading">Helping students find the <span>best</span> study spots in the nation</h1>
             <p>
               Studdy Spotter was a small project that I created within a two-week time frame for one my (Leo) classes during Summer of 2024.
             </p>
@@ -26,21 +29,20 @@ function About() {
             <p >
               The repository for the original application is open, and I do plan to publicize the repository for this project after I’m happy with what I’ve done.
             </p>
+            
             <div className="pt-6">
-              <NavLink to="/signup">
-                <button
-                  aria-label="Register for Studdy Spotter"
-                  className="bg-accent text-white font-poppins  py-3 rounded-lg w-24 text-sm ">
-                  Register
-                </button>
-              </NavLink>
+              <button
+                aria-label="Register for Studdy Spotter"
+                className="bg-accent text-white font-poppins  py-3 rounded-lg w-24 text-sm ">
+                Register
+              </button>
             </div>
           </div>
 
           <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-            <div className="h-[471px] w-[387px] bg-white flex flex-col items-center py-12">
+            <div className="h-[471px] w-[350px] bg-white flex flex-col items-center py-8 border-[1px] border-borderColor">
               <img src={Creators} alt="Creators" />
-              <h1 className="font-poppins text-xl font-semibold mt-5">Leonille & Ethan</h1>
+              <h1 className="font-poppins text-xl font-semibold mt-8">Leonille & Ethan</h1>
             </div>
           </div>
         </div>
