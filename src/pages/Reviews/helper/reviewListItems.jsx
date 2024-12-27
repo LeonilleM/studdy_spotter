@@ -74,7 +74,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                         Updated {formatDistanceToNow(new Date(review.updated_at))} ago
                     </p>
                 )}
-                {!isUserReview && (<hr className="w-full border-black mt-14 mb-4" />)}
+                {!isUserReview && (<hr className="w-full border-[1px] border-[#3c3c3c] mt-14 mb-12" />)}
             </div>
         </div>
     );

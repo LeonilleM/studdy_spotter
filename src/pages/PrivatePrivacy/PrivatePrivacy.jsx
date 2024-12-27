@@ -3,7 +3,7 @@ import BackButton from '../../components/shared/BackButton';
 function PrivatePrivacy() {
     return (
         <div className=" bg-background ">
-            <div className="absolute top-28 sm:left-14 left-4" >
+            <div className="absolute top-32 sm:left-14 left-4" >
                 <BackButton />
             </div>
             <section className="pt-24 container mx-auto sm:px-0 px-4">
@@ -24,7 +24,7 @@ function PrivatePrivacy() {
                             <span className="font-bold">🔄 Data Usage: </span>Your data helps us improve the app and is not shared with third parties unless required by law. We do use third-party services to support app functionality.
                         </p>
                         <p >
-                            If you have any questions or concerns, feel free to contact us at 
+                            If you have any questions or concerns, feel free to contact us at
                             <span className="font-bold"> support_studdyspotter@gmail.com</span>
                         </p>
                     </div>

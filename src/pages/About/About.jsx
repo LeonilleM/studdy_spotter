@@ -1,13 +1,13 @@
 import BackButton from '../../components/shared/BackButton';
 import Creators from '../../assets/littlemonkey.png'
-import { NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 
 
 function About() {
   return (
     <div className=" bg-background ">
-      <div className="absolute top-28 sm:left-14 left-4" >
+      <div className="absolute top-32 sm:left-14 left-4" >
         <BackButton />
       </div>
       <section className="pt-24 container mx-auto sm:px-0 px-4">
@@ -28,7 +28,7 @@ function About() {
             <p >
               The repository for the original application is open, and I do plan to publicize the repository for this project after I’m happy with what I’ve done.
             </p>
-            
+
             <div className="pt-6">
               <NavLink to="/signup" className="text-white flex items-center gap-1">
                 <button
