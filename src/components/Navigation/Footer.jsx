@@ -7,7 +7,7 @@ function Footer() {
     return (
         <footer className="w-full">
             {location.pathname !== '/signup' && location.pathname !== '/signin' && (
-                <div className="bg-secondary sm:h-[20vh] h-full py-6 text-white ">
+                <div className="bg-secondary   py-6 text-white ">
                     <div className="container mx-auto justify-between flex flex-col h-full">
                         <NavLink to="/">
                             <img src={Logo} alt="logo" className="w-32 sm:px-0 mx-4 my-4" />
