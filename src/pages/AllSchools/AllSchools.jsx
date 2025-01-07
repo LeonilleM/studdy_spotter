@@ -75,7 +75,7 @@ function AllSchools() {
                                     return (
                                         <NavLink
                                             key={uni.id}
-                                            to={`/university/${uni.name}`}>
+                                            to={`/university/${encodeURIComponent(uni.name)} ${encodeURIComponent(uni.city)}`}>
                                             <h1 className="font-lato tracking-wide">{uni.name} - {uni.city}</h1>
                                         </NavLink>
                                     );
