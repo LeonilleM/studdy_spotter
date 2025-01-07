@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 function StudyLocationList({ studyLocations, uniName }) {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 lg:gap-14 ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 sm:gap-12 lg:gap-14 ">
             {studyLocations.map((studyLocation) => {
                 const studyLocationPath = `/university/${uniName}/${studyLocation.name}`;
                 return (
@@ -19,7 +19,7 @@ function StudyLocationList({ studyLocations, uniName }) {
                         <img
                             src={studyLocation.image_url}
                             alt="placeholder"
-                            className="w-full sm:h-52 h-40 object-cover rounded-l-xl group-hover:opacity-85"
+                            className="w-full sm:h-56 object-cover rounded-l-xl group-hover:opacity-85"
                         />
                         <div className="bg-white rounded-r-xl items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
                             <h1 className="sm:text-2xl  px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">

@@ -39,7 +39,7 @@ function AllSchools() {
 
     return (
         <div className="flex flex-col bg-background ">
-            <div className="absolute top-28 sm:left-14 left-4" >
+            <div className="absolute top-32 sm:left-14 left-4" >
                 <BackButton />
             </div>
             <div className="pt-24 container mx-auto sm:px-0 px-4">

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser } from 'react-icons/fa';
 import Select from 'react-select';
+import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities } from '../../services/University/University.js';
 import EditImageButton from './helper/editImage.jsx';
 
@@ -83,6 +84,9 @@ function Profile() {
 
     return (
         <div className="xl:h-screen flex justify-center items-center bg-background">
+            <div className="absolute top-32 sm:left-14 left-4" >
+                <BackButton />
+            </div>
             <div className="container mx-auto md:px-44 px-4 py-32 text-secondary">
                 <form
                     onSubmit={handleSubmitForm}
