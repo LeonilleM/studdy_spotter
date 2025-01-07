@@ -6,6 +6,7 @@ import { requestStudyLocation } from '../../../services/StudyLocation/Study.js';
 import { fetchUniversities } from '../../../services/University/University.js';
 import { loadingComponent } from "../../../components/Loading.jsx";
 import Modal from "../../../components/shared/popupModal";
+import PropTypes from 'prop-types';
 
 function RequestLocationModal({ isOpen, onClose, user }) {
     const [states, setStates] = useState([]);
@@ -45,17 +46,6 @@ function RequestLocationModal({ isOpen, onClose, user }) {
 
     const handleRequestSubmit = async (event) => {
         event.preventDefault();
-        if (!user) {
-            setModal({
-                type: 'noAuth',
-                message: 'Please log in to request a new study location',
-                onClick: () => setModal(null),
-                timeout: 5000
-            })
-
-            setIsLoading(false);
-            return;
-        }
         setIsLoading(true);
         const formData = new FormData(event.target);
 
@@ -65,7 +55,7 @@ function RequestLocationModal({ isOpen, onClose, user }) {
             city: formData.get('city'),
             state_id: selectedState ? selectedState.id : null,
             tags: selectedTags.map(tag => tag.value),
-            user_id: user.id,
+            user_id: user,
             category: formData.get('category'),
             university_id: selectedCategory.value === 'On-Campus' ? selectedUniversity.value : null,
             image: selectedFile
@@ -129,8 +119,26 @@ function RequestLocationModal({ isOpen, onClose, user }) {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
+        // Check if file is not an image
+        if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            setModal({
+                type: 'failed',
+                message: 'Only image files (jpeg, jpg, png) are allowed.',
+                timeout: 3000,
+                onClick: () => setModal(null)
+            });
+            return;
+        }
         setSelectedFile(file);
         setImagePreview(URL.createObjectURL(file));
+    };
+
+    const removeImage = () => {
+        setSelectedFile(null);
+        setImagePreview(null);
+        if (formRef.current) {
+            formRef.current.querySelector('input[type="file"]').value = '';
+        }
     };
 
     if (!isOpen) return null;
@@ -156,7 +164,7 @@ function RequestLocationModal({ isOpen, onClose, user }) {
                 )}</>
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-12 w-full max-w-full rounded-xl">
+                className="bg-white p-12 w-full max-w-full rounded-xl overflow-y-auto sm:max-w-screen-xl max-h-[90vh]">
                 <h1 className="text-heading font-bold text-2xl">Request New Location</h1>
                 <form className="pt-4 flex flex-col  gap-4" ref={formRef} onSubmit={handleRequestSubmit}>
                     <div className="flex flex-row flex-wrap gap-4">
@@ -233,28 +241,34 @@ function RequestLocationModal({ isOpen, onClose, user }) {
                         </div>
                     )}
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col space-y-2">
                         <label htmlFor="image" className="text-sm font-medium">Upload Image <span className="text-xs italic font-normal">(this will be the location image)</span></label>
-                        <div className="relative flex items-center  p-4 border-2 border-l-8 border-l-accent rounded-lg h-[12rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
-                            style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
+                        <div className="relative flex items-center  p-4 border border-l-8 border-l-accent rounded-3xl h-[10rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
+                            style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'fill', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
                             <input type="file"
                                 name="image"
                                 accept="image/jpeg, image/jpg, image/png"
                                 id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} />
-                            <div className="flex flex-col space-y-2">
-
-                                <p className="text-sm">Drag & drop an image here, or click to select one</p>
-
-                            </div>
-
+                            {!imagePreview &&
+                                <div className="flex flex-col space-y-2">
+                                    <p className="text-sm">Drag & drop an image here, or click to select one</p>
+                                </div>
+                            }
                         </div>
-                        {selectedFile && <p className="text-sm text-primary mt-2 text-center">{selectedFile.name}</p>}
+                        {selectedFile && <button type="button" className="text-sm text-red-500 mt-2 t" onClick={removeImage}>Remove Image</button>}
                     </div>
                     <button type="submit" className="bg-primary text-white p-2 rounded">Submit</button>
                 </form>
             </div>
         </div>
     );
+}
+
+
+RequestLocationModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    user: PropTypes.string.isRequired
 }
 
 export default RequestLocationModal;

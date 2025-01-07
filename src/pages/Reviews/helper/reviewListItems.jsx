@@ -22,8 +22,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
 
 
     return (
-        <div className="flex flex-col space-y-2">
-            {isUserReview && <h1 className="font-bold text-3xl font-poppins text-heading">Your Review</h1>}
+        <div className="flex flex-col space-y-2 ">
             <div className="flex flex-col font-lato w-full">
                 <div className="flex flex-row justify-between items-center mt-6">
                     <div className="flex flex-row gap-4">

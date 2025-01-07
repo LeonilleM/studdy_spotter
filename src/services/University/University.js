@@ -21,8 +21,13 @@ export const fetchUniversities = async () => {
 
 // Fetches University Data by the name
 export const fetchUniversityData = async (uniName) => {
-    const university = decodeURIComponent(uniName);
+    // Extract the last part of the URL
+    const lastIndex = uniName.lastIndexOf(' ');
+    const university = uniName.substring(0, lastIndex);
+    const city = uniName.substring(lastIndex + 1);
 
+    console.log(university);
+    console.log(city);
     const { data, error } = await supabase
         .from('University')
         .select(
@@ -32,6 +37,7 @@ export const fetchUniversityData = async (uniName) => {
             )
            `)
         .eq('name', university)
+        .eq('city', city)
         .eq('status', 'Approved')
     if (error) {
         throw error

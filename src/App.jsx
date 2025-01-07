@@ -14,7 +14,7 @@ import Setting from './pages/Setting/Setting';
 import RequestLocation from './pages/RequestLocation/RequestLocation';
 import ProtectedRoute from './services/Auth/ProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
-import PrivatePrivacy from './pages/PrivatePrivacy/PrivatePrivacy'; 
+import PrivatePrivacy from './pages/PrivatePrivacy/PrivatePrivacy';
 
 function App() {
 
@@ -31,11 +31,11 @@ function App() {
         <Route path="/university/request-location" element={<RequestLocation />} />
         <Route path="/about" element={<About />} />
         <Route path="/allschools" element={<AllSchools />} />
-        <Route path="/privacy-policy" element={<PrivatePrivacy />} /> 
+        <Route path="/privacy-policy" element={<PrivatePrivacy />} />
         <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
         <Route path="/setting" element={<ProtectedRoute Component={Setting} />} />
         <Route path="/admin-dashboard" element={<ProtectedRoute Component={AdminDashboard} />} />
-       
+
       </Routes>
       <Footer />
     </div>

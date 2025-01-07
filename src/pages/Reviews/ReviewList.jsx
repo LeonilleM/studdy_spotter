@@ -11,15 +11,20 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
 
     return (
         <>
-            {reviews.userReview.map((review, index) => (
-                <ReviewListItems
-                    key={review.id || `user-review-${index}`}
-                    review={review}
-                    isUserReview
-                    onEditReview={handleEditReview}
-                />
-            ))}
-            <h1 className="font-bold text-3xl font-poppins text-heading mt-20">Reviews</h1>
+            {reviews.userReview.length > 0 && (
+                <div key="user-reviews" className="pb-20">
+                    <h1 className="font-bold text-3xl font-poppins text-heading">Your Review</h1>
+                    {reviews.userReview.map((review, index) => (
+                        <ReviewListItems
+                            key={review.id || `user-review-${index}`}
+                            review={review}
+                            isUserReview
+                            onEditReview={handleEditReview}
+                        />
+                    ))}
+                </div>
+            )}
+            <h1 className="font-bold text-3xl font-poppins text-heading ">Reviews</h1>
             <ReviewFilter
                 onFilterChange={onFilterChange}
             />

@@ -38,7 +38,6 @@ const Modal = ({ type, message, onClick, timeout }) => {
                     onClick();
                 }
             }, timeout);
-
             return () => clearTimeout(timer);
         }
     }, [timeout, onClick]);

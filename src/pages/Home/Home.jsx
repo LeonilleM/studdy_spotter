@@ -18,13 +18,14 @@ function Home() {
     }, []);
 
     const options = universities.map(university => ({
-        value: university.name,
+        value: `${university.name} ${university.city}`,
         label: university.name + ', ' + university.city
     }));
 
     const handleChange = (selectedOption) => {
         if (selectedOption) {
-            window.location.href = `/university/${selectedOption.value}`;
+            const nameWithCity = selectedOption.value;
+            window.location.href = `/university/${encodeURIComponent(nameWithCity)}`;
         }
     };
 

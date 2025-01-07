@@ -168,7 +168,8 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
             ),
             University:university_id!inner (
                 name,
-                school_hex_color
+                school_hex_color,
+                city
             ),
             State:state_id(abr)
         `)
