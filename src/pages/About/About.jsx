@@ -1,9 +1,6 @@
 import BackButton from '../../components/shared/BackButton';
 import Creators from '../../assets/littlemonkey.png'
 import { NavLink } from 'react-router-dom';
-import { NavLink} from 'react-router-dom';
-
-
 
 function About() {
   return (
@@ -29,13 +26,15 @@ function About() {
             <p >
               The repository for the original application is open, and I do plan to publicize the repository for this project after I’m happy with what I’ve done.
             </p>
-            
+
             <div className="pt-6">
-              <button
-                aria-label="Register for Studdy Spotter"
-                className="bg-accent text-white font-poppins  py-3 rounded-lg w-24 text-sm ">
-                Register
-              </button>
+              <NavLink to="/signup">
+                <button
+                  aria-label="Register for Studdy Spotter"
+                  className="bg-accent text-white font-poppins  py-3 rounded-lg w-24 text-sm ">
+                  Register
+                </button>
+              </NavLink>
             </div>
           </div>
 
