@@ -6,21 +6,21 @@ import SignIn from './pages/Auth/SignIn';
 import SignUp from './pages/Auth/SignUp';
 import Home from './pages/Home/Home';
 import University from './pages/University/University'
-import Reviews from './pages/University/Reviews/Reviews'
+import Reviews from './pages/Reviews/Reviews'
 import About from './pages/About/About';
 import AllSchools from './pages/AllSchools/AllSchools';
 import Account from './pages/Account/Account';
 import Setting from './pages/Setting/Setting';
-import RequestLocation from './pages/University/RequestLocation/RequestLocation';
+import RequestLocation from './pages/RequestLocation/RequestLocation';
 import ProtectedRoute from './services/Auth/ProtectedRoute';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import PrivatePrivacy from './pages/PrivatePrivacy/PrivatePrivacy';
 
 function App() {
 
 
   return (
     <div>
-
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -31,12 +31,13 @@ function App() {
         <Route path="/university/request-location" element={<RequestLocation />} />
         <Route path="/about" element={<About />} />
         <Route path="/allschools" element={<AllSchools />} />
+        <Route path="/privacy-policy" element={<PrivatePrivacy />} />
         <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
         <Route path="/setting" element={<ProtectedRoute Component={Setting} />} />
         <Route path="/admin-dashboard" element={<ProtectedRoute Component={AdminDashboard} />} />
+
       </Routes>
       <Footer />
-
     </div>
   )
 }

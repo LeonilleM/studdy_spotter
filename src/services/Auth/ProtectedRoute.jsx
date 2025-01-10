@@ -7,10 +7,9 @@ import { loadingComponent } from '../../components/Loading';
 const ProtectedRoute = ({ Component }) => {
     const { isAuthenticated, isLoading } = useContext(AuthContext);
     const location = useLocation();
-    // Load first
-    if (isLoading) return loadingComponent("Checking Authentication...");
 
-    // Final check
+    if (isLoading) return loadingComponent("Checking Credentials...");
+
     return isAuthenticated ? (
         <Component />
     ) : (

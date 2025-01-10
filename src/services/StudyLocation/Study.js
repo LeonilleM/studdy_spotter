@@ -121,6 +121,9 @@ export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
             image_url,
             UserReview (
                 rating
+            ),
+            LocationTagList (
+                TagTypes:tag_id (name)
             )
         `)
         .eq('university_id', uniID)
@@ -155,6 +158,8 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
             image_url,
             address,
             city,
+            category,
+            zipcode,
             LocationTagList (
                 TagTypes:tag_id (name)
             ),
@@ -162,8 +167,11 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
                 rating
             ),
             University:university_id!inner (
-                name
-            )
+                name,
+                school_hex_color,
+                city
+            ),
+            State:state_id(abr)
         `)
         .eq('name', studyName)
         .eq('University.name', universityName)
@@ -196,9 +204,62 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
     }
 }
 
+// This returns most popular study locations for a given university
+export const fetchPopularLocations = async (universityID) => {
+    const MIN_REVIEWS = 5;
+    const MIN_RATING = 3.5;
+
+    const { data, error } = await supabase
+        .from('StudyLocation')
+        .select(`
+            id,
+            name,
+            image_url,
+            UserReview (
+                rating
+            ),
+            University:university_id!inner (
+                name
+            )   
+        `)
+        .eq('university_id', universityID);
+
+    if (error) {
+        throw error;
+    }
+
+    // Process the results to calculate averages and counts
+    const processedLocations = data.map(location => {
+        const reviews = location.UserReview || [];
+        const review_count = reviews.length;
+        const rating = review_count > 0
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / review_count
+            : 0;
+
+        return {
+            ...location,
+            review_count,
+            rating: rating ? Number(rating.toFixed(1)) : 0 // Round to 1 decimal place
+        };
+    });
+
+    // Filter locations based on criteria
+    const popularLocations = processedLocations.filter(location =>
+        location.review_count >= MIN_REVIEWS && location.rating >= MIN_RATING
+    );
+
+    // Sort by number of reviews and rating
+    popularLocations.sort((a, b) => {
+        if (b.review_count === a.review_count) {
+            return b.rating - a.rating;
+        }
+        return b.rating - a.rating;
+    });
+    return popularLocations;
+};
+
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
-
     const { data, error } = await supabase
         .from('studylocationrequest')
         .insert([
@@ -213,12 +274,71 @@ export const requestStudyLocation = async (studyLocationData) => {
                 locationtag: studyLocationData.tags,
             }
         ])
+        .select('id')
+        .single();
 
     if (error) {
+        console.error('Error inserting study location:', error);
         throw error;
-    } else {
-        console.log("Study Location Requested, wait for approval", data);
     }
 
+    const studyLocationId = data.id;
+    const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
 
-}
+    try {
+        const { error: imageError } = await supabase.storage
+            .from('study_location_image')
+            .upload(sanitizedFileName, studyLocationData.image);
+
+        if (imageError) {
+            console.error('Error uploading image:', imageError);
+            throw imageError;
+        }
+
+        const { data: publicURL, error: publicURLError } = await supabase.storage
+            .from('study_location_image')
+            .getPublicUrl(sanitizedFileName);
+        if (publicURLError) {
+            console.error('Error getting public URL:', publicURLError);
+            throw publicURLError;
+        }
+
+        if (!publicURL) {
+            // Delete the inserted study location if the image URL is not available
+            await supabase
+                .from('studylocationrequest')
+                .delete()
+                .eq('id', studyLocationId);
+            console.error('Failed to get public URL for image');
+            throw new Error('Failed to get public URL for image');
+        }
+
+        const image_url = publicURL.publicUrl;
+
+
+        const { error: updateError } = await supabase
+            .from('studylocationrequest')
+            .update({ image_url })
+            .eq('id', studyLocationId);
+
+        if (updateError) {
+            console.error('Error updating study location with image URL:', updateError);
+            throw updateError;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error during requestStudyLocation:', error);
+        // Ensure the original insert is deleted if any error occurs
+        try {
+            await supabase
+                .from('studylocationrequest')
+                .delete()
+                .eq('id', studyLocationId);
+            console.log('Deleted study location due to error:', studyLocationId);
+        } catch (deleteError) {
+            console.error('Error deleting study location after failure:', deleteError);
+        }
+        throw error;
+    }
+};

@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
-import { toggleFavorite, fetchUserFavorites } from '../../../../services/StudyLocation/Study';
+import { toggleFavorite, fetchUserFavorites } from '../../../services/StudyLocation/Study';
 
 
 const useFavorite = (studyLocationID, userID, initialState = false) => {
-const [isFavorite, setIsFavorite] = useState(initialState);
+    const [isFavorite, setIsFavorite] = useState(initialState);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isOnCooldown, setIsOnCooldown] = useState(false);
     const [cooldownEndTime, setCooldownEndTime] = useState(null);
     const [cooldownTimeLeft, setCooldownTimeLeft] = useState(0);
 
-    const COOLDOWN_DURATION = 6000;
+    const COOLDOWN_DURATION = 5000;
 
     // Check initial favorite status    
     useEffect(() => {
@@ -20,7 +20,10 @@ const [isFavorite, setIsFavorite] = useState(initialState);
             setIsLoading(true);
             try {
                 const favorites = await fetchUserFavorites(userID);
-                const favoriteIds = favorites.map(fav => fav.study_location_id);
+
+                const favoriteIds = favorites.flatMap(collection =>
+                    collection.Collectionlist.map(item => item.UserFavorites.StudyLocation.id)
+                );
                 setIsFavorite(favoriteIds.includes(studyLocationID));
                 setError(null);
             } catch (err) {
@@ -65,6 +68,7 @@ const [isFavorite, setIsFavorite] = useState(initialState);
     const handleToggle = useCallback(async () => {
         if (!userID) {
             setError(new Error('User must be logged in'));
+
             return;
         }
 

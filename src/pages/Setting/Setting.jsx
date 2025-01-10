@@ -2,152 +2,168 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser } from 'react-icons/fa';
 import Select from 'react-select';
+import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities } from '../../services/University/University.js';
-import { updateUserProfile } from '../../services/Auth/Auth.js';
-
-
-const modalProfileImage = (onClose, user) => {
-    return (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen bg-black/30">
-                <div className="bg-white pt-12 rounded-lg shadow-lg text-center flex flex-col w-[50vh]">
-                    <h2 className="text-xl font-semibold mb-4">Change Profile Image</h2>
-                    <div className="px-24 border-t py-2 hover:bg-slate-300">
-                        <input
-                            type="file"
-                            className="w-full text-slate-500 file:text-action file:cursor-pointer file:bg-transparent file:border-none file:outline-none hover:cursor-pointer"
-                            placeholder="Choose Image"
-                        />
-                    </div>
-                    {user.image_url && (
-                        <button
-                            type="button"
-                            className=" text-red-500 border-t py-2 hover:bg-slate-300"
-                        >
-                            Remove Image
-                        </button>
-                    )}
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="text-secondary border-t px-4 py-2 rounded hover:bg-slate-300 "
-                    >
-
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-
+import EditImageButton from './helper/editImage.jsx';
 
 function Profile() {
-    const { user } = useContext(AuthContext)
-    const [universities, setUniversities] = useState([])
-    const [modalOpen, setModalOpen] = useState(false)
-    const [selectedUniversity, setSelectedUniversity] = useState(null)
-
+    const { user, profileUpdate } = useContext(AuthContext);
+    const [universities, setUniversities] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedUniversity, setSelectedUniversity] = useState(null);
+    const [firstName, setFirstName] = useState(user.first_name);
+    const [lastName, setLastName] = useState(user.last_name);
+    const [university] = useState(user.University?.name || "No University Affiliation");
 
     const handleModalOpen = () => {
-        setModalOpen(true)
-    }
+        setModalOpen(true);
+    };
 
     const handleModalClose = () => {
-        setModalOpen(false)
-    }
+        setModalOpen(false);
+    };
 
     const handleUniversity = (selectedOption) => {
         setSelectedUniversity(selectedOption);
-
     };
-
 
     useEffect(() => {
         fetchUniversities()
             .then(data => {
-                setUniversities(data)
+                setUniversities(data);
             })
             .catch(error => {
-                console.log(error)
-            })
-    }, [])
+                console.log(error);
+            });
+    }, []);
 
     const handleSubmitForm = (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        const formData = new FormData(e.target)
         const profileData = {
             userId: user.id,
-            firstName: formData.get('firstName'),
-            lastName: formData.get('lastName'),
+            firstName: firstName,
+            lastName: lastName,
             universityId: selectedUniversity?.value
-        }
+        };
 
-
-
-        updateUserProfile(profileData).then(() => {
+        profileUpdate(profileData, false).then(() => {
             alert('Profile updated successfully');
         }).catch(error => {
             console.error(error);
-            alert('An error occurred while sending study location request');
+            alert('An error occurred while updating the profile');
         });
-    }
+    };
+
+    const customStyles = {
+        option: (provided, state) => ({
+            ...provided,
+            color: state.data.isDisabled ? 'gray' : 'black',
+            backgroundColor: state.data.isDisabled ? '#f0f0f0' : 'white',
+            cursor: state.isDisabled ? 'not-allowed' : 'default',
+        }),
+    };
+
+    const userUniversity = universities.find(uni => uni.name === university);
+    const otherUniversities = universities.filter(uni => uni.name !== university);
+
+    const universityOptions = [
+        ...(userUniversity ? [{
+            value: userUniversity.id,
+            label: userUniversity.name + ", " + userUniversity.city,
+            isDisabled: true,
+        }] : []),
+        ...otherUniversities
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(uni => ({
+                value: uni.id,
+                label: uni.name + ", " + uni.city,
+                isDisabled: false,
+            }))
+    ];
 
     return (
-        <div className="h-screen flex justify-center items-center bg-primary">
-            <div className="container mx-auto xl:px-96 md:px-44 px-4 text-secondary">
-                <h1 className="text-2xl font-semibold font-poppins">Edit Profile</h1>
+        <div className="xl:h-screen flex justify-center items-center bg-background">
+            <div className="absolute top-32 sm:left-14 left-4" >
+                <BackButton />
+            </div>
+            <div className="container mx-auto md:px-44 px-4 py-32 text-secondary">
                 <form
                     onSubmit={handleSubmitForm}
-                    className="mt-4 font-lato space-y-6 ">
-                    <div className="flex flex-row justify-between bg-white rounded-xl p-4">
-                        <div className="flex flex-row gap-4">
-                            {user.image_url ? (
-                                <img src={user.image_url} alt="user avatar" className="w-14 h-14 rounded-full shadow-md" />
-                            ) : (
-                                <FaUser className="w-14 h-14 bg-gray-300 text-white rounded-full shadow-md border-2" />
-                            )}
-                            <div className="flex flex-col">
-                                <h1 className="text-sm font-semibold mt-2">{user.first_name} {user.last_name}</h1>
-                                <span className="text-sm">{user.University?.name || "No University Affiliation"}</span>
-                            </div>
-                        </div>
+                    className="mt-4 font-lato gap-4 flex xl:flex-row flex-col justify-center">
+                    <div className="flex flex-col justify-center items-center bg-secondary rounded-xl py-32 text-white 2xl:w-[30%] xl:w-[35%] w-full">
+                        {user.image_url ? (
+                            <img
+                                src={user.image_url}
+                                draggable="false"
+                                alt="user avatar"
+                                className="w-24 h-24 rounded-full shadow-md"
+                            />
+                        ) : (
+                            <FaUser className="w-24 h-24 bg-gray-300 text-white rounded-full shadow-md border-2" />
+                        )}
+                        <h1 className="text-lg font-semibold mt-4">{user.first_name} {user.last_name}</h1>
+                        <span>{user.University?.name || "No University Affiliation"}</span>
                         <button
                             type="button"
                             onClick={handleModalOpen}
-                            className="bg-action text-white my-2 py-2 px-2 rounded-lg hover:scale-105 transition duration-300 ease-in-out">
-                            Change Image
+                            className="bg-action text-white p-2 mt-4 rounded-lg hover:scale-105 transition duration-300 ease-in-out w-36"
+                        >
+                            Change Photo
                         </button>
-                        {modalOpen && modalProfileImage(handleModalClose, user)}
+                        {modalOpen && (
+                            <EditImageButton
+                                onClose={handleModalClose}
+                                user={user}
+                                profileUpdate={profileUpdate}
+                            />
+                        )}
                     </div>
-                    <div className="flex flex-row gap-12">
-                        <div className="flex flex-col  w-1/2">
-                            <label htmlFor="firstName" className="text-sm font-semibold ">First Name</label>
-                            <input type="text" name="firstName" className="border border-gray-300 rounded-md p-2 mt-1" />
+                    <div className="flex flex-col gap-4 bg-white rounded-xl xl:w-7/12 px-10 py-16">
+                        <h1 className="font-poppins font-semibold text-2xl pb-6">Edit Profile</h1>
+                        <div className="flex lg:flex-row gap-4 flex-col">
+                            <div className="flex flex-col w-full">
+                                <label htmlFor="firstName" className="text-sm font-semibold">First Name</label>
+                                <input
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    type="text"
+                                    name="firstName"
+                                    className="border border-gray-300 rounded-md p-2 mt-1"
+                                />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <label htmlFor="lastName" className="text-sm font-semibold">Last Name</label>
+                                <input
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    type="text"
+                                    name="lastName"
+                                    className="border border-gray-300 rounded-md p-2 mt-1"
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-col w-1/2">
-                            <label htmlFor="lastName" className="text-sm font-semibold ">Last Name</label>
-                            <input type="text" name="lastName" className="border border-gray-300 rounded-md p-2 mt-1" />
+                        <div className="flex flex-col pb-6">
+                            <label htmlFor="university" className="text-sm font-semibold">University</label>
+                            <Select
+                                name='university'
+                                placeholder={university}
+                                onChange={handleUniversity}
+                                options={universityOptions}
+                                styles={customStyles}
+                                className="mt-1"
+                            />
                         </div>
+                        <button
+                            type="submit"
+                            className="bg-action text-white p-2 rounded-md w-36 font-bold">
+                            Update Profile
+                        </button>
                     </div>
-                    <div className="flex flex-col pb-12">
-                        <label htmlFor="university" className="text-sm font-semibold ">University</label>
-                        <Select
-                            name='university'
-                            onChange={handleUniversity}
-                            options={universities.map(uni => ({ value: uni.id, label: uni.name }))}
-                            className="mt-1"
-                        />
-                    </div>
-                    <button
-
-                        type="submit" className="bg-action text-white py-2 px-4 rounded-md">Update Profile</button>
                 </form>
-            </div>
-        </div>
-    )
+            </div >
+        </div >
+    );
 }
 
-export default Profile
+export default Profile;

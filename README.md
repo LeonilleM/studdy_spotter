@@ -1,2 +1,2 @@
-# React + Vite
-
+Website here:
+https://studdy-spotter.vercel.app/

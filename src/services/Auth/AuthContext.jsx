@@ -1,7 +1,7 @@
 import { createContext, useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { supabase } from '../supabase/supabase';
-import { getCurrentUser, fetchUserData, signIn } from '../Auth/Auth';
+import { getCurrentUser, fetchUserData, signIn, signUp, updateUserProfile } from '../Auth/Auth';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
@@ -22,6 +22,20 @@ const authReducer = (state, action) => {
                 user: null,
                 isAuthenticated: false,
                 isLoading: false
+            };
+        case 'SIGNUP':
+            return {
+                ...state,
+                user: action.payload,
+                isAuthenticated: true,
+                isLoading: false,
+                error: null
+            };
+        case 'PROFILE_UPDATE':
+            return {
+                ...state,
+                user: { ...state.user, ...action.payload },
+                isAuthenticated: true,
             };
         case 'SET_LOADING':
             return {
@@ -83,10 +97,31 @@ const AuthProvider = ({ children }) => {
         };
     }, []);
 
-    const login = async (email, password, rememberMe) => {
+    const signup = async (email, password, firstName, lastName) => {
         dispatch({ type: 'SET_LOADING', payload: true });
         try {
-            const data = await signIn(email, password, rememberMe);
+            const data = await signUp(email, password, firstName, lastName);
+            if (!data) throw new Error('No data returned from authentication service');
+
+            const currentUser = await getCurrentUser();
+            if (currentUser && currentUser.sub) {
+                const userData = await fetchUserData(currentUser.sub);
+                dispatch({ type: 'SIGNUP', payload: userData });
+                return userData;
+            } else {
+                dispatch({ type: 'SET_LOADING', payload: false });
+            }
+        } catch (error) {
+            console.error('Signup error:', error);
+            dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to sign up' });
+            throw error;
+        }
+    }
+
+    const login = async (email, password) => {
+        dispatch({ type: 'SET_LOADING', payload: true });
+        try {
+            const data = await signIn(email, password);
 
             if (!data) {
                 throw new Error('No data returned from authentication service');
@@ -96,6 +131,7 @@ const AuthProvider = ({ children }) => {
             if (currentUser && currentUser.sub) {
                 const userData = await fetchUserData(currentUser.sub);
                 dispatch({ type: 'LOGIN', payload: userData });
+                return userData;
             } else {
                 dispatch({ type: 'SET_LOADING', payload: false });
             }
@@ -108,17 +144,33 @@ const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
+
             await supabase.auth.signOut();
-            dispatch({ type: 'LOGOUT, payload: null' });
-            
+            dispatch({ type: 'LOGOUT', payload: null });
+
         } catch (error) {
+            dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to sign out' });
             console.error('Logout error:', error);
+            throw error
+        }
+    }
+
+    // Is delete relates to the flag if a user is deleting their image
+    const profileUpdate = async (profileData, isDeleteImage) => {
+        try {
+            const updatedUser = await updateUserProfile(profileData, isDeleteImage);
+            dispatch({ type: 'PROFILE_UPDATE', payload: { ...state.user, ...updatedUser } });
+
+        } catch (error) {
+            console.error('Profile update error:', error);
+            dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to update profile' });
+            throw error;
         }
     }
 
 
     return (
-        <AuthContext.Provider value={{ ...state, dispatch, login, logout }}>
+        <AuthContext.Provider value={{ ...state, dispatch, signup, login, logout, profileUpdate }}>
             {children}
         </AuthContext.Provider>
     );

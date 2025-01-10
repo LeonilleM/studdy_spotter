@@ -1,29 +1,16 @@
 import { useState, useEffect } from 'react';
-import BackButton from '../../components/BackButton';
-import { fetchUniversities, sendCampusRequest } from '../../services/University/University';
+import BackButton from '../../components/shared/BackButton';
+import { fetchUniversities } from '../../services/University/University';
 import { NavLink } from 'react-router-dom';
-import Select from 'react-select';
-import { fetchStates } from '../../services/helper/helper';
+import RequestSchoolModal from './helper/RequestSchoolModal';
 
 function AllSchools() {
     const [uniData, setUniData] = useState(null);
-    const [states, setStates] = useState([]);
-    const [selectedStateId, setSelectedStateId] = useState(null);
-    const [universityName, setUniversityName] = useState('');
-    const [city, setCity] = useState('');
-    const [image, setImage] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
 
-    useEffect(() => {
-        fetchStates().then((data) => {
-            setStates(data);
-        }).catch(error => {
-            console.error(error);
-        });
-    }, []);
 
     useEffect(() => {
         fetchUniversities().then((data) => {
-            // Group universities by state
             const groupedData = data.reduce((acc, uni) => {
                 const stateName = uni.States ? uni.States.name : 'No State';
                 if (!acc[stateName]) {
@@ -32,7 +19,7 @@ function AllSchools() {
                 acc[stateName].push(uni);
                 return acc;
             }, {});
-            
+
             const sortedStates = Object.keys(groupedData).sort();
             setUniData({ groupedData, sortedStates });
         }).catch(error => {
@@ -40,117 +27,67 @@ function AllSchools() {
         });
     }, []);
 
-    const handleStateChange = (selectedOption) => {
-        const selectedState = states.find(state => state.name === selectedOption.value);
-        setSelectedStateId(selectedState ? selectedState.id : null);
-    };
+    const handleModalOpen = () => {
+        console.log("open")
+        setModalOpen(true);
+    }
 
-    const handleRequestCampus = () => {
-        sendCampusRequest({
-            name: universityName,
-            city: city,
-            states_id: selectedStateId
-        }, image).then(() => {
-            alert('Campus request sent successfully');
-        }).catch(error => {
-            console.error(error);
-            if (error === 'duplicate key value violates unique constraint "University_name_key"') {
-                alert('University already exists');
-            } else {
-                alert('An error occurred while sending campus request');
-            }
-        });
+    const handleModalClose = () => {
+        setModalOpen(false);
     };
-
 
 
     return (
-        <div className="flex flex-col bg-primary">
-            <div className="bg-secondary h-[50vh] pt-24">
-                <div className="container mx-auto flex flex-col items-center justify-center relative py-24">
-                    <div className="absolute top-0 lg:left-0 left-4">
-                        <BackButton />
-                    </div>
-                    <h1 className="font-poppins text-4xl font-bold text-white">Partnered Campuses</h1>
-                </div>
+        <div className="flex flex-col bg-background ">
+            <div className="absolute top-32 sm:left-14 left-4" >
+                <BackButton />
             </div>
-            <div className="container mx-auto flex lg:flex-row flex-col justify-between py-24 sm:px-0 px-4 gap-12">
-                <div className="lg:order-1 order-2">
-                    {uniData && uniData.sortedStates.map((state, index) => (
-                        <div key={index} className="pb-12">
-                            <h2 className="font-poppins text-4xl font-bold text-secondary mb-2">{state}</h2>
-                            <div className="flex flex-col">
-                                {uniData.groupedData[state].map((uni, uniIndex) => (
-                                    <div key={uniIndex} className="hover:-translate-y-1 transition duration-300">
-                                        <NavLink to={`/university/${uni.name}`} className="flex flex-row text-secondary items-center">
-                                            <h1 className="font-bold text-lg">{uni.name}</h1>
-                                            <h1 className="italic">, {uni.city}</h1>
+            <div className="pt-24 container mx-auto sm:px-0 px-4">
+                <section className="flex flex-row flex-wrap container justify-between mx-auto  text-secondary space-y-4 py-32">
+                    <div className="lg:w-[43%] space-y-4 flex flex-col justify-center">
+                        <h1 className="font-poppins ">PARTNERED CAMPUSES</h1>
+                        <h1 className="font-poppins text-4xl font-bold text-heading">Want to connect your school?</h1>
+                        <p>
+                            Please submit new study locations thoughtfully and in good faith. All submissions will be reviewed before theyre visible to other students.
+                        </p>
+                        <div className="pt-6">
+                            <button
+                                onClick={handleModalOpen}
+                                aria-label="Register for Studdy Spotter"
+                                className="bg-accent text-white font-poppins py-3 px-4 rounded-lg text-sm ">
+                                Request School
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
+                        <div className="h-[363px] w-[381px] bg-gray-200 flex flex-col items-center py-12 rounded-lg">
+                        </div>
+                    </div>
+                </section>
+                <hr className="border-black border-2 rounded-full" />
+                <h1 className="font-poppins text-3xl font-bold text-heading mb-10 mt-16 text-center">Partnered Campuses</h1>
+                <section className="grid sm:grid-cols-3 grid-cols-1 gap-4 pb-36">
+                    {uniData && uniData.sortedStates.map(state => {
+                        return (
+                            <div key={state} className="flex flex-col ">
+                                <h1 className="font-poppins text-2xl font-bold text-secondary">{state}</h1>
+                                {uniData.groupedData[state].map(uni => {
+                                    return (
+                                        <NavLink
+                                            key={uni.id}
+                                            to={`/university/${encodeURIComponent(uni.name)} ${encodeURIComponent(uni.city)}`}>
+                                            <h1 className="font-lato tracking-wide">{uni.name} - {uni.city}</h1>
                                         </NavLink>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="2xl:w-[45vh] lg:order-2 order-1">
-                    <div className="bg-white rounded-lg py-8 px-12 border-2 text-secondary flex flex-col font-poppins">
-                        <h1 className="text-2xl font-bold font-poppins text-center">Request your Campus</h1>
-                        <div className="flex flex-col mt-4">
-                            <label htmlFor="university_name" className="text-sm font-medium rounded-lg">
-                                University
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="University Name"
-                                className="border border-secondary rounded-lg p-2"
-                                value={universityName}
-                                onChange={(e) => setUniversityName(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-row gap-4">
-                            <div className="flex flex-col mt-4">
-                                <label htmlFor="city" className="text-sm font-medium">
-                                    City
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="City"
-                                    className="border border-secondary rounded-lg p-2"
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                />
-                            </div>
-                            <div className="flex flex-col mt-4">
-                                <label htmlFor="state" className="text-sm font-medium">
-                                    State
-                                </label>
-                                <Select
-                                    onChange={handleStateChange}
-                                    options={states.map(state => ({ value: state.name, label: state.abr }))}
-                                />
-                            </div>
-                        </div>
-                        <div className="flex flex-col mt-4">
-                            <label htmlFor="image" className="text-sm font-medium">
-                                University Image
-                            </label>
-                            <input
-                                type="file"
-                                className="border border-secondary rounded-lg p-2"
-                                onChange={(e) => setImage(e.target.files[0])}
-                            />
-                        </div>
-                        <button
-                            className="w-full bg-action text-white rounded-xl mt-4 p-2"
-                            onClick={handleRequestCampus}
-                        >
-                            Request
-                        </button>
-                    </div>
-                </div>
+                        );
+                    }
+                    )}
+                </section>
             </div>
-
-        </div>
+            <RequestSchoolModal isOpen={modalOpen} onClose={handleModalClose} />
+        </div >
     );
 }
 

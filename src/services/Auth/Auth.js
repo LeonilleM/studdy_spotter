@@ -17,10 +17,7 @@ export const getCurrentUser = async () => {
     }
 };
 
-
-// Sign in with magic link
 export const signIn = async (email, password) => {
-    console.log("Signing in with email and password")
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -37,7 +34,25 @@ export const signIn = async (email, password) => {
     return data
 }
 
-// Returns the user data for the current user
+export const signUp = async (email, password, firstName, lastName) => {
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                first_name: firstName,
+                last_name: lastName
+            }
+        }
+    })
+
+    if (error) {
+        throw new Error(`Error signing up: ${error.message}`);
+    }
+
+    return data
+}
+
 export const fetchUserData = async (userID) => {
     const { data, error } = await supabase
         .from('Users')
@@ -58,44 +73,77 @@ export const fetchUserData = async (userID) => {
     return data
 }
 
+export const deleteImage = async (userId) => {
+    const fileName = 'profile_img';
+    const filePath = `${userId}/${fileName}`;
+    const { data: deleted, error: deleteError } = await supabase.storage
+        .from('profile_images')
+        .remove(filePath);
+
+    if (deleteError) {
+        throw new Error(`Error deleting image from storage: ${deleteError.message}`);
+    }
+
+    if (!deleted || deleted.length === 0) {
+        throw new Error('Error deleting image from storage: No file was deleted.');
+    }
+
+    const { data, error } = await supabase
+        .from('Users')
+        .update({ image_url: null })
+        .eq('id', userId);
+
+    if (error) {
+        throw new Error(`Error updating user record: ${error.message}`);
+    }
+
+    return data;
+}
 
 export const uploadImage = async (userId, image) => {
+    const filePath = `${userId}/profile_img`;
+
     const { error } = await supabase.storage
         .from('profile_images')
-        .upload(`${userId}/profile_img`, image, {
+        .upload(filePath, image, {
             upsert: true
         })
     if (error)
         throw new Error("Error uploading image: ", error.message)
 
-
-    // Get the public URL of users image
     const { data: publicURLData, error: publicURLError } = supabase.storage
         .from('profile_images')
-        .getPublicUrl(`${userId}/profile_img`)
-    if (publicURLError) throw new Error(`Error getting public URL: ${publicURLError.message}`);
-
-    await updateUserImage_URL(userId, publicURLData.publicUrl);
+        .getPublicUrl(filePath);
+    if (publicURLError) {
+        throw new Error(`Error getting public URL: ${publicURLError.message}`);
+    }
+    const newImageUrl = `${publicURLData.publicUrl}?t=${new Date().getTime()}`;
+    return updateUserImage_URL(userId, newImageUrl);
 }
 
 export const updateUserImage_URL = async (userId, imageUrl) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('Users')
         .update({ image_url: imageUrl })
         .eq('id', userId)
+        .select('image_url')
+        .single();
     if (error)
         throw ("Error updating user image URL: ", error.message)
-
+    return data;
 }
 
 
 export const updateUniversity = async (userId, universityId) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from('Users')
         .update({ university_id: universityId })
         .eq('id', userId)
+        .select('university_id, University(name)')
+        .single();
     if (error)
         throw new Error("Error setting university: ", error.message)
+    return data;
 }
 
 
@@ -111,24 +159,57 @@ export const updateNames = async (userId, firstName, lastName) => {
     const { data, error } = await supabase
         .from('Users')
         .update(updateData)
-        .eq('id', userId);
+        .eq('id', userId)
+        .select('first_name, last_name')
+        .single();
+
     if (error) {
         throw new Error("Error updating profile: " + error.message);
     }
-
     return data;
 };
 
 
-export const updateUserProfile = async (userInfo) => {
+// Used for better type checking in updateUserProfile
+/**
+ * @typedef {Object} User
+ * @property {string} id
+ * @property {string} first_name
+ * @property {string} last_name
+ * @property {string} university_id
+ * @property {string|null} image_url
+ * @property {Object} [University]
+ * @property {string} University.name
+ * @property {Object} [role]
+ * @property {string} role.name
+ */
+export const updateUserProfile = async (userInfo, isDeleteImage) => {
     try {
-        if (userInfo.firstName || userInfo.lastName) await updateNames(userInfo.userId, userInfo.firstName, userInfo.lastName);
 
-        if (userInfo.universityId) await updateUniversity(userInfo.userId, userInfo.universityId);
+        /** @type {Partial<User>} */
+        let updatedUser = {};
 
-        if (userInfo.image) await uploadImage(userInfo.userId, userInfo.image);
+        if (userInfo.firstName || userInfo.lastName) {
+            const namesUpdate = await updateNames(userInfo.userId, userInfo.firstName, userInfo.lastName);
+            updatedUser = { ...updatedUser, ...namesUpdate };
+        }
 
-        console.log("Profile updated successfully");
+        if (userInfo.universityId) {
+            const universityUpdate = await updateUniversity(userInfo.userId, userInfo.universityId);
+            updatedUser = { ...updatedUser, ...universityUpdate };
+        }
+
+        if (userInfo.image) {
+            const newURL = await uploadImage(userInfo.userId, userInfo.image);
+            updatedUser.image_url = newURL;
+        }
+
+        if (isDeleteImage) {
+            await deleteImage(userInfo.userId);
+            updatedUser.image_url = null;
+        }
+
+        return updatedUser;
     } catch (error) {
         console.error("Error updating profile: ", error.message);
         throw new Error("Error updating profile: " + error.message);

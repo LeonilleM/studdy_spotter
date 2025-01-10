@@ -11,9 +11,11 @@ export const fetchAllReviews = async (studyLocationID) => {
             created_at,
             updated_at,
             Users:user_id (
+                id,
                 first_name,
                 last_name,
-                University:university_id (name)
+                University:university_id (name),
+                image_url
             )
         `)
         .eq('study_location_id', studyLocationID)
@@ -65,6 +67,45 @@ export const createReview = async (studyLocationID, userID, rating, review) => {
             rating: rating,
             description: review
         })
+        .select('*')
+        .single()
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}
+
+// Let's a user Delete a review for a given study location
+export const deleteReview = async (userID, studyLocationID) => {
+    const { data, error } = await supabase
+        .from('UserReview')
+        .delete()
+        .eq('user_id', userID)
+        .eq('study_location_id', studyLocationID)
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}
+
+// Let's a user update a review for a given study location
+export const updateReview = async (userId, studyLocationId, rating, review) => {
+    const { data, error } = await supabase
+        .from('UserReview')
+        .update([
+            {
+                rating: rating,
+                description: review,
+                updated_at: new Date().toISOString()
+            }])
+        .eq('user_id', userId)
+        .eq('study_location_id', studyLocationId)
+        .select('*')
+        .single()
 
     if (error) {
         throw error

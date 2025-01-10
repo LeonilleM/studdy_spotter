@@ -1,33 +1,55 @@
 import { fetchUniversityData } from '../../services/University/University';
 import { useEffect, useState } from 'react';
 import { fetchUniversityStudyLocationsWithReviews } from '../../services/StudyLocation/Study';
-import { NavLink } from 'react-router-dom';
-import StarRating from '../../components/StarRating';
+import { fetchTags } from '../../services/helper/helper';
 import { loadingComponent } from '../../components/Loading';
+import ErrorPage from '../../components/shared/ErrorPage';
+import StudyLocationList from './StudyLocationList';
+import Filter from './helper/filter';
+import SelectedTags from './helper/selectedTags';
+import PopularLocations from './helper/popuarLocations';
 
 function University() {
     const [uniData, setUniData] = useState(null);
     const [studyLocations, setStudyLocations] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [locationTags, setLocationTags] = useState([]);
+    const [filterMode, setFilterMode] = useState('AND');
 
     useEffect(() => {
-        // Extract the university name from the URL
-        const universityNameFromURL = window.location.pathname.split('/').pop();
-
-        // Fetch university data using the extracted name and it's ID
-
         const fetchData = async () => {
             try {
-                const data = await fetchUniversityData(universityNameFromURL);
-                if (data.length === 0) {
-                    setError('The university you are looking for isn\'t currently partnered with us.');
-                } else {
-                    setUniData(data);
+                // Extract the university name from the URL
+                const universityNameWithCity = decodeURIComponent(window.location.pathname.split('/').pop());
+                const universityData = await fetchUniversityData(universityNameWithCity);
+                const data = await fetchTags();
+
+                if (universityData.length === 0) {
+                    setError(`${decodeURIComponent(universityNameWithCity)} isn't partnered with us`);
+                    setLoading(false);
+                    return;
                 }
+                const universityID = universityData[0].id;
+                const studyLocationsData = await fetchUniversityStudyLocationsWithReviews(universityID);
+
+                const sortedByRatingAndName = studyLocationsData.sort((a, b) => {
+                    if (b.rating === a.rating) {
+                        // If ratings are equal, sort by name alphabetically
+                        return a.name.localeCompare(b.name);
+                    }
+                    // Otherwise, sort by rating
+                    return b.rating - a.rating;
+                });
+
+                setUniData(universityData);
+                setLocationTags(data);
+                setStudyLocations(sortedByRatingAndName);
             } catch (error) {
                 console.error(error);
-                setError('An error occurred while fetching university data.');
+                setError('An error occurred while fetching data.');
             } finally {
                 setLoading(false);
             }
@@ -36,111 +58,93 @@ function University() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (uniData) {
-            const universityID = uniData ? uniData[0].id : null;
-            fetchUniversityStudyLocationsWithReviews(universityID).then((data) => {
-                setStudyLocations(data);
-            }).catch(error => {
-                console.error(error);
-            })
-        }
-    }, [uniData]);
-
-    if (loading) {
-        return loadingComponent("Loading Study Spots...");
-    }
-
-    if (error) {
-        return (
-            <div className="pt-20 overflow-x-hidden text-center h-[82vh] space-y-4  sm:px-0 px-4 flex flex-col items-center justify-center bg-primary text-secondary">
-                <h1 className="text-3xl font-semibold font-poppins lg:w-1/2">{error}</h1>
-                <p className="text-xl font-lato">Want your university to be a part of the website? Send an application.</p>
-                <NavLink to='/allschools' className="mt-4 inline-block bg-action text-white py-2 px-4 rounded-lg hover:scale-110 transition duration-300">
-                    Go to Application
-                </NavLink>
-
-            </div>
+    const filteredStudyLocations = studyLocations ? studyLocations.filter(location => {
+        const matchesSearchQuery = location.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesTags = selectedTags.length === 0 || (
+            filterMode === 'AND'
+                ? selectedTags.every(tag =>
+                    location.LocationTagList.some(tagObj => tagObj.TagTypes.name === tag)
+                )
+                : selectedTags.some(tag =>
+                    location.LocationTagList.some(tagObj => tagObj.TagTypes.name === tag)
+                )
         );
+
+        return matchesSearchQuery && matchesTags;
+    }) : [];
+
+
+    const handleTagRemove = (tag) => {
+        setSelectedTags(selectedTags.filter(t => t !== tag));
     }
+
+    const clearAllTags = () => {
+        setSelectedTags([]);
+    }
+
+
 
     return (
-        <div className="pt-20 overflow-x-hidden">
-            {uniData && uniData.map((uni) => (
-                <div key={uni.id} style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '45vh', width: '100%' }}>
-                    <div
-                        className="lg:w-1/3 w-1/2 h-full font-lato flex flex-col items-center justify-center lg:px-12 px-4 gap-4 opacity-85"
-                        style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
-                    >
-                        <h1 className="text-white font-bold lg:text-4xl text-2xl text-center">{uni.name}</h1>
-                        <div>
-                            <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.city},</h1>
-                            <h1 className="text-white font-bold lg:text-2xl text-lg text-center">{uni.States.name}</h1>
+        <div className="bg-background">
+            {error ? (
+                <ErrorPage
+                    errorMessage={error}
+                    customMessage="If you think this university should be added, send a university application below"
+                    link="/allschools"
+                    linkText="Send Application"
+                />
+            ) : loading ? (
+                loadingComponent("Loading Study Spots...")
+            ) : (
+                <>
+                    {uniData && uniData.map((uni) => (
+                        <div key={uni.id}
+                            className="2xl:h-[50vh] h-[55vh]"
+                            style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', width: '100%' }}>
+                            <div
+                                className="lg:w-1/3 w-[60%] xl:px-36 lg:px-20 h-full font-lato flex flex-col justify-center px-4 gap-2 opacity-[90%]"
+                                style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
+                            >
+                                <h1 className="text-white font-bold lg:text-3xl text-xl ">{uni.name}</h1>
+                                <div>
+                                    <h1 className="text-white lg:text-xl">{uni.city}, {uni.States.name}</h1>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            ))}
-            <div className="bg-primary font-secondary lg:px-0 px-6 text-secondary pb-32">
-                <div className="container mx-auto flex flex-col gap-4 py-8">
-                    {  /* <h1 className="font-poppins font-semibold text-xl">Popular Study Spots</h1> */}
-                    <div className="flex flex-row justify-between w-full pb-4">
-                        <h1 className="font-poppins font-semibold text-4xl">Explore</h1>
-                        <NavLink
-                            to={`/university/request-location`}
-                            className="bg-action text-white px-4 py-2 rounded-lg font-lato hover:scale-105 hover:shadow-lg hover:shadow-action/30 transition ease-in-out duration-300">Request Location</NavLink>
-                    </div>
+                    ))}
+                    <section className="font-secondary lg:px-0 px-4 text-darkBlue pb-32">
+                        <div className="container mx-auto flex flex-col gap-4 py-8 mt-12 relative">
+                            <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
+                            {uniData && uniData[0] && (
+                                <PopularLocations universityID={uniData[0].id} />
+                            )}
 
-                    <div className="grid lg:grid-cols-3 2xl:gap-20 gap-16">
-                        {studyLocations ? (
-                            studyLocations.length > 0 ? (
-                                studyLocations.map((studyLocation) => {
-                                    const studyLocationPath = `/university/${uniData[0].name}/${studyLocation.name}`;
-                                    return (
-                                        <NavLink
-                                            to={studyLocationPath}
-                                            key={studyLocation.id}
-                                            className="grid grid-cols-2 font-poppins text-secondary transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-blue-400/20 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-400/0 before:to-blue-400/10 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 hover:scale-105 group"
-                                        >
-                                            <img
-                                                src={studyLocation.image_url}
-                                                alt="placeholder"
-                                                className="w-full h-full rounded-l-lg group-hover:opacity-85"
-                                            />
-                                            <div className="bg-white rounded-r-lg items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
-                                                <h1 className="text-2xl px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
-                                                    {studyLocation.name}
-                                                </h1>
-                                                <div className="items-center gap-2 flex flex-row transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110">
-                                                    <StarRating rating={studyLocation.rating} starSize={12} />
-                                                    <h1 className="text-xs font-light">{studyLocation.review_count} reviews</h1>
-                                                </div>
-                                            </div>
-                                        </NavLink>
-                                    );
-                                })
+                            <div className="flex sm:flex-row flex-wrap justify-between w-full items-center mt-12 mb-2">
+                                <Filter
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    selectedTags={selectedTags}
+                                    setSelectedTags={setSelectedTags}
+                                    locationTags={locationTags}
+                                    filterMode={filterMode}
+                                    setFilterMode={setFilterMode}
+                                />
+                                <SelectedTags
+                                    selectedTags={selectedTags}
+                                    handleTagRemove={handleTagRemove}
+                                    clearAllTags={clearAllTags}
+                                />
+                            </div>
+                            {filteredStudyLocations.length > 0 ? (
+                                <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} />
                             ) : (
-                                <h1 className="text-2xl">No study locations found for this university.</h1>
-                            )
-                        ) : (
-                            loadingComponent("Loading Study Locations...")
-                        )}
-
-                    </div>
-                    <div
-                        className="fter:h-px pt-24  w-full flex items-center before:h-px before:flex-1  before:bg-gray-300 before:content-[''] after:h-px after:flex-1 after:bg-gray-300  after:content-['']">
-                        <button type="button"
-                            className="flex items-center rounded-full border border-gray-300 bg-secondary-50 px-3 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="mr-1 h-4 w-4">
-                                <path fillRule="evenodd"
-                                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                    clipRule="evenodd" />
-                            </svg>
-                            View More
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div >
+                                <h1 className="text-2xl w-full">No study locations found for this university.</h1>
+                            )}
+                        </div>
+                    </section>
+                </>
+            )}
+        </div>
     );
 }
 
