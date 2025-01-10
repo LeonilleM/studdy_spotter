@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { SlOptions } from 'react-icons/sl';
 import LocationCardOption from './LocationCardOption';
 
-
-
 const LocationCard = ({ collectionName, item, userId, onLocationMoved }) => {
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const optionRef = useRef(null);
