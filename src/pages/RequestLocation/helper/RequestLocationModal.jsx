@@ -119,7 +119,6 @@ function RequestLocationModal({ isOpen, onClose, user }) {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        // Check if file is not an image
         if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
             setModal({
                 type: 'failed',

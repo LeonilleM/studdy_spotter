@@ -76,7 +76,6 @@ const AuthProvider = ({ children }) => {
                 dispatch({ type: 'SET_LOADING', payload: false });
             }
         };
-
         initializeAuth();
 
         const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
@@ -96,6 +95,10 @@ const AuthProvider = ({ children }) => {
             subscription.unsubscribe();
         };
     }, []);
+
+    const isAdmin = () => {
+        return state.user && state.user.role.name === 'Admin';
+    }
 
     const signup = async (email, password, firstName, lastName) => {
         dispatch({ type: 'SET_LOADING', payload: true });
@@ -170,7 +173,7 @@ const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ ...state, dispatch, signup, login, logout, profileUpdate }}>
+        <AuthContext.Provider value={{ ...state, dispatch, signup, login, logout, profileUpdate, isAdmin }}>
             {children}
         </AuthContext.Provider>
     );
