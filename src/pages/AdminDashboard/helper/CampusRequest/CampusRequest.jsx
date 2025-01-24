@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import Edit from './EditCampusModal';
 import { statusButton } from '../StatusButton';
+import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
 
-
-function CampusRequest(adminId) {
+function CampusRequest({ userId, selectedFilter, onFilterChange }) {
     const [universities, setUniversities] = useState([]);
+    const [filteredUniversities, setFilteredUniversities] = useState([]);
     const [hoveredImage, setHoveredImage] = useState(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -25,11 +27,18 @@ function CampusRequest(adminId) {
         const fetchUniversities = async () => {
             const universitiesData = await fetchUniversityRequest();
             setUniversities(universitiesData);
+            setFilteredUniversities(universitiesData.filter(university => university.status === selectedFilter));
         };
         fetchUniversities();
-    }, []);
+    }, [selectedFilter]);
 
-
+    useEffect(() => {
+        if (selectedFilter === 'all') {
+            setFilteredUniversities(universities);
+        } else {
+            setFilteredUniversities(universities.filter(university => university.status === selectedFilter));
+        }
+    }, [selectedFilter, universities]);
 
     const handleMouseMove = (event) => {
         setMousePosition({ x: event.pageX, y: event.pageY });
@@ -45,24 +54,33 @@ function CampusRequest(adminId) {
 
     return (
         <div className="bg-white mt-4 p-6 rounded-xl" onMouseMove={handleMouseMove}>
-            <div className="grid grid-cols-12 gap-4 bg-gray-200 p-4 rounded-full items-center justify-center">
+            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-full items-center justify-center">
                 <h1 className="font-bold col-span-3">Id</h1>
                 <h1 className="font-bold col-span-3">University</h1>
-                <h1 className="font-bold col-span-2">City</h1>
+                {/* <h1 className="font-bold col-span-2">City</h1> */}
                 <h1 className="font-bold col-span-1">State</h1>
                 <h1 className="font-bold col-span-1">Image</h1>
                 <h1 className="font-bold col-span-1">Status</h1>
                 <h1 className="font-bold col-span-1">Action</h1>
             </div>
-            {universities.map((university, index) => (
+            {filteredUniversities.map((university, index) => (
                 <div
                     key={university.id}
-                    className={`grid grid-cols-12 p-2 my-2 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    className={`grid grid-cols-10 p-2 my-2 gap-4 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                         }`}
                 >
                     <div className="col-span-3">{university.id}</div>
-                    <div className="col-span-3">{university.name}</div>
-                    <div className="col-span-2">{university.city}</div>
+                    {university.status === 'Approved' ? (
+                        <NavLink
+                            to={`/university/${encodeURIComponent(university.name)} ${encodeURIComponent(university.city)}`}
+                            className="col-span-3 text-blue-500 underline"
+                        >
+                            {university.name},{university.city}
+                        </NavLink>
+                    ) : (
+                        <div className="col-span-3">{university.name}, {university.city}</div>
+                    )}
+                    {/* <div className="col-span-2">{university.city}</div> */}
                     <div className="col-span-1">{university.States.abr}</div>
                     <div
                         className="relative col-span-1"
@@ -95,10 +113,16 @@ function CampusRequest(adminId) {
                 isOpen={isEditModalOpen}
                 onClose={handleCloseModal}
                 campus={currentCampus}
-                adminId={adminId.userId}
+                adminId={userId}
             />}
         </div>
     );
 }
+
+CampusRequest.propTypes = {
+    userId: PropTypes.string,
+    selectedFilter: PropTypes.string,
+    onFilterChange: PropTypes.func
+};
 
 export default CampusRequest;
