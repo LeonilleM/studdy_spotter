@@ -53,8 +53,8 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
     };
 
     return (
-        <div className="bg-white mt-4 p-6 rounded-xl" onMouseMove={handleMouseMove}>
-            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-full items-center justify-center">
+        <div className="bg-white mt-4 p-6 rounded-xl border border-gray-300" onMouseMove={handleMouseMove}>
+            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center">
                 <h1 className="font-bold col-span-3">Id</h1>
                 <h1 className="font-bold col-span-3">University</h1>
                 {/* <h1 className="font-bold col-span-2">City</h1> */}

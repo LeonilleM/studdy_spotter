@@ -79,7 +79,7 @@ function Account() {
                                 <NavLink
                                     to="/admin-dashboard"
                                     onClick={() => handleOptionChange('studyRequests')}
-                                    className={`flex items-center gap-2 py-2 px-6 transition duration-300 ${selectedOption === 'studyRequests' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
+                                    className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'studyRequests' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
                                         }`}
                                 >
                                     <FaUserShield />

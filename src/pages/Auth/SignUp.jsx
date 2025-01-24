@@ -119,7 +119,7 @@ const SignUp = () => {
                     </form>
                     <NavLink to='/signin'>
                     <p className="py-10 text-secondary text-center">Have an account?{' '} 
-                         <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Sing Up</span>
+                         <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Log In</span>
                     </p>
                     </NavLink>
                 </div>
