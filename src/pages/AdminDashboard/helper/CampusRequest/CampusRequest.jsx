@@ -33,8 +33,13 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
     }, [selectedFilter]);
 
     useEffect(() => {
+        const sortUniversities = (universities) => {
+            // Sort universities by status
+            const statusOrder = { 'Approved': 1, 'Denied': 2, 'Pending': 3 };
+            return universities.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+        };
         if (selectedFilter === 'all') {
-            setFilteredUniversities(universities);
+            setFilteredUniversities(sortUniversities([...universities]));
         } else {
             setFilteredUniversities(universities.filter(university => university.status === selectedFilter));
         }
@@ -53,15 +58,14 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
     };
 
     return (
-        <div className="bg-white mt-4 p-6 rounded-xl border border-gray-300" onMouseMove={handleMouseMove}>
-            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center">
-                <h1 className="font-bold col-span-3">Id</h1>
-                <h1 className="font-bold col-span-3">University</h1>
-                {/* <h1 className="font-bold col-span-2">City</h1> */}
-                <h1 className="font-bold col-span-1">State</h1>
-                <h1 className="font-bold col-span-1">Image</h1>
-                <h1 className="font-bold col-span-1">Status</h1>
-                <h1 className="font-bold col-span-1">Action</h1>
+        <div className="bg-white mt-2 p-6 rounded-xl border border-gray-300" onMouseMove={handleMouseMove}>
+            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
+                <h1 className="col-span-3">ID</h1>
+                <h1 className="col-span-3">University</h1>
+                <h1 className="col-span-1">State</h1>
+                <h1 className="col-span-1">Image</h1>
+                <h1 className="col-span-1">Status</h1>
+                <h1 className="col-span-1">Action</h1>
             </div>
             {filteredUniversities.map((university, index) => (
                 <div

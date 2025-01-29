@@ -33,44 +33,43 @@ function AdminDashboard() {
             </div>
             <div className="lg:block hidden pt-20">
                 <div className="py-36 container mx-auto flex flex-col">
-                    <h1 className="text-darkBlue font-poppins text-2xl font-bold">Admin Dashboard</h1>
-
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-6">
+                    <h1 className="text-darkBlue font-poppins text-4xl font-bold">Admin Dashboard</h1>
+                    <div className="flex justify-between items-center mt-4">
+                        <div className="flex items-center gap-6 font-poppins">
                             <button
                                 onClick={() => handleFilterChange('Pending')}
-                                className={`rounded ${selectedFilter === 'Pending' ? 'text-blue-500 ' : 'text-secondary'}`}
+                                className={` ${selectedFilter === 'Pending' ? 'text-accent ' : 'text-secondary'}`}
                             >
                                 Pending
                             </button>
                             <button
                                 onClick={() => handleFilterChange('Approved')}
-                                className={`rounded ${selectedFilter === 'Approved' ? 'text-blue-500 ' : 'text-secondary'}`}
+                                className={`border-l border-r border-black px-4 ${selectedFilter === 'Approved' ? 'text-accent ' : 'text-secondary'}`}
                             >
                                 Approved
                             </button>
                             <button
                                 onClick={() => handleFilterChange('Denied')}
-                                className={`rounded ${selectedFilter === 'Denied' ? 'text-blue-500 ' : 'text-secondary'}`}
+                                className={`border-r border-black pr-5 ${selectedFilter === 'Denied' ? 'text-accent ' : 'text-secondary'}`}
                             >
                                 Denied
                             </button>
                             <button
                                 onClick={() => handleFilterChange('all')}
-                                className={`rounded ${selectedFilter === 'all' ? 'text-blue-500 ' : 'text-secondary'}`}
+                                className={` ${selectedFilter === 'all' ? 'text-accent ' : 'text-secondary'}`}
                             >
                                 All
                             </button>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-1 font-poppins">
                             <button
-                                className={`px-4 py-2 ${selectedOption === 'campus' ? 'bg-blueAlt ' : 'bg-gray-400 '} ${selectedOption !== 'location' ? 'border-r border-gray-300' : ''} rounded-l-lg`}
+                                className={`px-4 py-2 ${selectedOption === 'campus' ? 'bg-accent text-white ' : 'bg-white '} rounded-l-lg`}
                                 onClick={() => handleOptionChange('campus')}
                             >
                                 Campus
                             </button>
                             <button
-                                className={`px-4 py-2 ${selectedOption === 'location' ? 'bg-blueAlt ' : 'bg-gray-400 '} rounded-r-lg`}
+                                className={`px-4 py-2 ${selectedOption === 'location' ? 'bg-accent text-white ' : 'bg-white '} rounded-r-lg`}
                                 onClick={() => handleOptionChange('location')}
                             >
                                 Study Spot

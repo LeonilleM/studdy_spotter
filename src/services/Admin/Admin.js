@@ -98,6 +98,7 @@ export const fetchCampusLogHistory = async (campusId) => {
         .select(`
             action,
             edit_time,
+            message,
             Users (
                 first_name,
                 last_name
@@ -134,6 +135,7 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
             university_id: id,
             edited_by: adminId,
             action: changes,
+            message: data.message,
             edit_time: new Date().toISOString(),
         };
 

@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { uniRequestCommand, fetchCampusLogHistory } from '../../../../services/Admin/Admin';
 import { fetchStates } from '../../../../services/helper/helper';
 import { FaTimes } from 'react-icons/fa';
-// Date formating import from fns
-import { formatRelative } from 'date-fns';
+import { format } from 'date-fns';
 
 function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     const [status, setStatus] = useState(campus.status);
@@ -13,6 +12,8 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     const [schoolHexColor, setSchoolHexColor] = useState(campus.school_hex_color || '');
     const [latitude, setLatitude] = useState(campus.latitude || '');
     const [longitude, setLongitude] = useState(campus.longitude || '');
+    const [message, setMessage] = useState('');
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const batchFetch = async () => {
@@ -22,49 +23,47 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             setLogHistory(universitiesData);
         };
         batchFetch();
-
     }, [campus.id]);
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isOpen]);
 
     if (!isOpen) {
         return null;
     }
 
-    const handleStatusChange = (event) => {
-        setStatus(event.target.value);
-    };
-
-    const handleHexColorChange = (event) => {
-        setSchoolHexColor(event.target.value);
-    };
-
-    const handleLatitudeChange = (event) => {
-        setLatitude(event.target.value);
-    };
-
-    const handleLongitudeChange = (event) => {
-        setLongitude(event.target.value);
-    };
-
     const handleEditCampus = async (event) => {
         event.preventDefault();
+        const newErrors = {};
+
+        if (!latitude.trim()) newErrors.latitude = 'Latitude is required.';
+        if (!longitude.trim()) newErrors.longitude = 'Longitude is required.';
+        if (!schoolHexColor.trim()) newErrors.schoolHexColor = 'Hex Code is required.';
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) return;
 
         const campusData = {
-            latitude: latitude,
-            longitude: longitude,
-            school_hex_color: schoolHexColor
+            latitude,
+            longitude,
+            school_hex_color: schoolHexColor,
+            message
         };
-
-        if (!campusData.latitude || !campusData.longitude || !campusData.school_hex_color) {
-            alert("Please fill all fields");
-            return;
-        }
 
         try {
             await uniRequestCommand(campus.id, status, campusData, campus, adminId);
-            alert("Campus updated successfully");
-            onClose(); // Close the modal after successful update
+            alert('Campus updated successfully');
+            onClose();
         } catch (error) {
-            alert("Error updating campus: " + error.message);
+            alert('Error updating campus: ' + error.message);
         }
     };
 
@@ -74,102 +73,138 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-12 w-full max-w-full rounded-xl overflow-y-auto sm:max-w-screen-xl max-h-[90vh]">
-                <button onClick={onClose} className="relative -left-5 -top-7 text-2xl text-darkBlue hover:text-red-500 transition-colors duration-300">
+                className="bg-white p-8  max-w-7xl rounded-xl overflow-y-auto  h-[85vh]">
+                <button
+                    onClick={onClose}
+                    className="relative -top-4 -left-4 text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
                     <FaTimes />
                 </button>
-                <h1 className="text-darkBlue font-poppins font-bold text-2xl">Edit Campus</h1>
-                <form
-                    className="flex flex-col "
-                    onSubmit={handleEditCampus}>
-                    <label>University Name </label>
-                    <input
-                        type="text"
-                        value={campus.name}
-                        className="border border-gray-300 p-2 w-48 rounded-lg placeholder:italic"
-                    />
-                    <label>City</label>
-                    <input
-                        type="text"
-                        value={campus.city}
-                        className="border border-gray-300 p-2 w-48 rounded-lg placeholder:italic"
-                    />
-                    <label>State</label>
-                    <select
-                        value={campus.States.abr}
-                        placeholder="Select State"
-                        className="border border-gray-300 p-2 w-48 rounded-lg"
-                    >
-                        {states.map((state) => (
-                            <option key={state.id} value={state.id}>{state.abr}</option>
-                        ))}
-                    </select>
-                    <label>Hex Code</label>
-                    <input
-                        type="text"
-                        value={schoolHexColor}
-                        onChange={handleHexColorChange}
-                        placeholder="Ex. #FFFFFF"
-                        className="border border-gray-300 p-2 w-48 rounded-lg placeholder:italic"
-                    />
-                    <label>Latitude</label>
-                    <input
-                        type="text"
-                        value={latitude}
-                        onChange={handleLatitudeChange}
-                        placeholder="Ex. 123.456"
-                        className="border border-gray-300 p-2 w-48 rounded-lg placeholder:italic"
-                    />
-                    <label>Longitude</label>
-                    <input
-                        type="text"
-                        value={longitude}
-                        onChange={handleLongitudeChange}
-                        placeholder="Ex. 123.456"
-                        className="border border-gray-300 p-2 w-48 rounded-lg placeholder:italic"
-                    />
-                    <label>Status</label>
-                    <select
-                        value={status}
-                        onChange={handleStatusChange}
-                        className="border border-gray-300 p-2 w-48 rounded-lg"
-                    >
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Denied">Denied</option>
-                    </select>
-                    <button
-                        type="submit"
-                        className="bg-action text-white p-2 rounded-lg mt-4 flex"
-                    >
-                        Submit
-                    </button>
-                </form>
-                <section>
-                    <h1 className="text-darkBlue font-poppins font-bold text-2xl mt-8">Edit History</h1>
-                    <div className="overflow-y-auto max-h-52">
-                        {logHistory.length > 0 ? (
-                            logHistory.map((log, index) => (
-                                <div key={index} className="border border-gray-300 p-2 rounded-lg mt-2">
-                                    <h1>{log.Users.first_name} {log.Users.last_name} - Updated {formatRelative(new Date(log.edit_time), new Date())}</h1>
-                                    <ul className="flex gap-12">
-                                        {Object.keys(log.action).map((key, index) => (
-                                            <li key={index}>
-                                                <h1>{key}</h1>
-                                                <p>Old: {log.action[key].old}</p>
-                                                <p>New: {log.action[key].new}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No edit history available.</p>
-                        )}
-                    </div>
+                <h1 className="text-darkBlue font-poppins font-bold text-3xl mb-6">Edit Campus</h1>
+                <section className="flex flex-col sm:flex-row gap-8">
+                    <form
+                        onSubmit={handleEditCampus}
+                        className="flex flex-row flex-wrap gap-4 w-full sm:w-2/5">
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">University Name</label>
+                            <input
+                                type="text"
+                                value={campus.name}
+                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
+                                disabled
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">City</label>
+                            <input
+                                type="text"
+                                value={campus.city}
+                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
+                                disabled
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">State</label>
+                            <select
+                                value={campus.States.abr}
+                                className="border border-gray-300 p-2 rounded-lg "
+                                disabled
+                            >
+                                {states.map((state) => (
+                                    <option key={state.id} value={state.id}>{state.abr}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">Hex Code</label>
+                            <input
+                                type="text"
+                                value={schoolHexColor}
+                                onChange={(e) => setSchoolHexColor(e.target.value)}
+                                placeholder="Ex. #FFFFFF"
+                                className={`border p-2 rounded-lg placeholder:italic ${errors.schoolHexColor ? 'border-red-500' : 'border-gray-300'}`}
+                            />
+                            {errors.schoolHexColor && <p className="text-red-500 text-sm mt-1">{errors.schoolHexColor}</p>}
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">Latitude</label>
+                            <input
+                                type="text"
+                                value={latitude}
+                                onChange={(e) => setLatitude(e.target.value)}
+                                placeholder="Ex. 123.456"
+                                className={`border p-2 rounded-lg placeholder:italic ${errors.latitude ? 'border-red-500' : 'border-gray-300'}`}
+                            />
+                            {errors.latitude && <p className="text-red-500 text-sm mt-1">{errors.latitude}</p>}
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">Longitude</label>
+                            <input
+                                type="text"
+                                value={longitude}
+                                onChange={(e) => setLongitude(e.target.value)}
+                                placeholder="Ex. 123.456"
+                                className={`border p-2 rounded-lg placeholder:italic ${errors.longitude ? 'border-red-500' : 'border-gray-300'}`}
+                            />
+                            {errors.longitude && <p className="text-red-500 text-sm mt-1">{errors.longitude}</p>}
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-gray-700 font-medium">Status</label>
+                            <select
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                className="border border-gray-300 p-2 rounded-lg"
+                            >
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Denied">Denied</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-full">
+                            <label className="text-gray-700 font-medium">Update Reason</label>
+                            <textarea
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
+                                placeholder="Enter your reason..."
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-action text-white rounded-lg p-2 hover:scale-105 transform transition-transform duration-300 disabled:opacity-50"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                    <section className="w-3/5">
+                        <h2 className="text-darkBlue font-poppins font-bold text-xl mb-1">Update Logs</h2>
+                        <div className="overflow-y-auto max-h-[55vh] space-y-4">
+                            {logHistory.length > 0 ? (
+                                logHistory.map((log, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-4 rounded-lg space-y-1 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
+                                    >
+                                        <p className="font-medium">{log.Users.first_name} {log.Users.last_name} - Updated on {format(new Date(log.edit_time), 'MM-dd-yyyy HH:mm:ss')}</p>
+                                        <p className="text-gray-600">
+                                            <span className="font-semibold">Update Notes:</span> {log.message || 'None'}
+                                        </p>
+                                        <ul className="space-y-1">
+                                            {Object.keys(log.action).map((key, i) => (
+                                                <li key={i}>
+                                                    <span className="font-semibold text-darkBlue">{key.toUpperCase()}:</span>{' '}
+                                                    <span className="text-red-500">Old: {log.action[key].old}</span> |{' '}
+                                                    <span className="text-green-500">New: {log.action[key].new}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-600">No edit history available.</p>
+                            )}
+                        </div>
+                    </section>
                 </section>
-
-
             </div>
         </div>
     );
@@ -179,7 +214,7 @@ EditCampusModal.propTypes = {
     adminId: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    campus: PropTypes.object.isRequired
+    campus: PropTypes.object.isRequired,
 };
 
 export default EditCampusModal;

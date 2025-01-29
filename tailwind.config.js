@@ -10,7 +10,7 @@ export default {
         background: "#F5EFE7",
         primary: "#4764B9",
         secondary: '#3C3C3C',
-        accent: '#366B9D',
+        accent: '#224D7C',
         action: '#366B9D',
         darkBlue: "#3B4D61",
         blueAlt: '#15529C',
