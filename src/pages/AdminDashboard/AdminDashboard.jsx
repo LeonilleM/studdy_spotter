@@ -4,12 +4,12 @@ import LocationRequest from './helper/LocationRequest/LocationRequest';
 import { AuthContext } from '../../services/Auth/AuthContext';
 import BackButton from '../../components/shared/BackButton';
 
-const renderTabContents = (selectedOption, userId, selectedFilter, handleFilterChange) => {
+const renderTabContents = (selectedOption, userId, selectedFilter) => {
     switch (selectedOption) {
         case 'campus':
-            return <CampusRequest userId={userId} selectedFilter={selectedFilter} onFilterChange={handleFilterChange} />;
+            return <CampusRequest userId={userId} selectedFilter={selectedFilter} />;
         case 'location':
-            return <LocationRequest userId={userId} selectedFilter={selectedFilter} onFilterChange={handleFilterChange} />;
+            return <LocationRequest userId={userId} selectedFilter={selectedFilter} />;
     }
 };
 

@@ -6,7 +6,7 @@ import { statusButton } from '../StatusButton';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
-function CampusRequest({ userId, selectedFilter, onFilterChange }) {
+function CampusRequest({ userId, selectedFilter }) {
     const [universities, setUniversities] = useState([]);
     const [filteredUniversities, setFilteredUniversities] = useState([]);
     const [hoveredImage, setHoveredImage] = useState(null);
@@ -58,10 +58,17 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
     };
 
     return (
+<<<<<<< HEAD
         <div className="bg-white mt-2 p-6 rounded-xl border border-gray-300" onMouseMove={handleMouseMove}>
             <div className="grid grid-cols-10 bg-gray-200 py-4 px-2 rounded-xl items-center justify-center font-poppins">
                 <h1 className="col-span-3">ID</h1>
                 <h1 className="col-span-3">University</h1>
+=======
+        <div className="bg-white mt-2 p-6 rounded-xl border border-gray-borderColor" onMouseMove={handleMouseMove}>
+            <div className="grid grid-cols-8 gap-8 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
+                <h1 className="col-span-2">ID</h1>
+                <h1 className="col-span-2">University</h1>
+>>>>>>> 3b24f29126eed6caa4e89947a147c3e898bc5e72
                 <h1 className="col-span-1">State</h1>
                 <h1 className="col-span-1 text-center">Image</h1>
                 <h1 className="col-span-1 text-center">Status</h1>
@@ -70,21 +77,24 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
             {filteredUniversities.map((university, index) => (
                 <div
                     key={university.id}
+<<<<<<< HEAD
                     className={`grid grid-cols-10 p-2 my-2 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+=======
+                    className={`grid grid-cols-8 p-2 my-2 gap-8 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+>>>>>>> 3b24f29126eed6caa4e89947a147c3e898bc5e72
                         }`}
                 >
-                    <div className="col-span-3">{university.id}</div>
+                    <div className="col-span-2">{university.id}</div>
                     {university.status === 'Approved' ? (
                         <NavLink
                             to={`/university/${encodeURIComponent(university.name)} ${encodeURIComponent(university.city)}`}
-                            className="col-span-3 text-blue-500 underline"
+                            className="col-span-2 text-blue-500 underline"
                         >
                             {university.name},{university.city}
                         </NavLink>
                     ) : (
-                        <div className="col-span-3">{university.name}, {university.city}</div>
+                        <div className="col-span-2">{university.name}, {university.city}</div>
                     )}
-                    {/* <div className="col-span-2">{university.city}</div> */}
                     <div className="col-span-1">{university.States.abr}</div>
                     <div
                         className="relative col-span-1 justify-center items-center flex flex-row"
@@ -95,13 +105,13 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
                             onMouseLeave={handleMouseLeave}
                         />
                     </div>
-                    <div className="col-span-1">{statusButton(university.status)}</div>
-                    <div
+                    <div className="col-span-1 ">{statusButton(university.status)}</div>
+                    <button
                         onClick={() => handleEditModal(university)}
-                        className="col-span-1 flex flex-row justify-center  items-center gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300 ">
+                        className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300 ">
                         <FaEdit className="w-4 h-4" />
                         Edit
-                    </div>
+                    </button>
                 </div>
             ))}
             {hoveredImage && (
