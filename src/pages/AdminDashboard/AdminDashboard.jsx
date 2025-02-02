@@ -38,38 +38,38 @@ function AdminDashboard() {
                         <div className="flex items-center gap-6 font-poppins">
                             <button
                                 onClick={() => handleFilterChange('Pending')}
-                                className={` ${selectedFilter === 'Pending' ? 'text-accent ' : 'text-secondary'}`}
+                                className={` ${selectedFilter === 'Pending' ? 'text-action ' : 'text-secondary'}`}
                             >
                                 Pending
                             </button>
                             <button
                                 onClick={() => handleFilterChange('Approved')}
-                                className={`border-l border-r border-black px-4 ${selectedFilter === 'Approved' ? 'text-accent ' : 'text-secondary'}`}
+                                className={`border-l border-r border-black px-4 ${selectedFilter === 'Approved' ? 'text-action ' : 'text-secondary'}`}
                             >
                                 Approved
                             </button>
                             <button
                                 onClick={() => handleFilterChange('Denied')}
-                                className={`border-r border-black pr-5 ${selectedFilter === 'Denied' ? 'text-accent ' : 'text-secondary'}`}
+                                className={`border-r border-black pr-5 ${selectedFilter === 'Denied' ? 'text-action ' : 'text-secondary'}`}
                             >
                                 Denied
                             </button>
                             <button
                                 onClick={() => handleFilterChange('all')}
-                                className={` ${selectedFilter === 'all' ? 'text-accent ' : 'text-secondary'}`}
+                                className={` ${selectedFilter === 'all' ? 'text-action ' : 'text-secondary'}`}
                             >
                                 All
                             </button>
                         </div>
                         <div className="flex gap-1 font-poppins">
                             <button
-                                className={`px-4 py-2 ${selectedOption === 'campus' ? 'bg-accent text-white ' : 'bg-white '} rounded-l-lg`}
+                                className={`px-4 py-2 ${selectedOption === 'campus' ? 'bg-action text-white ' : 'bg-white '} rounded-l-lg`}
                                 onClick={() => handleOptionChange('campus')}
                             >
                                 Campus
                             </button>
                             <button
-                                className={`px-4 py-2 ${selectedOption === 'studyspot' ? 'bg-accent text-white ' : 'bg-white '} rounded-r-lg`}
+                                className={`px-4 py-2 ${selectedOption === 'studyspot' ? 'bg-action text-white ' : 'bg-white '} rounded-r-lg`}
                                 onClick={() => handleOptionChange('studyspot')}
                             >
                                 Study Spot
