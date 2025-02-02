@@ -6,7 +6,6 @@ import { fetchUserReviews } from '../../../services/Reviews/Reviews';
 import PropTypes from 'prop-types';
 import { formatDistanceToNow } from 'date-fns';
 
-
 function ReviewTab({ userId }) {
     const [reviews, setReviews] = useState([]);
     useEffect(() => {

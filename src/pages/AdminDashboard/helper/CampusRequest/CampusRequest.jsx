@@ -59,18 +59,18 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
 
     return (
         <div className="bg-white mt-2 p-6 rounded-xl border border-gray-300" onMouseMove={handleMouseMove}>
-            <div className="grid grid-cols-10 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
+            <div className="grid grid-cols-10 bg-gray-200 py-4 px-2 rounded-xl items-center justify-center font-poppins">
                 <h1 className="col-span-3">ID</h1>
                 <h1 className="col-span-3">University</h1>
                 <h1 className="col-span-1">State</h1>
-                <h1 className="col-span-1">Image</h1>
-                <h1 className="col-span-1">Status</h1>
-                <h1 className="col-span-1">Action</h1>
+                <h1 className="col-span-1 text-center">Image</h1>
+                <h1 className="col-span-1 text-center">Status</h1>
+                <h1 className="col-span-1 text-center">Action</h1>
             </div>
             {filteredUniversities.map((university, index) => (
                 <div
                     key={university.id}
-                    className={`grid grid-cols-10 p-2 my-2 gap-4 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    className={`grid grid-cols-10 p-2 my-2 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                         }`}
                 >
                     <div className="col-span-3">{university.id}</div>
@@ -87,7 +87,7 @@ function CampusRequest({ userId, selectedFilter, onFilterChange }) {
                     {/* <div className="col-span-2">{university.city}</div> */}
                     <div className="col-span-1">{university.States.abr}</div>
                     <div
-                        className="relative col-span-1"
+                        className="relative col-span-1 justify-center items-center flex flex-row"
 
                     >
                         <img src={university.image_url} alt={university.name} className="w-16 h-16 object-cover"
