@@ -7,7 +7,7 @@ export const fetchStudyRequest = async () => {
     // Fetch data from studylocationrequest
     const { data, error } = await supabase
         .from('StudyLocation')
-        .select('*, University(name), States(abr)')
+        .select('*, University(name),  States(abr)')
     if (error) {
         throw error
     }
@@ -15,7 +15,6 @@ export const fetchStudyRequest = async () => {
     return data
 
 }
-
 
 export const fetchUniversityRequest = async () => {
     const { data, error } = await supabase
@@ -49,6 +48,27 @@ export const fetchCampusLogHistory = async (campusId) => {
     }
     return data;
 }
+
+// Command to fetch the history changes for a given study location
+export const fetchStudyLocationLogHistory = async (studyLocationId) => {
+    const { data, error } = await supabase
+        .from('study_location_edit_logs')
+        .select(`
+        action,
+        edit_time,
+        message,
+        Users (
+            first_name,
+            last_name
+        )
+    `).eq('study_location_id', studyLocationId)
+        .order('edit_time', { ascending: false });
+    if (error)
+        throw error
+    return data
+}
+
+
 // Command for updating a campus request
 export const uniRequestCommand = async (id, status, data, oldCampusDetails, adminId) => {
     // Track changes
@@ -102,3 +122,9 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
 
     return "Success";
 };
+
+
+
+// Command for updating a study location request
+export const studyLocationRequestCommand = async (id, data, oldStudyLocationDetails, adminId) => {
+}

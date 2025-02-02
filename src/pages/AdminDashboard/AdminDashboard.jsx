@@ -8,15 +8,15 @@ const renderTabContents = (selectedOption, userId, selectedFilter) => {
     switch (selectedOption) {
         case 'campus':
             return <CampusRequest userId={userId} selectedFilter={selectedFilter} />;
-        case 'location':
+        case 'studyspot':
             return <LocationRequest userId={userId} selectedFilter={selectedFilter} />;
     }
 };
 
 function AdminDashboard() {
     const { user } = useContext(AuthContext);
-    const [selectedOption, setSelectedOption] = useState('campus');
-    const [selectedFilter, setSelectedFilter] = useState('Pending');
+    const [selectedOption, setSelectedOption] = useState('studyspot');
+    const [selectedFilter, setSelectedFilter] = useState('all');
 
     const handleOptionChange = (option) => {
         setSelectedOption(option);
@@ -69,8 +69,8 @@ function AdminDashboard() {
                                 Campus
                             </button>
                             <button
-                                className={`px-4 py-2 ${selectedOption === 'location' ? 'bg-accent text-white ' : 'bg-white '} rounded-r-lg`}
-                                onClick={() => handleOptionChange('location')}
+                                className={`px-4 py-2 ${selectedOption === 'studyspot' ? 'bg-accent text-white ' : 'bg-white '} rounded-r-lg`}
+                                onClick={() => handleOptionChange('studyspot')}
                             >
                                 Study Spot
                             </button>

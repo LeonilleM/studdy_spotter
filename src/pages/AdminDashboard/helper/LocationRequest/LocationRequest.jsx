@@ -3,20 +3,20 @@ import { statusButton } from '../StatusButton'
 import { fetchStudyRequest } from '../../../../services/Admin/Admin'
 import { FaEdit } from 'react-icons/fa'
 import EditLocationModal from './EditLocationModal'
+import PropTypes from 'prop-types'
 
 function LocationRequest({ userId, selectedFilter }) {
-
-    const [studyRequests, setStudyRequests] = useState([])
+    const [filteredStudyRequests, setFilteredStudyRequests] = useState([])
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [location, setLocation] = useState(null);
 
     useEffect(() => {
         const fetchRequests = async () => {
             const studyRequestLocation = await fetchStudyRequest();
-            setStudyRequests(studyRequestLocation);
+            setFilteredStudyRequests(studyRequestLocation.filter(request => selectedFilter === 'all' || request.status === selectedFilter));
         };
         fetchRequests();
-    }, [])
+    }, [selectedFilter]);
 
     const handleEditModal = (StudyLocation) => {
         setLocation(StudyLocation);
@@ -41,7 +41,11 @@ function LocationRequest({ userId, selectedFilter }) {
                 <h1 className="col-span-1">Status</h1>
                 <h1 className="col-span-1">Action</h1>
             </div>
-            {studyRequests.map((request, index) => (
+            {filteredStudyRequests.length === 0 ? (
+                <div className="text-center py-12">
+                    <p className="font-poppins text-semibold text-lg text-darkBlue">No {selectedFilter === 'all' ? '' : selectedFilter} entries</p>
+                </div>
+            ) : filteredStudyRequests.map((request, index) => (
                 <div
                     key={request.id}
                     className={`grid grid-cols-11 gap-2 p-2 my-2 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
@@ -55,6 +59,7 @@ function LocationRequest({ userId, selectedFilter }) {
                     <div className="col-span-1">{request.category}</div>
                     <div className="col-span-1">{statusButton(request.status)}</div>
                     <button
+                        onClick={() => handleEditModal(request)}
                         className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300 ">
                         <FaEdit className="w-4 h-4" />
                         Edit
@@ -74,5 +79,11 @@ function LocationRequest({ userId, selectedFilter }) {
         </div>
     );
 }
+
+LocationRequest.propTypes = {
+    userId: PropTypes.string.isRequired,
+    selectedFilter: PropTypes.string.isRequired
+}
+
 
 export default LocationRequest

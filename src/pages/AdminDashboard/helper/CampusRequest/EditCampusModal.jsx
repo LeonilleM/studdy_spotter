@@ -26,7 +26,6 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     }, [campus.id]);
 
 
-
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -42,13 +41,19 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         return null;
     }
 
+    // UseEffect for dynamically changing the div for showing hex color
+
+
+
     const handleEditCampus = async (event) => {
         event.preventDefault();
         const newErrors = {};
 
-        if (!latitude.trim()) newErrors.latitude = 'Latitude is required.';
-        if (!longitude.trim()) newErrors.longitude = 'Longitude is required.';
-        if (!schoolHexColor.trim()) newErrors.schoolHexColor = 'Hex Code is required.';
+        // Validation
+        if (!latitude) newErrors.latitude = 'Latitude is required.';
+        if (!longitude) newErrors.longitude = 'Longitude is required.';
+        if (!schoolHexColor) newErrors.schoolHexColor = 'Hex Code is required.';
+        if (!message) newErrors.message = 'Update Reason is required.';
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;

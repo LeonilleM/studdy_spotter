@@ -226,7 +226,7 @@ function Reviews() {
                             className="text-black italic hover:underline hover:text-blue-500 transition duration-300 ease-in-out"
                             target="_blank"
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
-                        >{locationDetails.address}
+                        >{address}
                         </a>
                         <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
                         <p className="italic text-red-500">Not Available</p>
