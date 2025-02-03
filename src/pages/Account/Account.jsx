@@ -61,7 +61,7 @@ function Account() {
                         <div className="flex flex-col border-r-[1px] border-b-[1px] border-l-[1px] rounded-b-lg border-borderColor pt-2 pb-8 shadow-lg font-lato bg-white">
                             <button
                                 onClick={() => handleOptionChange('reviews')}
-                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'reviews' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
+                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'reviews' ? 'bg-accent text-white' : 'hover:bg-lightBlue hover:text-blueAlt'
                                     }`}
                             >
                                 <FaStar />
@@ -69,7 +69,7 @@ function Account() {
                             </button>
                             <button
                                 onClick={() => handleOptionChange('collections')}
-                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'collections' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
+                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'collections' ? 'bg-accent text-white' : 'hover:bg-lightBlue hover:text-blueAlt'
                                     }`}
                             >
                                 <FaMapMarkerAlt />
@@ -79,7 +79,7 @@ function Account() {
                                 <NavLink
                                     to="/admin-dashboard"
                                     onClick={() => handleOptionChange('studyRequests')}
-                                    className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'studyRequests' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
+                                    className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'studyRequests' ? 'bg-accent text-white' : 'hover:bg-lightBlue hover:text-blueAlt'
                                         }`}
                                 >
                                     <FaUserShield />
@@ -109,7 +109,7 @@ function Account() {
                                 className={`relative px-2 ${selectedOption === 'collections' ? 'border-b-4 border-accent z-50' : ''}`}>
                                 Collections
                             </button>
-                            <div className="absolute right-0 bottom-0 w-full h-1  bg-borderColor"></div>
+                            <div className="absolute right-0 bottom-0 w-full h-0.5  bg-borderColor"></div>
                         </div>
                         <span className="font-bold text-4xl font-poppins">
                             {selectedOption === 'reviews' ? 'Reviews' : 'Collections'}
