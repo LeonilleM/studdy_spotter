@@ -13,6 +13,7 @@ import Account from './pages/Account/Account';
 import Setting from './pages/Setting/Setting';
 import RequestLocation from './pages/RequestLocation/RequestLocation';
 import ProtectedRoute from './services/Auth/ProtectedRoute';
+import AdminRoute from './services/Auth/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import PrivatePrivacy from './pages/PrivatePrivacy/PrivatePrivacy';
 
@@ -34,8 +35,7 @@ function App() {
         <Route path="/privacy-policy" element={<PrivatePrivacy />} />
         <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
         <Route path="/setting" element={<ProtectedRoute Component={Setting} />} />
-        <Route path="/admin-dashboard" element={<ProtectedRoute Component={AdminDashboard} />} />
-
+        <Route path="/admin-dashboard" element={<AdminRoute Component={AdminDashboard} />} />
       </Routes>
       <Footer />
     </div>

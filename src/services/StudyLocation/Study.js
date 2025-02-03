@@ -112,7 +112,7 @@ export const fetchUserFavorites = async (userID) => {
 };
 
 // Returns study locations for a given university id, used to show the study locations for a university, as well as the reviews for a study location
-export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
+export const fetchUniversityStudyLocations = async (uniID) => {
     const { data, error } = await supabase
         .from('StudyLocation')
         .select(`
@@ -122,12 +122,13 @@ export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
             UserReview (
                 rating
             ),
+
             LocationTagList (
                 TagTypes:tag_id (name)
             )
         `)
         .eq('university_id', uniID)
-
+        .eq('status', "Approved")
     if (error) {
         throw error
     }
@@ -261,7 +262,7 @@ export const fetchPopularLocations = async (universityID) => {
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
     const { data, error } = await supabase
-        .from('studylocationrequest')
+        .from('StudyLocation')
         .insert([
             {
                 name: studyLocationData.name,
@@ -269,9 +270,7 @@ export const requestStudyLocation = async (studyLocationData) => {
                 city: studyLocationData.city,
                 state_id: studyLocationData.state_id,
                 university_id: studyLocationData.university_id || null,
-                submitted_by: studyLocationData.user_id,
                 category: studyLocationData.category,
-                locationtag: studyLocationData.tags,
             }
         ])
         .select('id')
@@ -285,6 +284,9 @@ export const requestStudyLocation = async (studyLocationData) => {
     const studyLocationId = data.id;
     const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
 
+    console.log('Uploading image:', studyLocationData.image);
+    console.log('Sanitized file name:', sanitizedFileName);
+
     try {
         const { error: imageError } = await supabase.storage
             .from('study_location_image')
@@ -295,6 +297,7 @@ export const requestStudyLocation = async (studyLocationData) => {
             throw imageError;
         }
 
+
         const { data: publicURL, error: publicURLError } = await supabase.storage
             .from('study_location_image')
             .getPublicUrl(sanitizedFileName);
@@ -303,10 +306,12 @@ export const requestStudyLocation = async (studyLocationData) => {
             throw publicURLError;
         }
 
+        console.log('Public URL:', publicURL);
+
         if (!publicURL) {
             // Delete the inserted study location if the image URL is not available
             await supabase
-                .from('studylocationrequest')
+                .from('StudyLocation')
                 .delete()
                 .eq('id', studyLocationId);
             console.error('Failed to get public URL for image');
@@ -317,7 +322,7 @@ export const requestStudyLocation = async (studyLocationData) => {
 
 
         const { error: updateError } = await supabase
-            .from('studylocationrequest')
+            .from('StudyLocation')
             .update({ image_url })
             .eq('id', studyLocationId);
 
@@ -330,15 +335,15 @@ export const requestStudyLocation = async (studyLocationData) => {
     } catch (error) {
         console.error('Error during requestStudyLocation:', error);
         // Ensure the original insert is deleted if any error occurs
-        try {
-            await supabase
-                .from('studylocationrequest')
-                .delete()
-                .eq('id', studyLocationId);
-            console.log('Deleted study location due to error:', studyLocationId);
-        } catch (deleteError) {
-            console.error('Error deleting study location after failure:', deleteError);
-        }
+        // try {
+        //     await supabase
+        //         .from('StudyLocation')
+        //         .delete()
+        //         .eq('id', studyLocationId);
+        //     console.log('Deleted study location due to error:', studyLocationId);
+        // } catch (deleteError) {
+        //     console.error('Error deleting study location after failure:', deleteError);
+        // }
         throw error;
     }
 };

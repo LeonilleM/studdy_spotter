@@ -10,7 +10,7 @@ const FavoriteButton = ({ studyLocationID, userID, onClick }) => {
         cooldownTimeLeft,
         toggleFavorite
     } = useFavorite(studyLocationID, userID);
-    
+
     const handleToggleFavorite = async () => {
         if (!userID) {
             onClick();
@@ -30,24 +30,26 @@ const FavoriteButton = ({ studyLocationID, userID, onClick }) => {
             <button
                 onClick={handleToggleFavorite}
                 disabled={isLoading || isOnCooldown}
-                className={`border 
+                className={`border flex flex-row items-center justify-center py-3 px-4 rounded-lg 
+                    transition-all duration-200
                     ${isFavorite
                         ? 'border-action text-white font-bold bg-action '
                         : 'border-gray-300 text-secondary bg-white'
                     }
-                    ${isOnCooldown ? 'opacity-75 cursor-not-allowed' : 'hover:opacity-90'}
-                    py-3 px-4 rounded-lg flex items-center justify-center
-                    transition-all duration-200
+                    ${isOnCooldown ? 'opacity-75 cursor-not-allowed ' : 'hover:opacity-90 '}
+                 
                 `}
             >
-                {isFavorite ? <FaBookmark className="mr-2" /> : <FaRegBookmark className="mr-2" />}
-                {isLoading ? 'Loading...' : (
-                    isOnCooldown ? (
-                        `Wait ${formatCooldownTime(cooldownTimeLeft)}`
-                    ) : (
-                        isFavorite ? 'Saved' : 'Save'
-                    )
-                )}
+                {!isOnCooldown && (isFavorite ? <FaBookmark className="mr-2" /> : <FaRegBookmark className="mr-2" />)}
+                {isOnCooldown ? (
+                    <>
+                        <span className="mr-2"> Wait </span><span>{formatCooldownTime(cooldownTimeLeft)}</span>
+                    </>
+
+                ) : (
+                    isFavorite ? 'Saved' : 'Save'
+                )
+                }
             </button>
         </div>
     );

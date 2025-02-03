@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function ReviewFilter({ onFilterChange }) {
     const handleFilterChange = (e) => {
         const newFilter = e.target.value;
@@ -24,5 +26,9 @@ function ReviewFilter({ onFilterChange }) {
         </div>
     )
 }
+
+ReviewFilter.propTypes = {
+    onFilterChange: PropTypes.func.isRequired
+};
 
 export default ReviewFilter

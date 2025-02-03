@@ -14,16 +14,18 @@ function RequestSchoolModal({ isOpen, onClose }) {
 
     useEffect(() => {
         fetchStates().then((data) => {
-            setStates(data);
+            const sortedStates = data.sort((a, b) => a.name.localeCompare(b.name));
+            setStates(sortedStates);
         }).catch(error => {
             console.error(error);
         });
     }, []);
 
-    const handleStateChange = (selectedOption) => {
-        const selectedState = states.find(state => state.name === selectedOption.value);
-        setSelectedStateId(selectedState ? selectedState.id : null);
+
+    const handleStateChange = (event) => {
+        setSelectedStateId(event.target.value);
     };
+
 
     const handleRequestCampus = () => {
         sendCampusRequest({
@@ -91,11 +93,11 @@ function RequestSchoolModal({ isOpen, onClose }) {
                         </label>
                         <select
                             className="border border-secondary rounded-lg p-2"
-                            onChange={(e) => handleStateChange(e.target.value)}
+                            onChange={handleStateChange}
                         >
                             <option value="">Select State</option>
                             {states.map(state => (
-                                <option key={state.id} value={state.abr}>{state.name}</option>
+                                <option key={state.id} value={state.id}>{state.name}</option>
                             ))}
                         </select>
                     </div>
