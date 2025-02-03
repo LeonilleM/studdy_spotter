@@ -1,7 +1,7 @@
 import { fetchUniversityRequest } from '../../../../services/Admin/Admin';
 import { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
-import Edit from './EditCampusModal';
+import EditCampusModal from './EditCampusModal';
 import { statusButton } from '../StatusButton';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
@@ -45,10 +45,10 @@ function CampusRequest({ userId, selectedFilter }) {
 
     return (
         <div className="bg-white mt-2 p-6 rounded-xl border border-gray-borderColor" onMouseMove={handleMouseMove}>
-            <div className="grid grid-cols-8 gap-8 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
+            <div className="grid grid-cols-9 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
                 <h1 className="col-span-2">ID</h1>
                 <h1 className="col-span-2">University</h1>
-                <h1 className="col-span-1">State</h1>
+                <h1 className="col-span-2">Address</h1>
                 <h1 className="col-span-1 text-center">Image</h1>
                 <h1 className="col-span-1 text-center">Status</h1>
                 <h1 className="col-span-1 text-center">Action</h1>
@@ -61,7 +61,7 @@ function CampusRequest({ userId, selectedFilter }) {
                 filteredUniversities.map((university, index) => (
                     <div
                         key={university.id}
-                        className={`grid grid-cols-8 p-2 my-2 gap-8 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        className={`grid grid-cols-9 p-2 my-2 gap-4 items-center justify-center text-sm rounded-xl font-lato ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                     >
                         <div className="col-span-2">{university.id}</div>
@@ -75,22 +75,24 @@ function CampusRequest({ userId, selectedFilter }) {
                         ) : (
                             <div className="col-span-2">{university.name}, {university.city}</div>
                         )}
-                        <div className="col-span-1">{university.States.abr}</div>
-                        <div
-                            className="relative col-span-1"
-                        >
+                        <div className="col-span-2 italic ">
+                            {university.address ? `${university.address}, ${university.city}, ${university.zipcode}, ${university.States.abr}` : "N/A"}
+                        </div>
+                        <div className="relative col-span-1 flex items-center justify-center">
                             <img src={university.image_url} alt={university.name} className="w-16 h-16 object-cover"
                                 onMouseEnter={() => handleMouseEnter(university.image_url)}
-                                onMouseLeave={handleMouseLeave}
-                            />
+                                onMouseLeave={handleMouseLeave} />
                         </div>
-                        <div className="col-span-1 ">{statusButton(university.status)}</div>
-                        <button
-                            onClick={() => handleEditModal(university)}
-                            className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300 ">
-                            <FaEdit className="w-4 h-4" />
-                            Edit
-                        </button>
+                        <div className="col-span-1">{statusButton(university.status)}</div>
+                        <div className="col-span-1 flex items-center justify-center">
+                            <button
+                                onClick={() => handleEditModal(university)}
+                                className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300"
+                            >
+                                <FaEdit className="w-4 h-4" />
+                                Edit
+                            </button>
+                        </div>
                     </div>
                 ))}
             {hoveredImage && (
@@ -102,12 +104,13 @@ function CampusRequest({ userId, selectedFilter }) {
                     <img src={hoveredImage} alt="Hovered" className="w-60 h-60 object-cover" />
                 </div>
             )}
-            {isEditModalOpen && <Edit
-                isOpen={isEditModalOpen}
-                onClose={handleCloseModal}
-                campus={currentCampus}
-                adminId={userId}
-            />}
+            {isEditModalOpen &&
+                <EditCampusModal
+                    isOpen={isEditModalOpen}
+                    onClose={handleCloseModal}
+                    campus={currentCampus}
+                    adminId={userId}
+                />}
         </div>
     );
 }

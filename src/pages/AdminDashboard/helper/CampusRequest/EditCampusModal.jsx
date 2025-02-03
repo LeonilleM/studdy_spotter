@@ -2,19 +2,37 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { uniRequestCommand, fetchCampusLogHistory } from '../../../../services/Admin/Admin';
 import { fetchStates } from '../../../../services/helper/helper';
+import LogHistory from '../Shared/LogHistory';
 import { FaTimes } from 'react-icons/fa';
-import { format } from 'date-fns';
+import FormFields from '../Shared/FormField';
+import FormFieldsSelect from '../Shared/FormFieldSelect';
+import PopUpModal from '../../../../components/shared/popupModal';
 
 function EditCampusModal({ adminId, isOpen, onClose, campus }) {
-    const [status, setStatus] = useState(campus.status);
+    const [formData, setFormData] = useState({
+        university_name: campus.name,
+        city: campus.city,
+        state: campus.states_id,
+        address: campus.address || '',
+        zipcode: campus.zipcode || '',
+        status: campus.status,
+        schoolHexColor: campus.school_hex_color || '',
+        latitude: campus.latitude || '',
+        longitude: campus.longitude || '',
+        message: '',
+    });
+
+    const [initialFormData, setInitialFormData] = useState({});
     const [logHistory, setLogHistory] = useState([]);
     const [states, setStates] = useState([]);
-    const [schoolHexColor, setSchoolHexColor] = useState(campus.school_hex_color || '');
-    const [latitude, setLatitude] = useState(campus.latitude || '');
-    const [longitude, setLongitude] = useState(campus.longitude || '');
-    const [message, setMessage] = useState('');
     const [errors, setErrors] = useState({});
+    const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
 
+    const hasChanges = () => {
+        return Object.keys(formData).some((key) => formData[key] !== initialFormData[key]);
+    };
+
+    // Fetch log history and states on component mount
     useEffect(() => {
         const batchFetch = async () => {
             const universitiesData = await fetchCampusLogHistory(campus.id);
@@ -25,7 +43,34 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         batchFetch();
     }, [campus.id]);
 
+    useEffect(() => {
+        if (isOpen) {
+            setInitialFormData({ // Store initial form data
+                university_name: campus.name,
+                state: campus.states_id,
+                city: campus.city,
+                address: campus.address || '',
+                zipcode: campus.zipcode || '',
+                status: campus.status,
+                schoolHexColor: campus.school_hex_color || '',
+                latitude: campus.latitude || '',
+                longitude: campus.longitude || '',
+                message: '',
+            })
+        }
+    }, [isOpen, campus]);
 
+    const handlePopUp = (type, message, timeout) => {
+        setPopUp({ isVisible: true, type, message, timeout });
+        setTimeout(() => {
+            setPopUp({ isVisible: false, type: '', message: '', timeout: 0 });
+            if (type === 'success') {
+                onClose();
+            }
+        }, timeout);
+    };
+
+    // Disable body scroll when modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -37,53 +82,65 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         };
     }, [isOpen]);
 
-    if (!isOpen) {
-        return null;
-    }
-
-    // UseEffect for dynamically changing the div for showing hex color
-
-
 
     const handleEditCampus = async (event) => {
         event.preventDefault();
         const newErrors = {};
 
         // Validation
-        if (!latitude) newErrors.latitude = 'Latitude is required.';
-        if (!longitude) newErrors.longitude = 'Longitude is required.';
-        if (!schoolHexColor) newErrors.schoolHexColor = 'Hex Code is required.';
-        if (!message) newErrors.message = 'Update Reason is required.';
+        if (!formData.message.trim()) newErrors.message = 'Update Reason is required.';
+        if (!hasChanges()) newErrors.form = 'No changes detected.';
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length > 0) return;
 
         const campusData = {
-            latitude,
-            longitude,
-            school_hex_color: schoolHexColor,
-            message
+            name: formData.university_name,
+            city: formData.city,
+            states_id: formData.state,
+            address: formData.address,
+            zipcode: formData.zipcode,
+            school_hex_color: formData.schoolHexColor,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            message: formData.message
         };
 
         try {
-            await uniRequestCommand(campus.id, status, campusData, campus, adminId);
-            alert('Campus updated successfully');
-            onClose();
+            await uniRequestCommand(campus.id, formData.status, campusData, campus, adminId);
+            handlePopUp('success', 'Campus updated successfully', 3000);
         } catch (error) {
             alert('Error updating campus: ' + error.message);
         }
     };
 
+    // Check if a specific field has been changed
+    const isFieldChanged = (fieldName, currentValue) => {
+        return currentValue !== initialFormData[fieldName];
+    };
+
+    if (!isOpen) {
+        return null;
+    }
+
     return (
         <div
             onClick={onClose}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+            {popUp.isVisible && (
+                <PopUpModal
+                    type={popUp.type}
+                    message={popUp.message}
+                    onClick={() => setPopUp({ isVisible: false, type: '', message: '', timeout: 0 })}
+                    timeout={popUp.timeout}
+                />
+            )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8  max-w-7xl rounded-xl overflow-y-auto  h-[85vh]">
+                className="bg-white p-8 max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
                 <button
                     onClick={onClose}
-                    className="relative -top-4 -left-4 text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
+                    className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
                     <FaTimes />
                 </button>
                 <h1 className="text-darkBlue font-poppins font-bold text-3xl mb-6">Edit Campus</h1>
@@ -91,129 +148,111 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                     <form
                         onSubmit={handleEditCampus}
                         className="flex flex-row flex-wrap gap-4 w-full sm:w-2/5">
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">University Name</label>
-                            <input
-                                type="text"
-                                value={campus.name}
-                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
-                                disabled
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">City</label>
-                            <input
-                                type="text"
-                                value={campus.city}
-                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
-                                disabled
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">State</label>
-                            <select
-                                value={campus.States.abr}
-                                className="border border-gray-300 p-2 rounded-lg "
-                                disabled
-                            >
-                                {states.map((state) => (
-                                    <option key={state.id} value={state.id}>{state.abr}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">Hex Code</label>
-                            <div className="flex">
-                                <input
-                                    type="text"
-                                    value={schoolHexColor}
-                                    onChange={(e) => setSchoolHexColor(e.target.value)}
-                                    placeholder="Ex. #FFFFFF"
-                                    className={`border p-2 rounded-lg placeholder:italic ${errors.schoolHexColor ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                <div className="w-10 h-10 ml-1 rounded-lg border border-gray-200" style={{ backgroundColor: schoolHexColor }} />
-                            </div>
-                            {errors.schoolHexColor && <p className="text-red-500 text-sm mt-1">{errors.schoolHexColor}</p>}
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">Latitude</label>
-                            <input
-                                type="text"
-                                value={latitude}
-                                onChange={(e) => setLatitude(e.target.value)}
-                                placeholder="Ex. 123.456"
-                                className={`border p-2 rounded-lg placeholder:italic ${errors.latitude ? 'border-red-500' : 'border-gray-300'}`}
-                            />
-                            {errors.latitude && <p className="text-red-500 text-sm mt-1">{errors.latitude}</p>}
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">Longitude</label>
-                            <input
-                                type="text"
-                                value={longitude}
-                                onChange={(e) => setLongitude(e.target.value)}
-                                placeholder="Ex. 123.456"
-                                className={`border p-2 rounded-lg placeholder:italic ${errors.longitude ? 'border-red-500' : 'border-gray-300'}`}
-                            />
-                            {errors.longitude && <p className="text-red-500 text-sm mt-1">{errors.longitude}</p>}
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-gray-700 font-medium">Status</label>
-                            <select
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                className="border border-gray-300 p-2 rounded-lg"
-                            >
-                                <option value="Pending">Pending</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Denied">Denied</option>
-                            </select>
-                        </div>
+                        <FormFields
+                            type="text"
+                            label="Campus Name"
+                            value={formData.university_name}
+                            placeholder={campus.name.toString()}
+                            onChange={(e) => setFormData({ ...formData, university_name: e.target.value })}
+                            isFieldChanged={isFieldChanged('university_name', formData.university_name)}
+                        />
+                        <FormFields
+                            type="text"
+                            label="Address"
+                            value={formData.address}
+                            placeholder={campus.address ?? 'N/A'}
+                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                            isFieldChanged={isFieldChanged('address', formData.address)}
+                        />
+                        <FormFields
+                            type="text"
+                            value={formData.city}
+                            label="City"
+                            placeholder={campus.city}
+                            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                            isFieldChanged={isFieldChanged('city', formData.city)}
+
+                        />
+                        <FormFieldsSelect
+                            label="State"
+                            value={formData.state}
+                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                            options={states}
+                            isFieldChanged={isFieldChanged('state', formData.state)}
+                        />
+                        <FormFields
+                            type="number"
+                            label="Zip Code"
+                            width="25%"
+                            value={formData.zipcode}
+                            placeholder={campus.zipcode?.toString() ?? 'N/A'}
+                            onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
+                            isFieldChanged={isFieldChanged('zipcode', formData.zipcode)}
+                        />
+                        <FormFields
+                            label="Hex Code"
+                            value={formData.schoolHexColor}
+                            onChange={(e) => setFormData({ ...formData, schoolHexColor: e.target.value })}
+                            placeholder="Ex. #FFFFFF"
+                            error={errors.schoolHexColor}
+                            isFieldChanged={isFieldChanged('schoolHexColor', formData.schoolHexColor)}
+                        />
+                        <FormFields
+                            label="Latitude"
+                            value={formData.latitude}
+                            onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                            placeholder="Ex. 123.456"
+                            error={errors.latitude}
+                            isFieldChanged={isFieldChanged('latitude', formData.latitude)}
+                        />
+                        <FormFields
+                            label="Longitude"
+                            value={formData.longitude}
+                            onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                            placeholder="Ex. 123.456"
+                            error={errors.longitude}
+                            isFieldChanged={isFieldChanged('longitude', formData.longitude)}
+                        />
+                        <FormFieldsSelect
+                            label="Status"
+                            value={formData.status}
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                            options={[
+                                { id: 'Pending', abr: 'Pending' },
+                                { id: 'Approved', abr: 'Approved' },
+                                { id: 'Denied', abr: 'Denied' }
+                            ]}
+                            isFieldChanged={isFieldChanged('status', formData.status)}
+                            width="100%"
+                        />
+                        {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>
                             <textarea
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                className="border border-gray-300 p-2 rounded-lg placeholder:italic"
+                                value={formData.message}
+                                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                className={`border p-2 rounded-lg placeholder:italic 
+                                focus:outline-none focus:ring-2 hover:ring-2 hover:ring-darkBlue transition duration-300
+                                focus:ring-accent focus:border-transparent
+
+                                    ${errors.message ? 'border-red-500' : 'border-gray-300'}`}
                                 placeholder="Enter your reason..."
                             />
+                            {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
                         </div>
+                        {errors.form && <p className="text-red-500 text-sm mt-1">{errors.form}</p>}
+                        {hasChanges() && !formData.message.trim() && (
+                            <p className="text-red-500 text-sm mt-1">You must provide an update reason to submit changes.</p>
+                        )}
                         <button
                             type="submit"
-                            className="w-full bg-action text-white rounded-lg p-2 hover:scale-105 transform transition-transform duration-300 disabled:opacity-50"
+                            className={`w-full bg-action text-white rounded-lg p-2 hover:scale-105 transform transition-transform duration-300 disabled:opacity-50 ${!hasChanges() || !formData.message.trim() ? 'cursor-not-allowed' : ''}`}
+                            disabled={!hasChanges() || !formData.message.trim()}
                         >
                             Submit
                         </button>
                     </form>
-                    <section className="w-3/5">
-                        <h2 className="text-darkBlue font-poppins font-bold text-xl mb-1">Update Logs</h2>
-                        <div className="overflow-y-auto max-h-[55vh] space-y-4 border border-black border-opacity-10 rounded-lg">
-                            {logHistory.length > 0 ? (
-                                logHistory.map((log, index) => (
-                                    <div
-                                        key={index}
-                                        className={`p-4 space-y-1 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
-                                    >
-                                        <p className="font-medium">{log.Users.first_name} {log.Users.last_name} - Updated on {format(new Date(log.edit_time), 'MM-dd-yyyy HH:mm:ss')}</p>
-                                        <p className="text-gray-600">
-                                            <span className="font-semibold">Update Notes:</span> {log.message || 'None'}
-                                        </p>
-                                        <ul className="space-y-1">
-                                            {Object.keys(log.action).map((key, i) => (
-                                                <li key={i}>
-                                                    <span className="font-semibold text-darkBlue">{key.toUpperCase()}:</span>{' '}
-                                                    <span className="text-red-500">Old: {log.action[key].old}</span> |{' '}
-                                                    <span className="text-green-500">New: {log.action[key].new}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-600">No edit history available.</p>
-                            )}
-                        </div>
-                    </section>
+                    <LogHistory logHistory={logHistory} />
                 </section>
             </div>
         </div>

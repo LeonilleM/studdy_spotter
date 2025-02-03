@@ -4,78 +4,112 @@ import { fetchStudyRequest } from '../../../../services/Admin/Admin'
 import { FaEdit } from 'react-icons/fa'
 import EditLocationModal from './EditLocationModal'
 import PropTypes from 'prop-types'
+import { NavLink } from 'react-router-dom'
 
 function LocationRequest({ userId, selectedFilter }) {
-    const [filteredStudyRequests, setFilteredStudyRequests] = useState([])
+    const [filteredLocations, setFilteredLocations] = useState([]);
+    const [hoveredImage, setHoveredImage] = useState(null);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [location, setLocation] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState(null);
 
-    useEffect(() => {
-        const fetchRequests = async () => {
-            const studyRequestLocation = await fetchStudyRequest();
-            setFilteredStudyRequests(studyRequestLocation.filter(request => selectedFilter === 'all' || request.status === selectedFilter));
-        };
-        fetchRequests();
-    }, [selectedFilter]);
-
-    const handleEditModal = (StudyLocation) => {
-        setLocation(StudyLocation);
+    const handleEditModal = (location) => {
+        setCurrentLocation(location);
         setIsEditModalOpen(true);
-    }
+    };
 
     const handleCloseModal = () => {
         setIsEditModalOpen(false);
-    }
+    };
+
+    useEffect(() => {
+        const fetchUniversities = async () => {
+            const universitiesData = await fetchStudyRequest();
+            setFilteredLocations(universitiesData.
+                filter(studyLocation => selectedFilter === 'all' || studyLocation.status === selectedFilter));
+        };
+        fetchUniversities();
+    }, [selectedFilter]);
+
+    const handleMouseMove = (event) => {
+        setMousePosition({ x: event.pageX, y: event.pageY });
+    };
+
+    const handleMouseEnter = (image) => {
+        setHoveredImage(image);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredImage(null);
+    };
 
     return (
-        <div className="bg-white mt-2 p-6 rounded-xl h-full border border-borderColor">
-            <div className="grid grid-cols-11 gap-2 bg-gray-200  p-4 rounded-xl  items-center justify-center font-poppins">
+        <div className="bg-white mt-2 p-6 rounded-xl border border-gray-borderColor" onMouseMove={handleMouseMove}>
+            <div className="grid grid-cols-9 gap-4 bg-gray-200 p-4 rounded-xl items-center justify-center font-poppins">
                 <h1 className="col-span-2">ID</h1>
-                <h1 className="col-span-1">University</h1>
-                <h1 className="col-span-1">Address</h1>
-                <h1 className="col-span-1">City</h1>
-                <h1 className="col-span-1">State</h1>
-                <h1 className="col-span-1">Zipcode</h1>
-                <h1 className="col-span-1">Tags</h1>
-                <h1 className="col-span-1">Category</h1>
-                <h1 className="col-span-1">Status</h1>
-                <h1 className="col-span-1">Action</h1>
+                <h1 className="col-span-2">Location</h1>
+                <h1 className="col-span-2">Address</h1>
+                <h1 className="col-span-1 text-center">Image</h1>
+                <h1 className="col-span-1 text-center">Status</h1>
+                <h1 className="col-span-1 text-center">Action</h1>
             </div>
-            {filteredStudyRequests.length === 0 ? (
+            {filteredLocations.length === 0 ? (
                 <div className="text-center py-12">
                     <p className="font-poppins text-semibold text-lg text-darkBlue">No {selectedFilter === 'all' ? '' : selectedFilter} entries</p>
                 </div>
-            ) : filteredStudyRequests.map((request, index) => (
+            ) :
+                filteredLocations.map((studyLocation, index) => (
+                    <div
+                        key={studyLocation.id}
+                        className={`grid grid-cols-9 p-2 my-2 gap-4 items-center justify-center text-sm rounded-xl font-lato ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}
+                    >
+                        <div className="col-span-2">{studyLocation.id}</div>
+                        {studyLocation.status === 'Approved' ? (
+                            <NavLink
+                                to={`/university/${studyLocation.University.name}/${encodeURIComponent(studyLocation.name)}`}
+                                className="col-span-2 text-blue-500 underline"
+                            >
+                                {studyLocation.name}, {studyLocation.city}
+                            </NavLink>
+                        ) : (
+                            <div className="col-span-2">{studyLocation.name}, {studyLocation.city}</div>
+                        )}
+                        <div className="col-span-2 italic ">
+                            {studyLocation.address ? `${studyLocation.address}, ${studyLocation.city}, ${studyLocation.zipcode}, ${studyLocation.States.abr}` : "N/A"}
+                        </div>
+                        <div className="relative col-span-1 flex items-center justify-center">
+                            <img src={studyLocation.image_url} alt={studyLocation.name} className="w-16 h-16 object-cover"
+                                onMouseEnter={() => handleMouseEnter(studyLocation.image_url)}
+                                onMouseLeave={handleMouseLeave} />
+                        </div>
+                        <div className="col-span-1">{statusButton(studyLocation.status)}</div>
+                        <div className="col-span-1 flex items-center justify-center">
+                            <button
+                                onClick={() => handleEditModal(studyLocation)}
+                                className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300"
+                            >
+                                <FaEdit className="w-4 h-4" />
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            {hoveredImage && (
                 <div
-                    key={request.id}
-                    className={`grid grid-cols-11 gap-2 p-2 my-2 items-center justify-center text-sm rounded-xl ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                    <div className="col-span-2">{request.id}</div>
-                    <div className="col-span-1">{request.University ? request.University.name : 'N/A'}</div>
-                    <div className="col-span-1">{request.address}</div>
-                    <div className="col-span-1">{request.city}</div>
-                    <div className="col-span-1">{request.States.abr}</div>
-                    <div className="col-span-1">{request.zipcode}</div>
-                    <div className="col-span-1">{request.locationtag ? request.locationtag.join(', ') : 'N/A'}</div>
-                    <div className="col-span-1">{request.category}</div>
-                    <div className="col-span-1">{statusButton(request.status)}</div>
-                    <button
-                        onClick={() => handleEditModal(request)}
-                        className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300 ">
-                        <FaEdit className="w-4 h-4" />
-                        Edit
-                    </button>
+                    id="modal"
+                    className="absolute z-50 pointer-events-none border shadow-sm"
+                    style={{ top: mousePosition.y, left: mousePosition.x }}
+                >
+                    <img src={hoveredImage} alt="Hovered" className="w-60 h-60 object-cover" />
                 </div>
-            ))}
-            {
-                isEditModalOpen && (
-                    <EditLocationModal
-                        isOpen={isEditModalOpen}
-                        onClose={handleCloseModal}
-                        location={location}
-                        adminId={userId}
-                    />
-                )
-            }
+            )}
+            {isEditModalOpen && <EditLocationModal
+                isOpen={isEditModalOpen}
+                onClose={handleCloseModal}
+                location={currentLocation}
+                adminId={userId}
+            />}
         </div>
     );
 }

@@ -112,7 +112,7 @@ export const fetchUserFavorites = async (userID) => {
 };
 
 // Returns study locations for a given university id, used to show the study locations for a university, as well as the reviews for a study location
-export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
+export const fetchUniversityStudyLocations = async (uniID) => {
     const { data, error } = await supabase
         .from('StudyLocation')
         .select(`
@@ -122,12 +122,13 @@ export const fetchUniversityStudyLocationsWithReviews = async (uniID) => {
             UserReview (
                 rating
             ),
+
             LocationTagList (
                 TagTypes:tag_id (name)
             )
         `)
         .eq('university_id', uniID)
-
+        .eq('status', "Approved")
     if (error) {
         throw error
     }

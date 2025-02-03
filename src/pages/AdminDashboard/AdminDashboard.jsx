@@ -15,8 +15,8 @@ const renderTabContents = (selectedOption, userId, selectedFilter) => {
 
 function AdminDashboard() {
     const { user } = useContext(AuthContext);
-    const [selectedOption, setSelectedOption] = useState('studyspot');
-    const [selectedFilter, setSelectedFilter] = useState('all');
+    const [selectedOption, setSelectedOption] = useState('campus');
+    const [selectedFilter, setSelectedFilter] = useState('Pending');
 
     const handleOptionChange = (option) => {
         setSelectedOption(option);

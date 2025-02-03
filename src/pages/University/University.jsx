@@ -1,6 +1,6 @@
 import { fetchUniversityData } from '../../services/University/University';
 import { useEffect, useState } from 'react';
-import { fetchUniversityStudyLocationsWithReviews } from '../../services/StudyLocation/Study';
+import { fetchUniversityStudyLocations } from '../../services/StudyLocation/Study';
 import { fetchTags } from '../../services/helper/helper';
 import { loadingComponent } from '../../components/Loading';
 import ErrorPage from '../../components/shared/ErrorPage';
@@ -33,7 +33,7 @@ function University() {
                     return;
                 }
                 const universityID = universityData[0].id;
-                const studyLocationsData = await fetchUniversityStudyLocationsWithReviews(universityID);
+                const studyLocationsData = await fetchUniversityStudyLocations(universityID);
 
                 const sortedByRatingAndName = studyLocationsData.sort((a, b) => {
                     if (b.rating === a.rating) {
