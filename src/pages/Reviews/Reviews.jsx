@@ -60,9 +60,15 @@ function Reviews() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const locationData = await fetchStudyLocationData(studyLocation, uniName);
+                const uniNameCity = decodeURIComponent(uniName);
+                const parts = uniNameCity.split(" ");
+                // Assuming Cities are always the last part of the name
+                let uniCity = parts.slice(-1).join(' ');
+                let universityName = parts.slice(0, -1).join(' ');
+                const locationData = await fetchStudyLocationData(studyLocation, universityName, uniCity);
                 setAddress(locationData.address + " " + locationData.city + " " + locationData.State.abr + " " + locationData.zipcode + " " + locationData.name);
                 setLocationDetails(locationData);
+
                 if (locationData) {
                     const reviewsData = await fetchAllReviews(locationData.id);
                     // Sort reviews by date
@@ -141,9 +147,7 @@ function Reviews() {
         }
     };
 
-    if (loading) {
-        return loadingComponent("Loading Reviews...");
-    }
+
 
     const handleUpdateReview = (updatedReview) => {
         setReviews(prevReviews => {
@@ -164,11 +168,9 @@ function Reviews() {
             switch (filter) {
                 case 'Oldest':
                     sortedReviews = sortedReviews.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-                    console.log("Oldest", sortedReviews);
                     break;
                 case 'Newest':
                     sortedReviews = sortedReviews.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                    console.log("Newest", sortedReviews);
                     break;
                 case 'Highest':
                     sortedReviews = sortedReviews.slice().sort((a, b) => b.rating - a.rating);
@@ -186,9 +188,22 @@ function Reviews() {
         });
     };
 
-
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
 
+    if (loading) {
+        return loadingComponent("Loading Reviews...");
+    }
+
+    if (error) {
+        return (
+            <ErrorPage
+                errorMessage={error}
+                customMessage="If you think this location should be added, send a location application below"
+                link="/university/request-location"
+                linkText="Send Application"
+            />
+        );
+    }
     return (
         <div className="bg-background ">
             {locationDetails && (
@@ -282,16 +297,6 @@ function Reviews() {
                 handleDeleteReview={handleDeleteReview}
                 updateModal={handleUpdateReviewModal}
             />
-            {
-                error && (
-                    <ErrorPage
-                        errorMessage={error}
-                        customMessage=">If you think this location should be added, send a location application below"
-                        link="/university/request-location"
-                        linkText="Send Application"
-                    />
-                )
-            }
         </div >
     );
 }

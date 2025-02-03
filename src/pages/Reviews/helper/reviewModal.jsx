@@ -91,7 +91,7 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4 font-semibold">
             <div className="fixed inset-0 bg-black opacity-75" onClick={handleClose}></div>
-            <div className="bg-background rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-2/3 w-full py-6 sm:px-12">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-2/3 w-full py-6 sm:px-12">
                 <div className="flex flex-col p-6">
                     <div className="flex flex-row justify-between items-center">
                         <h1 className="font-poppins text-2xl text-secondary">{locationName}</h1>
@@ -99,8 +99,10 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                             <FaTimes className="w-6 h-6 hover:text-red-700 transition duration-500 ease-in-out" />
                         </button>
                     </div>
-                    <div className="w-full flex-col font-lato text-secondary pt-6 space-y-2">
-                        <h1 className="text-xl font-bold">{isEditMode ? 'Edit Review' : 'Write Review'}</h1>
+                    <div className="w-full flex-col font-lato text-secondary pt-6">
+                        <h1 className="font-bold">
+                            {isEditMode ? "Edit Review" : 'Write Review'} <span className="text-error">*</span>
+                        </h1>
                         <div className="relative">
                             <StarRating rating={rating} setRating={setRating} />
                             <textarea

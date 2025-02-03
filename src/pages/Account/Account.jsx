@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext.jsx';
 import { FaUser, FaSignOutAlt, FaStar, FaUserShield, FaMapMarkerAlt } from 'react-icons/fa';
+import CreateCollectionModal from './helper/createCollectionModal.jsx';
 import BackButton from '../../components/shared/BackButton';
 import { NavLink } from 'react-router-dom';
 import ReviewTab from './accountTabs/reviewTab.jsx';
@@ -21,6 +22,7 @@ const renderTabContents = (selectedOption, userId) => {
 function Account() {
     const { user, isAuthenticated, logout } = useContext(AuthContext);
     const [selectedOption, setSelectedOption] = useState('reviews');
+    const [isCreateModal, setIsCreateModalOpen] = useState(false);
 
     const handleOptionChange = (option) => {
         setSelectedOption(option);
@@ -111,17 +113,35 @@ function Account() {
                             </button>
                             <div className="absolute right-0 bottom-0 w-full h-0.5  bg-borderColor"></div>
                         </div>
-                        <span className="font-bold text-4xl font-poppins">
-                            {selectedOption === 'reviews' ? 'Reviews' : 'Collections'}
-                        </span>
+                        <div className=" flex justify-between items-center">
+                            <h1 className="font-bold text-4xl font-poppins">{selectedOption === 'reviews' ? 'Reviews' : 'Collections'} </h1>
+                            {selectedOption === 'collections' && (
+                                <button
+                                    onClick={() => setIsCreateModalOpen(true)}
+                                    className="border bg-accent text-white rounded-lg p-2.5 font-lato text-xs hover:scale-105 hover:shadow-sm hover:shadow-black transition duration-300">
+                                    Create New Collection
+                                </button>
+                            )}
+                        </div>
                         {renderTabContents(selectedOption, user.id)}
+                        {isCreateModal && (
+                            <CreateCollectionModal
+                                onClose={() => setIsCreateModalOpen(false)}
+                                userId={user.id}
+
+                            />
+                        )}
+
                     </div>
+
                 </div>
+
             ) : (
                 <div className="flex flex-col items-center justify-center h-screen">
                     <p>Please sign in to view your account</p>
                 </div>
             )}
+
         </div>
     );
 }

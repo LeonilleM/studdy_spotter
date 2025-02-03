@@ -136,7 +136,7 @@ function University() {
                                 />
                             </div>
                             {filteredStudyLocations.length > 0 ? (
-                                <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} />
+                                <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} uniCity={uniData[0].city} />
                             ) : (
                                 <h1 className="text-2xl w-full">No study locations found for this university.</h1>
                             )}

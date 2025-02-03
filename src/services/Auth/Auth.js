@@ -139,7 +139,7 @@ export const updateUniversity = async (userId, universityId) => {
         .from('Users')
         .update({ university_id: universityId })
         .eq('id', userId)
-        .select('university_id, University(name)')
+        .select('university_id, University(name,city)')
         .single();
     if (error)
         throw new Error("Error setting university: ", error.message)
@@ -170,19 +170,6 @@ export const updateNames = async (userId, firstName, lastName) => {
 };
 
 
-// Used for better type checking in updateUserProfile
-/**
- * @typedef {Object} User
- * @property {string} id
- * @property {string} first_name
- * @property {string} last_name
- * @property {string} university_id
- * @property {string|null} image_url
- * @property {Object} [University]
- * @property {string} University.name
- * @property {Object} [role]
- * @property {string} role.name
- */
 export const updateUserProfile = async (userInfo, isDeleteImage) => {
     try {
 

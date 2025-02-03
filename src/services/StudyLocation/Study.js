@@ -150,7 +150,8 @@ export const fetchUniversityStudyLocations = async (uniID) => {
 }
 
 // Reteurns the Data for a given study location, used to show the reviews for a study location
-export const fetchStudyLocationData = async (studyName, universityName) => {
+export const fetchStudyLocationData = async (studyName, universityName, uniCity) => {
+
     const { data, error } = await supabase
         .from('StudyLocation')
         .select(`
@@ -176,18 +177,19 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
         `)
         .eq('name', studyName)
         .eq('University.name', universityName)
+        .eq('city', uniCity)
         .single()
 
     if (error) {
         if (error.code === 'PGRST116') {
             // No rows returned
-            throw new Error(`${studyName} is not associated with ${universityName}`);
+            throw new Error(`${studyName} is not associated with ${universityName} ${uniCity}`);
         }
         throw error;
     }
 
     if (!data) {
-        throw new Error(`${studyName} is not associated with ${universityName}`);
+        throw new Error(`${studyName} is not associated with ${universityName} ${uniCity}`);
     }
 
     // Calculate review statistics
