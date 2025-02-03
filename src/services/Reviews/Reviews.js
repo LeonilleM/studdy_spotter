@@ -37,6 +37,7 @@ export const fetchUserReviews = async (userID) => {
             created_at,
             updated_at,
             StudyLocation:study_location_id (
+                id,
                 name,
                 address,
                 University:university_id (

@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import ReviewModal from '../../Reviews/helper/reviewModal'; // Adjust the import path as needed
+import ReviewSetting from '../../Reviews/helper/reviewSettings'; // Adjust the import path as needed
 import { fetchUserReviews } from '../../../services/Reviews/Reviews';
 import { formatDistanceToNow } from 'date-fns';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import StarRating from '../../../components/StarRating'; // Adjust the import path as needed
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { BsThreeDots } from 'react-icons/bs';
 
 function ReviewTab({ userId }) {
     const [reviews, setReviews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [showFullText, setShowFullText] = useState(false);
+    const [showFullText, setShowFullText] = useState({});
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showSettingMenu, setShowSettingMenu] = useState(false);
     const [reviewToEdit, setReviewToEdit] = useState(null);
-    const reviewsPerPage = 2;
+    const reviewsPerPage = 3;
     const MAX_LENGTH = 200;
 
     const toggleShowFullText = (reviewId) => {
@@ -31,8 +34,9 @@ function ReviewTab({ userId }) {
     };
 
     const handleEditReview = (review) => {
+        console.log("Review", review);
         setReviewToEdit(review);
-        setShowEditModal(true);
+        setShowSettingMenu(true);
     };
 
     const handleUpdateReview = (updatedReview) => {
@@ -49,6 +53,10 @@ function ReviewTab({ userId }) {
             prevReviews.filter((review) => review.id !== deletedReviewId)
         );
         setShowEditModal(false);
+    };
+
+    const openReviewModal = () => {
+        setShowEditModal(true);
     };
 
     useEffect(() => {
@@ -85,15 +93,25 @@ function ReviewTab({ userId }) {
                                 <NavLink to={studyPage}>
                                     <img src={review.StudyLocation.image_url} alt="location" className="sm:w-28 sm:h-28  rounded-md" />
                                 </NavLink>
-                                <div className="flex flex-col sm:ml-2 space-y-1">
-                                    <NavLink
-                                        to={studyPage}
-                                        className="font-bold text-lg font-poppins hover:underline">
-                                        {review.StudyLocation.name}
-                                    </NavLink>
-                                    <NavLink
-                                        to={UniPage}
-                                        className="text-sm hover:underline">{review.StudyLocation.University.name}, {review.StudyLocation.University.city}</NavLink>
+                                <div className="flex flex-col gap-4 sm:ml-2 space-y-1 xl:w-[80%]">
+                                    <div className="flex flex-row justify-between items-center">
+                                        <div className="flex flex-col">
+                                            <NavLink
+                                                to={studyPage}
+                                                className="font-bold text-lg font-poppins hover:underline">
+                                                {review.StudyLocation.name}
+                                            </NavLink>
+                                            <NavLink
+                                                to={UniPage}
+                                                className="text-sm hover:underline">{review.StudyLocation.University.name}, {review.StudyLocation.University.city}</NavLink>
+                                        </div>
+                                        <div
+                                            onClick={() => handleEditReview(review)}
+                                            className="text-secondary h-5 w-5 hover:cursor-pointer hover:text-black"
+                                        >
+                                            <BsThreeDots />
+                                        </div>
+                                    </div>
                                     <div className="flex flex-row flex-wrap gap-1 pt-2 text-white">
                                         <span className="text-xs font-bold bg-white text-black py-1 px-3 align-center">{review.StudyLocation.category}</span>
                                         {review.StudyLocation.LocationTagList.map((tag, index) => {
@@ -128,16 +146,15 @@ function ReviewTab({ userId }) {
                                     </span>
                                 )}
                             </p>
-                            {review.updated_at && (
-                                <p className="text-xs text-gray-500 mt-4 font-lato">
-                                    Updated {formatDistanceToNow(new Date(review.updated_at))} ago
-                                </p>
-                            )}
-                            <button onClick={() => handleEditReview(review)} className="text-action hover:underline cursor-pointer">
-                                Edit Review
-                            </button>
+                            {
+                                review.updated_at && (
+                                    <p className="text-xs text-gray-500 mt-4 font-lato">
+                                        Updated {formatDistanceToNow(new Date(review.updated_at))} ago
+                                    </p>
+                                )
+                            }
                             <hr className="border-[1px] border-black mt-14" />
-                        </div>
+                        </div >
                     );
                 })
             ) : (
@@ -168,18 +185,29 @@ function ReviewTab({ userId }) {
                     <FaChevronRight />
                 </button>
             </div>
+            {showSettingMenu && (
+                <ReviewSetting
+                    show={showSettingMenu}
+                    handleClose={() => setShowSettingMenu(false)}
+                    review={reviewToEdit}
+                    handleUpdateReview={handleUpdateReview}
+                    handleDeleteReview={handleDeleteReview}
+                    userID={userId}
+                    studyLocationID={reviewToEdit.StudyLocation?.id}
+                    updateModal={openReviewModal}
+                />
+            )}
             {showEditModal && (
                 <ReviewModal
                     show={showEditModal}
                     handleClose={() => setShowEditModal(false)}
                     userID={userId}
-                    locationId={reviewToEdit.StudyLocation.id}
-                    locationName={reviewToEdit.StudyLocation.name}
-                    handleUpdateReview={handleUpdateReview}
+                    locationId={reviewToEdit.StudyLocation?.id}
+                    locationName={reviewToEdit.StudyLocation?.name}
                     review={reviewToEdit}
                 />
             )}
-        </div>
+        </div >
     );
 }
 

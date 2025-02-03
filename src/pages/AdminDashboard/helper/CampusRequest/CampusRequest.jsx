@@ -75,7 +75,7 @@ function CampusRequest({ userId, selectedFilter }) {
                         ) : (
                             <div className="col-span-2">{university.name}, {university.city}</div>
                         )}
-                        <div className="col-span-1">{university.States.abr}</div>
+                        <div className="col-span-2">{university.address}, {university.States.abr}, {university.zipcode}</div>
                         <div
                             className="relative col-span-1"
                         >

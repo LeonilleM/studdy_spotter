@@ -4,8 +4,6 @@ import { FaTimes } from 'react-icons/fa';
 import { createReview, updateReview } from '../../../services/Reviews/Reviews'
 import StarRating from './StarRatingHover';
 
-
-
 const ReviewModal = ({ locationId, userID, locationName, show, handleClose, handleNewReview, handleUpdateReview, review }) => {
     const [reviewText, setReviewText] = useState(review?.description || '');
     const [rating, setRating] = useState(review?.rating || 0);
@@ -36,10 +34,14 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
 
             if (isEditMode) {
                 const updatedReview = await updateReview(userID, locationId, rating, reviewText);
-                handleUpdateReview(updatedReview);
+                if (handleUpdateReview) {
+                    handleUpdateReview(updatedReview);
+                }
             } else {
                 const userReview = await createReview(locationId, userID, rating, reviewText);
-                handleNewReview(userReview);
+                if (handleNewReview) {
+                    handleNewReview(userReview);
+                }
             }
             setSuccess(true);
             setTimeout(() => {
@@ -110,7 +112,8 @@ const ReviewModal = ({ locationId, userID, locationName, show, handleClose, hand
                             <span className={`text-xs inline-flex ${error ? 'text-red-500' : 'text-gray-500'}`}>{charCounter(reviewText)} / {MAX_CHAR} Charactars</span>
                         </div>
                         {error && <div className="text-red-500 mt-2">{error}</div>}
-                        {success && <div className="text-green-500 mt-2">Review submitted successfully!</div>}
+                        {!isEditMode && success && <div className="text-green-500 mt-2">Review submitted successfully!</div>}
+                        {isEditMode && success && <div className="text-green-500 mt-2">Review updated successfully!</div>}
                         <button
                             onClick={handleSaveReview}
                             disabled={loading || success}
