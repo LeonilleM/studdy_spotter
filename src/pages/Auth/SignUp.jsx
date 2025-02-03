@@ -40,7 +40,7 @@ const SignUp = () => {
             }, 100)
         } catch (error) {
             console.error("Sign up error:", error)
-            setError(error.message || "Failed to sign up")
+            setError(error.message || "Failed to Reigster")
             setTimeout(() => {
                 setError(null)
             }, 5000)
@@ -66,12 +66,12 @@ const SignUp = () => {
                     </h1>
                     {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 self-start w-full" role="alert"> {error} </div>}
                     <form className="flex flex-col space-y-5 mt-5 font-lato w-full text-lato font-bold" onSubmit={handleSignUp}>
-                        <div className="flex flex-row space-x-5">
-                            <div className="flex flex-col w-1/2">
+                        <div className="flex flex-row">
+                            <div className="flex flex-col w-1/2 pr-2">
                                 <label>First Name<span className="text-red-500">*</span></label>
                                 <input type="text" name="firstName" placeholder="First Name" className="p-2 rounded-md border-action border-2" />
                             </div>
-                            <div className="flex flex-col w-1/2">
+                            <div className="flex flex-col w-1/2 pl-2">
                                 <label>Last Name<span className="text-red-500">*</span></label>
                                 <input type="text" name="lastName" placeholder="Last Name" className="p-2 rounded-md border-action border-2" />
                             </div>
@@ -100,7 +100,7 @@ const SignUp = () => {
                                 />
                             </div>
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col pt-1">
                             <button
                                 type="submit"
                                 disabled={isLoading}
@@ -111,7 +111,7 @@ const SignUp = () => {
                                     <FaArrowRight />
                                 </span>
                                 <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">
-                                    {isLoading ? 'Signing up...' : 'Sign up'}
+                                    {isLoading ? 'Registering...' : 'Register'}
                                 </span>
                                 <span className="relative invisible">Register</span>
                             </button>

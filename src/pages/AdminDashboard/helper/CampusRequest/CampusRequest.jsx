@@ -61,7 +61,7 @@ function CampusRequest({ userId, selectedFilter }) {
                 filteredUniversities.map((university, index) => (
                     <div
                         key={university.id}
-                        className={`grid grid-cols-9 p-2 my-2 gap-4 items-center justify-center text-sm rounded-xl font-lato ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        className={`grid grid-cols-9 p-2 px-4 my-2 gap-4 items-center justify-center text-sm rounded-xl font-lato ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                     >
                         <div className="col-span-2">{university.id}</div>
@@ -75,23 +75,28 @@ function CampusRequest({ userId, selectedFilter }) {
                         ) : (
                             <div className="col-span-2">{university.name}, {university.city}</div>
                         )}
-                        <div className="col-span-2 italic ">
-                            {university.address ? `${university.address}, ${university.city}, ${university.zipcode}, ${university.States.abr}` : "N/A"}
-                        </div>
-                        <div className="relative col-span-1 flex items-center justify-center">
-                            <img src={university.image_url} alt={university.name} className="w-16 h-16 object-cover"
-                                onMouseEnter={() => handleMouseEnter(university.image_url)}
-                                onMouseLeave={handleMouseLeave} />
+                        <div className="col-span-1">{university.States.abr}</div>
+                        <div
+                            className="relative col-span-1"
+                        >
+                            <div className="flex flex-row justify-center items-center">
+                                <img src={university.image_url} alt={university.name} className="w-16 h-16 object-cover"
+                                    onMouseEnter={() => handleMouseEnter(university.image_url)}
+                                    onMouseLeave={handleMouseLeave}
+                                />
+                            </div>
                         </div>
                         <div className="col-span-1">{statusButton(university.status)}</div>
                         <div className="col-span-1 flex items-center justify-center">
-                            <button
+                            <div class = "flex flex-row justify-center items-center gap-2 rounded py-2">
+                        <button
                                 onClick={() => handleEditModal(university)}
                                 className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300"
                             >
                                 <FaEdit className="w-4 h-4" />
                                 Edit
                             </button>
+                        </div>
                         </div>
                     </div>
                 ))}
