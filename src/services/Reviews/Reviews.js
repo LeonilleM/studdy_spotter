@@ -40,7 +40,8 @@ export const fetchUserReviews = async (userID) => {
                 name,
                 address,
                 University:university_id (
-                    name
+                    name,
+                    city
                 ),
                 image_url,
                 category,

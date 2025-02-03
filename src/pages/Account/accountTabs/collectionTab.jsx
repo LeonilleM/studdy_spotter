@@ -134,7 +134,12 @@ function CollectionTab({ userId }) {
                     />
                 )}
                 <div className="flex items-center gap-2 font-lato">
-                    {!activeCollection && <span className="font-semibold">Collections</span>}
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-action text-white text-xs  rounded-md py-2 px-2"
+                    >
+                        Create New Collection
+                    </button>
                     {activeCollection && (
                         <>
                             <span
@@ -148,14 +153,7 @@ function CollectionTab({ userId }) {
                         </>
                     )}
                 </div>
-                {!activeCollection && (
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-action text-white text-xs  rounded-md py-2 px-2"
-                    >
-                        Create New Collection
-                    </button>
-                )}
+
             </div>
             {isLoading &&
                 (

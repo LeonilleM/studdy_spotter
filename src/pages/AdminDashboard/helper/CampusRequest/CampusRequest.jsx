@@ -88,15 +88,15 @@ function CampusRequest({ userId, selectedFilter }) {
                         </div>
                         <div className="col-span-1">{statusButton(university.status)}</div>
                         <div className="col-span-1 flex items-center justify-center">
-                            <div class = "flex flex-row justify-center items-center gap-2 rounded py-2">
-                        <button
-                                onClick={() => handleEditModal(university)}
-                                className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300"
-                            >
-                                <FaEdit className="w-4 h-4" />
-                                Edit
-                            </button>
-                        </div>
+                            <div className="flex flex-row justify-center items-center gap-2 rounded py-2">
+                                <button
+                                    onClick={() => handleEditModal(university)}
+                                    className="flex flex-row gap-1 text-blue-500 cursor-pointer hover:scale-105 hover:text-blue-600 transform transition-transform duration-300"
+                                >
+                                    <FaEdit className="w-4 h-4" />
+                                    Edit
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}

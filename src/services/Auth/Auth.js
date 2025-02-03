@@ -62,7 +62,7 @@ export const fetchUserData = async (userID) => {
             last_name,
             university_id,
             role:Roles (name),
-            University:university_id (name),
+            University:university_id (name,city),
             image_url
         `)
         .eq('id', userID)

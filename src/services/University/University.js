@@ -26,8 +26,6 @@ export const fetchUniversityData = async (uniName) => {
     const university = uniName.substring(0, lastIndex);
     const city = uniName.substring(lastIndex + 1);
 
-    console.log(university);
-    console.log(city);
     const { data, error } = await supabase
         .from('University')
         .select(

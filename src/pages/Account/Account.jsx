@@ -11,7 +11,7 @@ const renderTabContents = (selectedOption, userId) => {
     switch (selectedOption) {
         case 'reviews':
             return <ReviewTab userId={userId} />;
-        case 'locations':
+        case 'collections':
             return <CollectionTab userId={userId} />;
         default:
             return null;
@@ -51,7 +51,7 @@ function Account() {
                                 <FaUser className="w-20 h-20 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}
                             <span className="mt-4 font-bold text-lg text-white">{user.first_name} {user.last_name}</span>
-                            <span className="text-sm text-white">{user.University?.name || "No University Affiliation"}</span>
+                            <span className="text-sm text-white">{user.University?.name || "No University Affiliation"}, {user.University.city}</span>
                             {user.role.name === 'Admin' ? (
                                 <span className="text-sm text-[#FF90D6] mt-1">Admin</span>
                             ) : (
@@ -68,8 +68,8 @@ function Account() {
                                 <span>View Reviews</span>
                             </button>
                             <button
-                                onClick={() => handleOptionChange('locations')}
-                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'locations' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
+                                onClick={() => handleOptionChange('collections')}
+                                className={`flex items-center gap-2 py-4 px-6 transition duration-300 ${selectedOption === 'collections' ? 'bg-lightBlue text-blueAlt' : 'hover:bg-lightBlue hover:text-blueAlt'
                                     }`}
                             >
                                 <FaMapMarkerAlt />
@@ -98,6 +98,19 @@ function Account() {
                     </div>
 
                     <div className="flex flex-col lg:w-2/3 w-full">
+                        <div className="relative flex flex-row space-x-8 mb-8 font-poppins font-bold text-lg text-black">
+                            <button
+                                onClick={() => handleOptionChange('reviews')}
+                                className={`relative px-2 ${selectedOption === 'reviews' ? 'border-b-4 border-accent z-50' : ''}`}>
+                                Reviews
+                            </button>
+                            <button
+                                onClick={() => handleOptionChange('collections')}
+                                className={`relative px-2 ${selectedOption === 'collections' ? 'border-b-4 border-accent z-50' : ''}`}>
+                                Collections
+                            </button>
+                            <div className="absolute right-0 bottom-0 w-full h-1  bg-borderColor"></div>
+                        </div>
                         <span className="font-bold text-4xl font-poppins">
                             {selectedOption === 'reviews' ? 'Reviews' : 'Collections'}
                         </span>
