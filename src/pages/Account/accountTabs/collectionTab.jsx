@@ -124,7 +124,7 @@ function CollectionTab({ userId }) {
 
     return (
         <>
-            <div className="mb-6 py-3 flex justify-between items-center border-b border-secondary">
+            <div className="mb-6 py-4 mt-6 flex justify-between items-center border-b border-gray-300">
                 {popUp && (
                     <PopupModal
                         type={popUp.type}
@@ -133,13 +133,13 @@ function CollectionTab({ userId }) {
                         onClick={popUp.onClick}
                     />
                 )}
+                <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-action text-white text-xs rounded-md py-2 px-2"
+                            >
+                                Create New Collection
+                            </button>
                 <div className="flex items-center gap-2 font-lato">
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-action text-white text-xs  rounded-md py-2 px-2"
-                    >
-                        Create New Collection
-                    </button>
                     {activeCollection && (
                         <>
                             <span
@@ -153,7 +153,6 @@ function CollectionTab({ userId }) {
                         </>
                     )}
                 </div>
-
             </div>
             {isLoading &&
                 (
