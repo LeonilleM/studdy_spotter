@@ -137,7 +137,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8 max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
+                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">

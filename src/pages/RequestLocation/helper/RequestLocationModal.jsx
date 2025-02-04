@@ -219,9 +219,12 @@ function RequestLocationModal({ isOpen, onClose, user }) {
                             <div className="flex flex-col">
                                 <label htmlFor="university" className="text-sm font-medium">University</label>
                                 <Select
-                                    className="text-base"
+                                    className="text-base w-[25rem]"
                                     name="university"
-                                    options={universities.map(university => ({ value: university.id, label: university.name }))}
+                                    options={universities.map(university => ({
+                                        value: university.id,
+                                        label: `${university.name} (${university.city})`
+                                    }))}
                                     onChange={handleUniversity}
                                     required
                                 />

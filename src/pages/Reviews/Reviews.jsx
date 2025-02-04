@@ -264,7 +264,7 @@ function Reviews() {
                             </span>
                             {locationDetails.LocationTagList.map((Amenities, index) => {
                                 const tagName = Amenities.TagTypes?.name || 'no-name';
-                                const isLastItem = index === locationDetails.LocationTagList.length - 1;
+                                const isLastItem = index === locationDetails.LocationTagList.length;
                                 return (
                                     <span key={`tag-${index}-${tagName}`} className={`text-secondary py-2 font-poppins flex items-center ${!isLastItem ? 'border-b' : ''}`}>
                                         <span className="mr-2">{iconMap[tagName]}</span>{tagName}

@@ -151,7 +151,6 @@ export const fetchUniversityStudyLocations = async (uniID) => {
 
 // Reteurns the Data for a given study location, used to show the reviews for a study location
 export const fetchStudyLocationData = async (studyName, universityName, uniCity) => {
-
     const { data, error } = await supabase
         .from('StudyLocation')
         .select(`
@@ -263,6 +262,7 @@ export const fetchPopularLocations = async (universityID) => {
 
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
+
     const { data, error } = await supabase
         .from('StudyLocation')
         .insert([
@@ -283,11 +283,24 @@ export const requestStudyLocation = async (studyLocationData) => {
         throw error;
     }
 
+    // Insert all tags for the study location
+    const tags = studyLocationData.tags.map(tag => ({
+        study_location_id: data.id,
+        tag_id: tag
+    }));
+
+
+    // Will insert all tags in a single request
+    const { error: tagError } = await supabase
+        .from('LocationTagList')
+        .insert(tags);
+    if (tagError) {
+        console.error('Error inserting tags:', tagError);
+        throw tagError;
+    }
+
     const studyLocationId = data.id;
     const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
-
-    console.log('Uploading image:', studyLocationData.image);
-    console.log('Sanitized file name:', sanitizedFileName);
 
     try {
         const { error: imageError } = await supabase.storage

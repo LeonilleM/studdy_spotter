@@ -23,8 +23,6 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
         message: '',
     });
 
-    console.log(location);
-
     const [initialFormData, setInitialFormData] = useState({});
     const [logHistory, setLogHistory] = useState([]);
     const [states, setStates] = useState([]);
@@ -93,9 +91,9 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
         if (!formData.message.trim()) newErrors.message = 'Update Reason is required.';
         if (!hasChanges()) newErrors.form = 'No changes detected.';
         setErrors(newErrors);
-
         if (Object.keys(newErrors).length > 0) return;
 
+        
         const locationData = {
             university_id: formData.university_id,
             name: formData.name,
@@ -138,7 +136,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
             )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8 max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
+                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
@@ -214,6 +212,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             placeholder={location.latitude ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                             isFieldChanged={isFieldChanged('latitude', formData.latitude)}
+                            width="43%"
                         />
                         <FormFields
                             label="Longitude"
@@ -221,6 +220,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             placeholder={location.longitude ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                             isFieldChanged={isFieldChanged('longitude', formData.longitude)}
+                            width="43%"
                         />
                         <FormFieldsSelect
                             label="Status"
@@ -231,6 +231,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                                 { id: 'Approved', abr: 'Approved' },
                                 { id: 'Denied', abr: 'Denied' }
                             ]}
+                            width="30%"
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             renderOption={(option) => option.abr}
                         />

@@ -78,15 +78,14 @@ function ReviewTab({ userId }) {
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
     const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
-
     const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
     return (
         <div>
             {currentReviews.length > 0 ? (
                 currentReviews.map((review) => {
-                    const studyPage = `/university/${review.StudyLocation.University.name}/${review.StudyLocation.name}`;
                     const UniPage = `/university/${review.StudyLocation.University.name} ${review.StudyLocation.University.city}`;
+                    const studyPage = `${UniPage}/${review.StudyLocation.name}`;
                     return (
                         <div key={review.id} className="flex flex-col my-4 text-black pb-8">
                             <div className="flex flex-row flex-wrap items-center gap-4 font-lato">
@@ -172,7 +171,7 @@ function ReviewTab({ userId }) {
                     <button
                         key={index}
                         onClick={() => handlePageChange(index + 1)}
-                        className={`mx-1 px-3 py-1 rounded ${currentPage === index + 1 ? 'bg-darkBlue text-white' : 'bg-gray-200 text-black'}`}
+                        className={`mx-1 px-3 py-1 rounded-lg ${currentPage === index + 1 ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700'}`}
                     >
                         {index + 1}
                     </button>

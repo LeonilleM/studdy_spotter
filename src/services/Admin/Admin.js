@@ -7,7 +7,7 @@ export const fetchStudyRequest = async () => {
     // Fetch data from studylocationrequest
     const { data, error } = await supabase
         .from('StudyLocation')
-        .select('*, University(name, city),  States(abr)')
+        .select('*, University(name, city),  States(abr),LocationTagList(TagTypes:tag_id (name))')
     if (error) {
         throw error
     }
