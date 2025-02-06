@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom'
 import { IoSearchOutline } from "react-icons/io5";
 import { FaUniversity } from "react-icons/fa";
 import PropTypes from 'prop-types';
+import ourImage from '../../assets/littlemonkey.png'
 
 function Home() {
     const [universities, setUniversities] = useState([]);
@@ -100,10 +101,31 @@ function Home() {
                 </div>
             </section >
             <section className="bg-secondary h-24 w-full">
+
             </section>
 
-            <section className="h-screen bg-background">
-
+            <section className="h-screen bg-background ">
+                <div className="max-w-4xl mx-auto pt-12 px-4">
+                    <div className="items-center justify-center flex flex-col gap-4">
+                        <h1 className="text-accent font-bold text-3xl">Top Study Spots Across The Nation</h1>
+                        <div className="bg-black w-full">Test</div>
+                    </div>
+                </div>
+                <div className="max-w-4xl mx-auto pt-12 px-4">
+                    <div className="flex flex-col sm:flex-row gap-8 bg-white border border-borderColor rounded-xl p-8 shadow-2xl mt-5">
+                        <img src={ourImage} alt="ourImage" className="w-full sm:w-auto rounded-lg border border-borderColor" />
+                        <div className="flex flex-col gap-4 justify-between">
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-accent font-bold">WHO ARE WE?</h1>
+                                <h2 className="font-bold text-4xl">BLAHHHHHH</h2>
+                                <h1 className="text-2xl">Oink in the oink with the oink. This is the problem with today's society.</h1>
+                            </div>
+                            <NavLink to="/about" onClick={() => window.scrollTo(0, 0)}>
+                                <h4 className="font-bold text-xl">Read More ⇀</h4>
+                            </NavLink>
+                        </div>
+                    </div>
+                </div>
             </section>
         </>
     )

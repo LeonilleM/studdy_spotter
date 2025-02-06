@@ -2,12 +2,12 @@ import BackButton from '../../components/shared/BackButton';
 
 function PrivatePrivacy() {
     return (
-        <div className=" bg-background ">
+        <div className=" bg-background min-h-screen">
             <div className="absolute top-32 sm:left-14 left-4" >
                 <BackButton />
             </div>
             <section className="pt-24 container mx-auto sm:px-0 px-4">
-                <div className="flex flex-row flex-wrap container justify-between mx-auto  text-secondary space-y-4 py-32">
+                <div className="flex flex-row flex-wrap container justify-between mx-auto text-secondary space-y-4 py-32">
                     <div className="lg:w-[43%] space-y-4 flex flex-col justify-center">
                         <h1 className="font-poppins">PRIVACY POLICY</h1>
                         <h1 className="font-poppins text-4xl font-bold text-heading">We respect your privacy</h1>
