@@ -10,25 +10,24 @@ import FormFieldsSelect from '../Shared/FormFieldSelect';
 import PopUpModal from '../../../../components/shared/popupModal';
 
 function EditLocationModal({ adminId, isOpen, onClose, location }) {
-    const [formData, setFormData] = useState({
-        university_id: location.university_id,
-        name: location.name,
-        address: location.address || '',
-        city: location.city,
-        state: location.state,
-        zipcode: location.zipcode || '',
-        latitude: location.latitude || '',
-        longitude: location.longitude || '',
-        status: location.status,
-        message: '',
-    });
-
     const [initialFormData, setInitialFormData] = useState({});
     const [logHistory, setLogHistory] = useState([]);
     const [states, setStates] = useState([]);
     const [universities, setUniversities] = useState([]);
     const [errors, setErrors] = useState({});
     const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
+    const [formData, setFormData] = useState({
+        university_id: location?.university_id || '',
+        name: location.name,
+        address: location.address || '',
+        city: location.city,
+        state: location.state_id,
+        zipcode: location.zipcode || '',
+        latitude: location.latitude || '',
+        longitude: location.longitude || '',
+        status: location.status,
+        message: '',
+    });
 
     const hasChanges = () => {
         return Object.keys(formData).some((key) => formData[key] !== initialFormData[key]);
@@ -53,7 +52,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                 name: location.name,
                 address: location.address || '',
                 city: location.city,
-                state: location.state,
+                state: location.state_id,
                 zipcode: location.zipcode || '',
                 latitude: location.latitude || '',
                 longitude: location.longitude || '',
@@ -93,13 +92,13 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
 
-        
+
         const locationData = {
             university_id: formData.university_id,
             name: formData.name,
             address: formData.address,
             city: formData.city,
-            state: formData.state,
+            state_id: formData.state,
             zipcode: formData.zipcode,
             latitude: formData.latitude,
             longitude: formData.longitude,
@@ -192,11 +191,15 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                         <FormFieldsSelect
                             label="State"
                             value={formData.state}
-                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                            onChange={(e) => {
+                                console.log('Selected State ID:', e.target.value);
+                                setFormData({ ...formData, state: e.target.value });
+                            }}
                             options={states}
                             isFieldChanged={isFieldChanged('state', formData.state)}
                             renderOption={(option) => option.abr}
                         />
+
                         <FormFields
                             type="number"
                             label="Zip Code"
@@ -235,16 +238,6 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             renderOption={(option) => option.abr}
                         />
-                        <FormFieldsSelect
-                            label="Is Active?"
-                            value={location.is_active}
-                            options={[
-                                { id: "true", abr: 'TRUE' },
-                                { id: "false", abr: 'FALSE' }
-                            ]}
-                            disabled
-                        />
-
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>

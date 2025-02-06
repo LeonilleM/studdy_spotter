@@ -9,7 +9,7 @@ function LocationDetails({ locationDetails, totalReviews }) {
             style={{
                 backgroundImage: `url(${locationDetails.image_url})`,
                 backgroundPosition: 'center',
-                backgroundSize: 'cover',
+                backgroundRepeat: 'repeat',
                 height: '50vh'
             }}>
             <div className="flex h-full py-">

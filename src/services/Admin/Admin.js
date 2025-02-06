@@ -85,8 +85,8 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
     if (data.city !== oldStudyLocationDetails.city) {
         changes.city = { old: oldStudyLocationDetails.city, new: data.city }
     }
-    if (data.states_id !== oldStudyLocationDetails.states_id) {
-        changes.states_id = { old: oldStudyLocationDetails.states_id, new: data.states_id }
+    if (data.state_id !== oldStudyLocationDetails.state_id) {
+        changes.state_id = { old: oldStudyLocationDetails.state_id, new: data.state_id }
     }
     if (data.zipcode !== oldStudyLocationDetails.zipcode) {
         changes.zipcode = { old: oldStudyLocationDetails.zipcode === null ? "Null" : oldStudyLocationDetails.zipcode, new: data.zipcode }
@@ -124,7 +124,7 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
             address: data.address,
             zipcode: data.zipcode,
             city: data.city,
-            states_id: data.states_id,
+            state_id: data.state_id,
             name: data.name,
             university_id: data.university_id,
         })

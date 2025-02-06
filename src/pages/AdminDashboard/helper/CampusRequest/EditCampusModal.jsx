@@ -9,6 +9,11 @@ import FormFieldsSelect from '../Shared/FormFieldSelect';
 import PopUpModal from '../../../../components/shared/popupModal';
 
 function EditCampusModal({ adminId, isOpen, onClose, campus }) {
+    const [initialFormData, setInitialFormData] = useState({});
+    const [logHistory, setLogHistory] = useState([]);
+    const [states, setStates] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
     const [formData, setFormData] = useState({
         university_name: campus.name,
         city: campus.city,
@@ -21,12 +26,6 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         longitude: campus.longitude || '',
         message: '',
     });
-
-    const [initialFormData, setInitialFormData] = useState({});
-    const [logHistory, setLogHistory] = useState([]);
-    const [states, setStates] = useState([]);
-    const [errors, setErrors] = useState({});
-    const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
 
     const hasChanges = () => {
         return Object.keys(formData).some((key) => formData[key] !== initialFormData[key]);

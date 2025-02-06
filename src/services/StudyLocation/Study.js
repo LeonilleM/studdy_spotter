@@ -176,7 +176,7 @@ export const fetchStudyLocationData = async (studyName, universityName, uniCity)
         `)
         .eq('name', studyName)
         .eq('University.name', universityName)
-        .eq('city', uniCity)
+        .eq('University.city', uniCity)
         .single()
 
     if (error) {

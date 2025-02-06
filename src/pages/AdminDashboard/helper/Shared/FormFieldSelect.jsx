@@ -29,14 +29,14 @@ const FormFieldsSelect = ({ label, value, onChange, options, isFieldChanged, err
 FormFieldsSelect.propTypes = {
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         abr: PropTypes.string,
         name: PropTypes.string,
         city: PropTypes.string
     })).isRequired,
-    isFieldChanged: PropTypes.bool.isRequired,
+    isFieldChanged: PropTypes.bool,
     error: PropTypes.string,
     width: PropTypes.string,
     renderOption: PropTypes.func,
