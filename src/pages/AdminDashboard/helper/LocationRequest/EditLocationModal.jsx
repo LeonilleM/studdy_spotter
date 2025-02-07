@@ -50,7 +50,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
             setInitialFormData({
                 university_id: location.university_id,
                 name: location.name,
-                address: location.address || '',
+                address: location.address || 'N/A',
                 city: location.city,
                 state: location.state_id,
                 zipcode: location.zipcode || '',
@@ -212,7 +212,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                         <FormFields
                             label="Latitude"
                             value={formData.latitude}
-                            placeholder={location.latitude ?? 'N/A'}
+                            placeholder={location.latitude.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                             isFieldChanged={isFieldChanged('latitude', formData.latitude)}
                             width="43%"
@@ -220,7 +220,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                         <FormFields
                             label="Longitude"
                             value={formData.longitude}
-                            placeholder={location.longitude ?? 'N/A'}
+                            placeholder={location.longitude.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                             isFieldChanged={isFieldChanged('longitude', formData.longitude)}
                             width="43%"
