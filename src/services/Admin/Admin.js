@@ -24,7 +24,6 @@ export const fetchUniversityRequest = async () => {
     return data
 }
 
-
 // Command for showing the history changes for a given campus
 export const fetchCampusLogHistory = async (campusId) => {
     const { data, error } = await supabase
@@ -137,6 +136,36 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
     return "Success";
 }
 
+// Used for updating the image of a university, and then return the new URL created to be inserted into the database
+const universityImageUpdate = async (uniID, uniData) => {
+    const filePath = `${uniID}/${uniData.name.replace(/ /g, "_")}`
+    console.log("File Path", filePath)
+    console.log("Image", uniData.image)
+
+    const { data, error: uploadError } = await supabase.storage
+        .from('university_images')
+        .upload(filePath, uniData.image, {
+            upsert: true
+        })
+    if (uploadError) {
+        throw uploadError;
+    }
+
+    console.log("Data", data);
+
+    const { data: publicURLData, error: publicURLError } = supabase.storage
+        .from('university_images')
+        .getPublicUrl(filePath);
+    if (publicURLError) {
+        throw publicURLError;
+    }
+    const newImageUrl = `${publicURLData.publicUrl}?t=${new Date().getTime()}`;
+
+    return newImageUrl;
+
+}
+
+
 // Command for updating a campus request
 export const uniRequestCommand = async (id, status, data, oldCampusDetails, adminId) => {
     // Track changes
@@ -166,6 +195,18 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         changes.zipcode = { old: oldCampusDetails.zipcode === null ? "Null" : oldCampusDetails.zipcode, new: data.zipcode };
     }
 
+    if (data.image) {
+        changes.immage = "Replaced old image with new one, there's no trace of the last image as it's been deleted";
+    }
+
+    // Update Image if given
+    if (data.image) {
+        const newImageURL = await universityImageUpdate(id, data);
+        console.log(newImageURL);
+    }
+
+    return "Success";
+
     if (Object.keys(changes).length > 0) {
         const logEntry = {
             university_id: id,
@@ -181,7 +222,6 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         if (logError) {
             throw logError;
         }
-
     }
 
     // Update the University table
@@ -202,7 +242,6 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
     if (updateError) {
         throw updateError;
     }
-
 
     return "Success";
 };

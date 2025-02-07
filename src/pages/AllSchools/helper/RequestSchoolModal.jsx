@@ -28,9 +28,12 @@ function RequestSchoolModal({ isOpen, onClose }) {
 
 
     const handleRequestCampus = () => {
+        //Adding delimiter in the city, to make a better santized URL link
+        const cityWithHyphen = city.replace(/\s+/g, '-');
+
         sendCampusRequest({
             name: universityName,
-            city: city,
+            city: cityWithHyphen,
             states_id: selectedStateId
         }, image).then(() => {
             setPopUp({
@@ -50,6 +53,11 @@ function RequestSchoolModal({ isOpen, onClose }) {
                 timeout: 5000
             });
         });
+        //Reset the form after
+        setUniversityName('');
+        setCity('');
+        setSelectedStateId(null);
+        setImage(null);
     };
 
     if (!isOpen) return null;

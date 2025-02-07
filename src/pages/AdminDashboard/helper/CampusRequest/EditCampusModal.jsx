@@ -14,6 +14,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     const [states, setStates] = useState([]);
     const [errors, setErrors] = useState({});
     const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
+    const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         university_name: campus.name,
         city: campus.city,
@@ -25,6 +26,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         latitude: campus.latitude || '',
         longitude: campus.longitude || '',
         message: '',
+        image: null
     });
 
     const hasChanges = () => {
@@ -55,6 +57,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                 latitude: campus.latitude || '',
                 longitude: campus.longitude || '',
                 message: '',
+                image: null
             })
         }
     }, [isOpen, campus]);
@@ -81,6 +84,25 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         };
     }, [isOpen]);
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            setErrors({ ...errors, image: 'Image size must be less than 5MB' });
+            return;
+        }
+
+        if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            setErrors({ ...errors, image: 'Invalid file type. Please upload a JPEG, JPG, or PNG file.' });
+            return;
+        }
+
+        setFormData({ ...formData, image: file });
+        setImagePreview(URL.createObjectURL(file));
+        setErrors({ ...errors, image: '' });
+
+    }
 
     const handleEditCampus = async (event) => {
         event.preventDefault();
@@ -102,7 +124,8 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             school_hex_color: formData.schoolHexColor,
             latitude: formData.latitude,
             longitude: formData.longitude,
-            message: formData.message
+            message: formData.message,
+            image: formData.image // Image will be replaced using another function
         };
 
         try {
@@ -224,6 +247,25 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             width="100%"
                         />
+                        <div className="flex flex-col space-y-2 w-full">
+                            <label htmlFor="image" className="text-sm font-medium">Upload Image <span className="text-xs italic font-normal">(this will be the location image)</span></label>
+                            <div className="relative flex items-center  p-4 border border-l-8 border-l-accent rounded-3xl h-[5rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
+                                style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'fill', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
+                                <input type="file"
+                                    name="image"
+                                    accept="image/jpeg, image/jpg, image/png"
+                                    id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={handleImageChange}
+                                />
+                                {!imagePreview &&
+                                    <div className="flex flex-col space-y-2">
+                                        <p className="text-sm">Drag & drop an image here, or click to select one</p>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>

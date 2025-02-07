@@ -58,6 +58,7 @@ export const fetchStates = async () => {
 
 // Used for Requesting a campus
 export const sendCampusRequest = async (data, image) => {
+   
     const { data: insertedData, error: insertError } = await supabase
         .from('University')
         .insert([

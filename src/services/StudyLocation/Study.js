@@ -288,7 +288,7 @@ export const requestStudyLocation = async (studyLocationData) => {
         study_location_id: data.id,
         tag_id: tag
     }));
-
+    
 
     // Will insert all tags in a single request
     const { error: tagError } = await supabase
