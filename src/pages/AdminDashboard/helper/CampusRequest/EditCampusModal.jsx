@@ -17,7 +17,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         university_name: campus.name,
-        city: campus.city,
+        city: campus.city.replace(/-/g, ' '),
         state: campus.states_id,
         address: campus.address || '',
         zipcode: campus.zipcode || '',
@@ -46,10 +46,10 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
 
     useEffect(() => {
         if (isOpen) {
-            setInitialFormData({ // Store initial form data
+            setInitialFormData({
                 university_name: campus.name,
+                city: campus.city.replace(/-/g, ' '),
                 state: campus.states_id,
-                city: campus.city,
                 address: campus.address || '',
                 zipcode: campus.zipcode || '',
                 status: campus.status,
@@ -101,7 +101,6 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         setFormData({ ...formData, image: file });
         setImagePreview(URL.createObjectURL(file));
         setErrors({ ...errors, image: '' });
-
     }
 
     const handleEditCampus = async (event) => {
@@ -117,7 +116,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
 
         const campusData = {
             name: formData.university_name,
-            city: formData.city,
+            city: formData.city.replace(/\s+/g, '-'),
             states_id: formData.state,
             address: formData.address,
             zipcode: formData.zipcode,
@@ -141,6 +140,11 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         return currentValue !== initialFormData[fieldName];
     };
 
+    const removeImage = () => {
+        setImagePreview(null);
+        setFormData({ ...formData, image: null });
+    }
+
     if (!isOpen) {
         return null;
     }
@@ -159,7 +163,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
+                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[90vh] relative">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
@@ -263,7 +267,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                                     </div>
                                 }
                             </div>
-
+                            {imagePreview && <button type="button" className="text-sm text-red-500 mt-2 t" onClick={removeImage}>Remove Image</button>}
                         </div>
 
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}

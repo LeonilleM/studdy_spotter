@@ -5,7 +5,7 @@ const LogHistory = ({ logHistory }) => (
     <section className="w-3/5">
         <h2 className="text-darkBlue font-poppins font-bold text-xl mb-1">Update Logs</h2>
         {logHistory.length > 0 ? (
-            <div className="overflow-y-auto max-h-[55vh] space-y-4 border border-black border-opacity-10 rounded-lg">
+            <div className="overflow-y-auto max-h-[70vh] space-y-4 border border-black border-opacity-10 rounded-lg">
                 {logHistory.map((log, index) => (
                     <div
                         key={index}
@@ -17,10 +17,13 @@ const LogHistory = ({ logHistory }) => (
                         </p>
                         <ul className="space-y-1">
                             {Object.keys(log.action).map((key, i) => (
-                                <li key={i}>
+                                <li
+                                    className="font-lato"
+                                    key={i}>
                                     <span className="font-semibold text-darkBlue">{key.toUpperCase()}:</span>{' '}
                                     <span className="text-red-500">Old: {log.action[key].old}</span> |{' '}
                                     <span className="text-green-500">New: {log.action[key].new}</span>
+                                    {log.action[key].note && <span className="text-gray-500 italic"> | ({log.action[key].note})</span>}
                                 </li>
                             ))}
                         </ul>

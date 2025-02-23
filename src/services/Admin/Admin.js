@@ -65,6 +65,65 @@ export const fetchStudyLocationLogHistory = async (studyLocationId) => {
     return data
 }
 
+const studyLocationImageUpdate = async (studyLocationID, studyLocationData) => {
+    const filePath = `${studyLocationID}/location_image`;
+
+    if (studyLocationData.image) {
+        const { error: uploadError } = await supabase.storage
+            .from('study_location_image')
+            .upload(filePath, studyLocationData.image, {
+                upsert: true
+            })
+        if (uploadError) {
+            throw uploadError;
+        }
+    }
+
+    const { data: publicURLData, error: publicURLError } = supabase.storage
+        .from('study_location_image')
+        .getPublicUrl(filePath);
+    if (publicURLError) {
+        throw publicURLError
+    }
+
+    const newPublicURL = publicURLData.publicUrl + `?t=${new Date().getTime()}`;
+
+    return newPublicURL; // Return the url
+}
+
+// Used for updating the image of a university, and then return the new URL created to be inserted into the database
+const universityImageUpdate = async (uniID, uniData) => {
+    console.log("University ID", uniID);
+    console.log("University Name", uniData.name);
+
+    const filePath = `${uniID}/university_image`; // Use a consistent file name
+
+    if (uniData.image) {
+        // Upload the new image file with the consistent name
+        const { error: uploadError } = await supabase.storage
+            .from('university_images')
+            .upload(filePath, uniData.image, {
+                upsert: true
+            });
+        if (uploadError) {
+            throw uploadError;
+        }
+    }
+
+    // Get the public URL with the consistent file path
+    const { data: publicURLData, error: publicURLError } = supabase.storage
+        .from('university_images')
+        .getPublicUrl(filePath);
+
+    if (publicURLError) {
+        throw publicURLError;
+    }
+
+    const newPublicURL = publicURLData.publicUrl + `?t=${new Date().getTime()}`; // Add timestamp to URL
+
+    return newPublicURL;
+};
+
 
 // Command for updating a study location request
 export const studyRequestCommand = async (id, status, data, oldStudyLocationDetails, adminId) => {
@@ -96,6 +155,14 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
     if (data.university_id !== oldStudyLocationDetails.university_id) {
         changes.university_id = { old: oldStudyLocationDetails.university_id, new: data.university_id }
     }
+    if (data.image) {
+        changes.image = { old: "Deleted", new: "Uploaded new image" }
+    }
+
+    let image_url = oldStudyLocationDetails.image_url
+    if (data.image) {
+        image_url = await studyLocationImageUpdate(id, data)
+    }
 
     if (Object.keys(changes).length > 0) {
         const logEntry = {
@@ -126,6 +193,7 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
             state_id: data.state_id,
             name: data.name,
             university_id: data.university_id,
+            image_url: image_url,
         })
         .eq('id', id);
 
@@ -135,44 +203,6 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
 
     return "Success";
 }
-
-// Used for updating the image of a university, and then return the new URL created to be inserted into the database
-const universityImageUpdate = async (uniID, uniData) => {
-    console.log("University ID", uniID);
-    console.log("University Name", uniData.name);
-
-    const filePath = `${uniID}/university_image`; // Use a consistent file name
-
-    if (uniData.image) {
-        // Upload the new image file with the consistent name
-        const { data, error: uploadError } = await supabase.storage
-            .from('university_images')
-            .upload(filePath, uniData.image, {
-                upsert: true
-            });
-
-        if (uploadError) {
-            throw uploadError;
-        }
-
-        if (data) {
-            console.log("Image uploaded");
-        }
-    }
-
-    // Get the public URL with the consistent file path
-    const { data: publicURLData, error: publicURLError } = supabase.storage
-        .from('university_images')
-        .getPublicUrl(filePath);
-
-    if (publicURLError) {
-        throw publicURLError;
-    }
-
-    const newPublicURL = publicURLData.publicUrl + `?t=${new Date().getTime()}`; // Add timestamp to URL
-
-    return newPublicURL;
-};
 
 // Command for updating a campus request
 export const uniRequestCommand = async (id, status, data, oldCampusDetails, adminId) => {
@@ -199,7 +229,7 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         changes.address = { old: oldCampusDetails.address === null ? "Null" : oldCampusDetails.address, new: data.address };
     }
     if (data.city !== oldCampusDetails.city) {
-        changes.city = { old: oldCampusDetails.city, new: data.city };
+        changes.city = { old: oldCampusDetails.city, new: data.city, note: "The hyphen is used for a delimiter" };
     }
     if (data.states_id !== oldCampusDetails.states_id) {
         changes.states_id = { old: oldCampusDetails.states_id, new: data.states_id };
@@ -212,9 +242,8 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
     }
 
     let imageUrl = oldCampusDetails.image_url;
-    // Or if the name changes, we have to re-name the image to the new name
-    if (data.image || data.name !== oldCampusDetails.name) {
-        imageUrl = await universityImageUpdate(id, data, oldCampusDetails.name);
+    if (data.image) {
+        imageUrl = await universityImageUpdate(id, data);
     }
 
 

@@ -62,10 +62,10 @@ function EntityRequest({ entities, entityType, handleEditModal }) {
                                 }
                                 className="col-span-2 text-blue-500 underline"
                             >
-                                {entity.name}, {entity.city}
+                                {entity.name}, {entity.city.replace(/-/, ' ')}
                             </NavLink>
                         ) : (
-                            <div className="col-span-2">{entity.name}, {entity.city}</div>
+                            <div className="col-span-2"> {entity.name}, {entity.city.replace(/-/, ' ')}</div>
                         )}
                         <div className="col-span-2">{entity.address}, {entity.States.abr}, {entity.zipcode}</div>
                         <div

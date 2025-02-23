@@ -8,6 +8,7 @@ export const fetchAllReviews = async (studyLocationID) => {
             id,
             description,
             rating,
+            
             created_at,
             updated_at,
             Users:user_id (
@@ -59,6 +60,20 @@ export const fetchUserReviews = async (userID) => {
     return data
 }
 
+// Upload image
+export const uploadImage = async (file, reviewData) => {
+    const { data, error } = await supabase.storage
+        .from('post_images')
+        .upload(`post_images/${reviewData.user_data}/${reviewData.id}`, file)
+    if (error) {
+        throw error
+    }
+
+    // get the url
+
+
+}
+
 // Let's a user create a review for a given study location 
 export const createReview = async (studyLocationID, userID, rating, review) => {
     const { data, error } = await supabase
@@ -95,7 +110,7 @@ export const deleteReview = async (userID, studyLocationID) => {
 }
 
 // Let's a user update a review for a given study location
-export const updateReview = async (userId, studyLocationId, rating, review) => {
+export const updateReview = async (userId, studyLocationId, rating, review, image) => {
     const { data, error } = await supabase
         .from('UserReview')
         .update([
@@ -111,6 +126,9 @@ export const updateReview = async (userId, studyLocationId, rating, review) => {
 
     if (error) {
         throw error
+    }
+
+    if (image) {
     }
 
     return data

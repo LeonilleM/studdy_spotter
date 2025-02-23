@@ -172,6 +172,11 @@ export const fetchStudyLocationData = async (studyName, universityName, uniCity)
                 school_hex_color,
                 city
             ),
+            study_location_hours(
+                day_of_week,
+                start_time,
+                end_time
+            ),
             State:state_id(abr)
         `)
         .eq('name', studyName)
@@ -262,7 +267,6 @@ export const fetchPopularLocations = async (universityID) => {
 
 // Let's Users Request for a study location to be added to the database
 export const requestStudyLocation = async (studyLocationData) => {
-
     const { data, error } = await supabase
         .from('StudyLocation')
         .insert([
@@ -288,7 +292,7 @@ export const requestStudyLocation = async (studyLocationData) => {
         study_location_id: data.id,
         tag_id: tag
     }));
-    
+
 
     // Will insert all tags in a single request
     const { error: tagError } = await supabase
@@ -300,7 +304,7 @@ export const requestStudyLocation = async (studyLocationData) => {
     }
 
     const studyLocationId = data.id;
-    const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
+    const sanitizedFileName = `${studyLocationId}/location_image`;
 
     try {
         const { error: imageError } = await supabase.storage
@@ -313,7 +317,7 @@ export const requestStudyLocation = async (studyLocationData) => {
         }
 
 
-        const { data: publicURL, error: publicURLError } = await supabase.storage
+        const { data: publicURL, error: publicURLError } = supabase.storage
             .from('study_location_image')
             .getPublicUrl(sanitizedFileName);
         if (publicURLError) {

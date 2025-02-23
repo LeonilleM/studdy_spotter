@@ -16,17 +16,19 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
     const [universities, setUniversities] = useState([]);
     const [errors, setErrors] = useState({});
     const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
+    const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         university_id: location?.university_id || '',
         name: location.name,
-        address: location.address || '',
-        city: location.city,
+        address: location.address,
+        city: location.city.replace(/-/, ' '),
         state: location.state_id,
-        zipcode: location.zipcode || '',
-        latitude: location.latitude || '',
-        longitude: location.longitude || '',
+        zipcode: location.zipcode,
+        latitude: location.latitude,
+        longitude: location.longitude,
         status: location.status,
         message: '',
+        image: null
     });
 
     const hasChanges = () => {
@@ -48,16 +50,17 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
     useEffect(() => {
         if (isOpen) {
             setInitialFormData({
-                university_id: location.university_id,
+                university_id: location?.university_id,
                 name: location.name,
-                address: location.address || 'N/A',
-                city: location.city,
+                address: location.address,
+                city: location.city.replace(/-/, ' '),
                 state: location.state_id,
-                zipcode: location.zipcode || '',
-                latitude: location.latitude || '',
-                longitude: location.longitude || '',
+                zipcode: location.zipcode,
+                latitude: location.latitude,
+                longitude: location.longitude,
                 status: location.status,
                 message: '',
+                image: null
             });
         }
     }, [isOpen, location]);
@@ -92,17 +95,17 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
         setErrors(newErrors);
         if (Object.keys(newErrors).length > 0) return;
 
-
         const locationData = {
             university_id: formData.university_id,
             name: formData.name,
             address: formData.address,
-            city: formData.city,
+            city: formData.city.replace(/\s+/g, '-'),
             state_id: formData.state,
             zipcode: formData.zipcode,
             latitude: formData.latitude,
             longitude: formData.longitude,
             message: formData.message,
+            image: formData.image
         };
 
         try {
@@ -116,6 +119,31 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
     const isFieldChanged = (fieldName, currentValue) => {
         return currentValue !== initialFormData[fieldName];
     };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            setErrors({ ...errors, image: 'Image size must be less than 5MB' });
+            return;
+        }
+
+        if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            setErrors({ ...errors, image: 'Invalid file type. Please upload a JPEG, JPG, or PNG file.' });
+            return;
+        }
+
+        setFormData({ ...formData, image: file });
+        setImagePreview(URL.createObjectURL(file));
+        setErrors({ ...errors, image: '' });
+    }
+
+    const removeImage = () => {
+        setImagePreview(null);
+        setFormData({ ...formData, image: null });
+    }
+
 
     if (!isOpen) {
         return null;
@@ -152,7 +180,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             onChange={(e) => setFormData({ ...formData, university_id: e.target.value })}
                             options={universities}
                             isFieldChanged={isFieldChanged('university_id', formData.university_id)}
-                            renderOption={(option) => `${option.name}, ${option.city}`}
+                            renderOption={(option) => `${option.name}, ${option.city.replace(/-/, ' ')}`}
                             width="88%"
                         />
                         <FormFields
@@ -204,23 +232,23 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             type="number"
                             label="Zip Code"
                             width="25%"
-                            value={formData.zipcode}
+                            value={formData.zipcode ?? ''}
                             placeholder={location.zipcode?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
                             isFieldChanged={isFieldChanged('zipcode', formData.zipcode)}
                         />
                         <FormFields
                             label="Latitude"
-                            value={formData.latitude}
-                            placeholder={location.latitude.toString() ?? 'N/A'}
+                            value={formData.latitude ?? ''}
+                            placeholder={location.latitude?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                             isFieldChanged={isFieldChanged('latitude', formData.latitude)}
                             width="43%"
                         />
                         <FormFields
                             label="Longitude"
-                            value={formData.longitude}
-                            placeholder={location.longitude.toString() ?? 'N/A'}
+                            value={formData.longitude ?? ''}
+                            placeholder={location.longitude?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                             isFieldChanged={isFieldChanged('longitude', formData.longitude)}
                             width="43%"
@@ -238,6 +266,24 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             renderOption={(option) => option.abr}
                         />
+                        <div className="flex flex-col space-y-2 w-full">
+                            <label htmlFor="image" className="text-sm font-medium">Upload Image <span className="text-xs italic font-normal">(this will be the location image)</span></label>
+                            <div className="relative flex items-center  p-4 border border-l-8 border-l-accent rounded-3xl h-[5rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
+                                style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'fill', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
+                                <input type="file"
+                                    name="image"
+                                    accept="image/jpeg, image/jpg, image/png"
+                                    id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={handleImageChange}
+                                />
+                                {!imagePreview &&
+                                    <div className="flex flex-col space-y-2">
+                                        <p className="text-sm">Drag & drop an image here, or click to select one</p>
+                                    </div>
+                                }
+                            </div>
+                            {imagePreview && <button type="button" className="text-sm text-red-500 mt-2 t" onClick={removeImage}>Remove Image</button>}
+                        </div>
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>

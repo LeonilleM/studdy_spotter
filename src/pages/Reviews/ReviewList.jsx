@@ -28,12 +28,16 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
             <ReviewFilter
                 onFilterChange={onFilterChange}
             />
-            {reviews.otherReviews.map((review, index) => (
-                <ReviewListItems
-                    key={review.id || `review-${index}`}
-                    review={review}
-                />
-            ))}
+            {reviews.otherReviews.length > 0 ? (
+                reviews.otherReviews.map((review, index) => (
+                    <ReviewListItems
+                        key={review.id || `review-${index}`}
+                        review={review}
+                    />
+                ))
+            ) : (
+                <p className="text-center text-secondary font-semibold pt-12 font-poppins text-lg">No other reviews currently</p>
+            )}
         </>
     );
 }

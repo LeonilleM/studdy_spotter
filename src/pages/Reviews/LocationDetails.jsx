@@ -3,7 +3,6 @@ import BackButton from '../../components/shared/BackButton';
 import StarRating from '../../components/StarRating';
 
 function LocationDetails({ locationDetails, totalReviews }) {
-    console.log(locationDetails.image_url)
     return (
         <div
             style={{
