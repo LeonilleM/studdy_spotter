@@ -10,27 +10,26 @@ import FormFieldsSelect from '../Shared/FormFieldSelect';
 import PopUpModal from '../../../../components/shared/popupModal';
 
 function EditLocationModal({ adminId, isOpen, onClose, location }) {
-    const [formData, setFormData] = useState({
-        university_id: location.university_id,
-        name: location.name,
-        address: location.address || '',
-        city: location.city,
-        state: location.state,
-        zipcode: location.zipcode || '',
-        latitude: location.latitude || '',
-        longitude: location.longitude || '',
-        status: location.status,
-        message: '',
-    });
-
-    console.log(location);
-
     const [initialFormData, setInitialFormData] = useState({});
     const [logHistory, setLogHistory] = useState([]);
     const [states, setStates] = useState([]);
     const [universities, setUniversities] = useState([]);
     const [errors, setErrors] = useState({});
     const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
+    const [imagePreview, setImagePreview] = useState(null);
+    const [formData, setFormData] = useState({
+        university_id: location?.university_id || '',
+        name: location.name,
+        address: location.address,
+        city: location.city.replace(/-/, ' '),
+        state: location.state_id,
+        zipcode: location.zipcode,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        status: location.status,
+        message: '',
+        image: null
+    });
 
     const hasChanges = () => {
         return Object.keys(formData).some((key) => formData[key] !== initialFormData[key]);
@@ -51,16 +50,17 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
     useEffect(() => {
         if (isOpen) {
             setInitialFormData({
-                university_id: location.university_id,
+                university_id: location?.university_id,
                 name: location.name,
-                address: location.address || '',
-                city: location.city,
-                state: location.state,
-                zipcode: location.zipcode || '',
-                latitude: location.latitude || '',
-                longitude: location.longitude || '',
+                address: location.address,
+                city: location.city.replace(/-/, ' '),
+                state: location.state_id,
+                zipcode: location.zipcode,
+                latitude: location.latitude,
+                longitude: location.longitude,
                 status: location.status,
                 message: '',
+                image: null
             });
         }
     }, [isOpen, location]);
@@ -93,19 +93,19 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
         if (!formData.message.trim()) newErrors.message = 'Update Reason is required.';
         if (!hasChanges()) newErrors.form = 'No changes detected.';
         setErrors(newErrors);
-
         if (Object.keys(newErrors).length > 0) return;
 
         const locationData = {
             university_id: formData.university_id,
             name: formData.name,
             address: formData.address,
-            city: formData.city,
-            state: formData.state,
+            city: formData.city.replace(/\s+/g, '-'),
+            state_id: formData.state,
             zipcode: formData.zipcode,
             latitude: formData.latitude,
             longitude: formData.longitude,
             message: formData.message,
+            image: formData.image
         };
 
         try {
@@ -119,6 +119,31 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
     const isFieldChanged = (fieldName, currentValue) => {
         return currentValue !== initialFormData[fieldName];
     };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            setErrors({ ...errors, image: 'Image size must be less than 5MB' });
+            return;
+        }
+
+        if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            setErrors({ ...errors, image: 'Invalid file type. Please upload a JPEG, JPG, or PNG file.' });
+            return;
+        }
+
+        setFormData({ ...formData, image: file });
+        setImagePreview(URL.createObjectURL(file));
+        setErrors({ ...errors, image: '' });
+    }
+
+    const removeImage = () => {
+        setImagePreview(null);
+        setFormData({ ...formData, image: null });
+    }
+
 
     if (!isOpen) {
         return null;
@@ -138,7 +163,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
             )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8 max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
+                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
@@ -155,7 +180,7 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             onChange={(e) => setFormData({ ...formData, university_id: e.target.value })}
                             options={universities}
                             isFieldChanged={isFieldChanged('university_id', formData.university_id)}
-                            renderOption={(option) => `${option.name}, ${option.city}`}
+                            renderOption={(option) => `${option.name}, ${option.city.replace(/-/, ' ')}`}
                             width="88%"
                         />
                         <FormFields
@@ -194,33 +219,39 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                         <FormFieldsSelect
                             label="State"
                             value={formData.state}
-                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                            onChange={(e) => {
+                                console.log('Selected State ID:', e.target.value);
+                                setFormData({ ...formData, state: e.target.value });
+                            }}
                             options={states}
                             isFieldChanged={isFieldChanged('state', formData.state)}
                             renderOption={(option) => option.abr}
                         />
+
                         <FormFields
                             type="number"
                             label="Zip Code"
                             width="25%"
-                            value={formData.zipcode}
+                            value={formData.zipcode ?? ''}
                             placeholder={location.zipcode?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, zipcode: e.target.value })}
                             isFieldChanged={isFieldChanged('zipcode', formData.zipcode)}
                         />
                         <FormFields
                             label="Latitude"
-                            value={formData.latitude}
-                            placeholder={location.latitude ?? 'N/A'}
+                            value={formData.latitude ?? ''}
+                            placeholder={location.latitude?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                             isFieldChanged={isFieldChanged('latitude', formData.latitude)}
+                            width="43%"
                         />
                         <FormFields
                             label="Longitude"
-                            value={formData.longitude}
-                            placeholder={location.longitude ?? 'N/A'}
+                            value={formData.longitude ?? ''}
+                            placeholder={location.longitude?.toString() ?? 'N/A'}
                             onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                             isFieldChanged={isFieldChanged('longitude', formData.longitude)}
+                            width="43%"
                         />
                         <FormFieldsSelect
                             label="Status"
@@ -231,19 +262,28 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                                 { id: 'Approved', abr: 'Approved' },
                                 { id: 'Denied', abr: 'Denied' }
                             ]}
+                            width="30%"
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             renderOption={(option) => option.abr}
                         />
-                        <FormFieldsSelect
-                            label="Is Active?"
-                            value={location.is_active}
-                            options={[
-                                { id: "true", abr: 'TRUE' },
-                                { id: "false", abr: 'FALSE' }
-                            ]}
-                            disabled
-                        />
-
+                        <div className="flex flex-col space-y-2 w-full">
+                            <label htmlFor="image" className="text-sm font-medium">Upload Image <span className="text-xs italic font-normal">(this will be the location image)</span></label>
+                            <div className="relative flex items-center  p-4 border border-l-8 border-l-accent rounded-3xl h-[5rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
+                                style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'fill', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
+                                <input type="file"
+                                    name="image"
+                                    accept="image/jpeg, image/jpg, image/png"
+                                    id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={handleImageChange}
+                                />
+                                {!imagePreview &&
+                                    <div className="flex flex-col space-y-2">
+                                        <p className="text-sm">Drag & drop an image here, or click to select one</p>
+                                    </div>
+                                }
+                            </div>
+                            {imagePreview && <button type="button" className="text-sm text-red-500 mt-2 t" onClick={removeImage}>Remove Image</button>}
+                        </div>
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>

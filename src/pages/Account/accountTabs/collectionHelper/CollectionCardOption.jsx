@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 
 const CollectionCardOption = ({ isOpen, collection, onDelete, setIsOptionsOpen }) => (
-    <div className={`absolute  -translate-y-2 -top-20 -right-2 w-3/4  ${isOpen ? 'block' : 'hidden'}`}>
-        <div className="bg-secondary  flex flex-col gap-2 rounded-lg py-2">
+    <div className={`absolute -top-20 -right-2 w-[150px]  ${isOpen ? 'block' : 'hidden'}`}>
+        <div className="bg-white shadow-sm border flex flex-col gap-2 rounded-lg py-2">
             <button
                 onClick={() => {
                     setIsOptionsOpen(false);
@@ -18,7 +18,7 @@ const CollectionCardOption = ({ isOpen, collection, onDelete, setIsOptionsOpen }
             <hr></hr>
             <button
                 onClick={() => setIsOptionsOpen(false)}
-                className="text-sm p-1 text-white"
+                className="text-sm p-1 text-black"
             >
                 Cancel
             </button>

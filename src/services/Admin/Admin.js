@@ -7,7 +7,7 @@ export const fetchStudyRequest = async () => {
     // Fetch data from studylocationrequest
     const { data, error } = await supabase
         .from('StudyLocation')
-        .select('*, University(name, city),  States(abr)')
+        .select('*, University(name, city),  States(abr),LocationTagList(TagTypes:tag_id (name))')
     if (error) {
         throw error
     }
@@ -23,7 +23,6 @@ export const fetchUniversityRequest = async () => {
     }
     return data
 }
-
 
 // Command for showing the history changes for a given campus
 export const fetchCampusLogHistory = async (campusId) => {
@@ -66,6 +65,65 @@ export const fetchStudyLocationLogHistory = async (studyLocationId) => {
     return data
 }
 
+const studyLocationImageUpdate = async (studyLocationID, studyLocationData) => {
+    const filePath = `${studyLocationID}/location_image`;
+
+    if (studyLocationData.image) {
+        const { error: uploadError } = await supabase.storage
+            .from('study_location_image')
+            .upload(filePath, studyLocationData.image, {
+                upsert: true
+            })
+        if (uploadError) {
+            throw uploadError;
+        }
+    }
+
+    const { data: publicURLData, error: publicURLError } = supabase.storage
+        .from('study_location_image')
+        .getPublicUrl(filePath);
+    if (publicURLError) {
+        throw publicURLError
+    }
+
+    const newPublicURL = publicURLData.publicUrl + `?t=${new Date().getTime()}`;
+
+    return newPublicURL; // Return the url
+}
+
+// Used for updating the image of a university, and then return the new URL created to be inserted into the database
+const universityImageUpdate = async (uniID, uniData) => {
+    console.log("University ID", uniID);
+    console.log("University Name", uniData.name);
+
+    const filePath = `${uniID}/university_image`; // Use a consistent file name
+
+    if (uniData.image) {
+        // Upload the new image file with the consistent name
+        const { error: uploadError } = await supabase.storage
+            .from('university_images')
+            .upload(filePath, uniData.image, {
+                upsert: true
+            });
+        if (uploadError) {
+            throw uploadError;
+        }
+    }
+
+    // Get the public URL with the consistent file path
+    const { data: publicURLData, error: publicURLError } = supabase.storage
+        .from('university_images')
+        .getPublicUrl(filePath);
+
+    if (publicURLError) {
+        throw publicURLError;
+    }
+
+    const newPublicURL = publicURLData.publicUrl + `?t=${new Date().getTime()}`; // Add timestamp to URL
+
+    return newPublicURL;
+};
+
 
 // Command for updating a study location request
 export const studyRequestCommand = async (id, status, data, oldStudyLocationDetails, adminId) => {
@@ -85,8 +143,8 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
     if (data.city !== oldStudyLocationDetails.city) {
         changes.city = { old: oldStudyLocationDetails.city, new: data.city }
     }
-    if (data.states_id !== oldStudyLocationDetails.states_id) {
-        changes.states_id = { old: oldStudyLocationDetails.states_id, new: data.states_id }
+    if (data.state_id !== oldStudyLocationDetails.state_id) {
+        changes.state_id = { old: oldStudyLocationDetails.state_id, new: data.state_id }
     }
     if (data.zipcode !== oldStudyLocationDetails.zipcode) {
         changes.zipcode = { old: oldStudyLocationDetails.zipcode === null ? "Null" : oldStudyLocationDetails.zipcode, new: data.zipcode }
@@ -96,6 +154,14 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
     }
     if (data.university_id !== oldStudyLocationDetails.university_id) {
         changes.university_id = { old: oldStudyLocationDetails.university_id, new: data.university_id }
+    }
+    if (data.image) {
+        changes.image = { old: "Deleted", new: "Uploaded new image" }
+    }
+
+    let image_url = oldStudyLocationDetails.image_url
+    if (data.image) {
+        image_url = await studyLocationImageUpdate(id, data)
     }
 
     if (Object.keys(changes).length > 0) {
@@ -124,9 +190,10 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
             address: data.address,
             zipcode: data.zipcode,
             city: data.city,
-            states_id: data.states_id,
+            state_id: data.state_id,
             name: data.name,
             university_id: data.university_id,
+            image_url: image_url,
         })
         .eq('id', id);
 
@@ -141,6 +208,11 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
 export const uniRequestCommand = async (id, status, data, oldCampusDetails, adminId) => {
     // Track changes
     const changes = {};
+    console.log("Data", data);
+
+    if (data.name !== oldCampusDetails.name) {
+        changes.status = { old: oldCampusDetails.name, new: data.name };
+    }
     if (status !== oldCampusDetails.status) {
         changes.status = { old: oldCampusDetails.status, new: status };
     }
@@ -157,7 +229,7 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         changes.address = { old: oldCampusDetails.address === null ? "Null" : oldCampusDetails.address, new: data.address };
     }
     if (data.city !== oldCampusDetails.city) {
-        changes.city = { old: oldCampusDetails.city, new: data.city };
+        changes.city = { old: oldCampusDetails.city, new: data.city, note: "The hyphen is used for a delimiter" };
     }
     if (data.states_id !== oldCampusDetails.states_id) {
         changes.states_id = { old: oldCampusDetails.states_id, new: data.states_id };
@@ -165,6 +237,15 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
     if (data.zipcode !== oldCampusDetails.zipcode) {
         changes.zipcode = { old: oldCampusDetails.zipcode === null ? "Null" : oldCampusDetails.zipcode, new: data.zipcode };
     }
+    if (data.image) {
+        changes.image = { old: "Deleted", new: "Uploaded new image" };
+    }
+
+    let imageUrl = oldCampusDetails.image_url;
+    if (data.image) {
+        imageUrl = await universityImageUpdate(id, data);
+    }
+
 
     if (Object.keys(changes).length > 0) {
         const logEntry = {
@@ -181,13 +262,15 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         if (logError) {
             throw logError;
         }
-
     }
+
+    console.log("Image URL", imageUrl);
 
     // Update the University table
     const { error: updateError } = await supabase
         .from('University')
         .update({
+            name: data.name,
             status: status,
             latitude: data.latitude,
             longitude: data.longitude,
@@ -196,13 +279,13 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
             zipcode: data.zipcode,
             city: data.city,
             states_id: data.states_id,
+            image_url: imageUrl,
         })
         .eq('id', id);
 
     if (updateError) {
         throw updateError;
     }
-
 
     return "Success";
 };

@@ -2,11 +2,11 @@ import { NavLink } from 'react-router-dom';
 import StarRating from '../../components/StarRating';
 import PropTypes from 'prop-types';
 
-function StudyLocationList({ studyLocations, uniName }) {
+function StudyLocationList({ studyLocations, uniName, uniCity }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 sm:gap-12 lg:gap-14 ">
             {studyLocations.map((studyLocation) => {
-                const studyLocationPath = `/university/${uniName}/${studyLocation.name}`;
+                const studyLocationPath = decodeURIComponent(`/university/${uniName} ${uniCity}/${studyLocation.name}`);
                 return (
                     <NavLink
                         to={studyLocationPath}
@@ -42,7 +42,8 @@ function StudyLocationList({ studyLocations, uniName }) {
 
 StudyLocationList.propTypes = {
     studyLocations: PropTypes.array.isRequired,
-    uniName: PropTypes.string.isRequired
+    uniName: PropTypes.string.isRequired,
+    uniCity: PropTypes.string
 }
 
 export default StudyLocationList

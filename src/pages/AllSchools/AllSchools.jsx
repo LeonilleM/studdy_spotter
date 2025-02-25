@@ -28,7 +28,6 @@ function AllSchools() {
     }, []);
 
     const handleModalOpen = () => {
-        console.log("open")
         setModalOpen(true);
     }
 

@@ -10,35 +10,18 @@ import EditReview from './helper/reviewSettings';
 import LocationDetails from './LocationDetails';
 import ReviewList from './ReviewList';
 import ErrorPage from '../../components/shared/ErrorPage';
-import PropTypes from 'prop-types';
 import PopUpModal from '../../components/shared/popupModal';
+import { useNavigate } from 'react-router-dom';
+import { FaChevronDown } from "react-icons/fa";
+import { HiPencilSquare } from "react-icons/hi2";
+import Icon from '../../components/shared/IconMapping';
+import { extractHours } from '../../components/shared/TimeUtility';
 
-
-import { FaWifi, FaVolumeMute, FaPlug, FaUsers, FaDoorClosed, FaParking, FaUniversity, FaHamburger } from 'react-icons/fa';
-
-const IconSize = ({ Icon }) => {
-    return <Icon className="w-5 h-5" />;
-};
-
-IconSize.propTypes = {
-    Icon: PropTypes.elementType.isRequired
-};
-
-
-const iconMap = {
-    'Wifi': <IconSize Icon={FaWifi} />,
-    'Quiet': <IconSize Icon={FaVolumeMute} />,
-    'Outlet': <IconSize Icon={FaPlug} />,
-    'Group Friendly': <IconSize Icon={FaUsers} />,
-    'Aesthetic': <IconSize Icon={FaDoorClosed} />,
-    'Late Night Access': <IconSize Icon={FaDoorClosed} />,
-    'Private Rooms': <IconSize Icon={FaDoorClosed} />,
-    'Near By Food': <IconSize Icon={FaHamburger} />,
-    'Food Services': <IconSize Icon={FaHamburger} />,
-    'Free Parking': <IconSize Icon={FaParking} />,
-    'Paid Parking': < IconSize Icon={FaParking} />,
-    'On-Campus': <IconSize Icon={FaUniversity} />,
-    'Off-Campus': <IconSize Icon={FaUniversity} />,
+const sortOptions = {
+    Oldest: (a, b) => new Date(a.created_at) - new Date(b.created_at),
+    Newest: (a, b) => new Date(b.created_at) - new Date(a.created_at),
+    Highest: (a, b) => b.rating - a.rating,
+    Lowest: (a, b) => a.rating - b.rating,
 };
 
 function Reviews() {
@@ -49,9 +32,12 @@ function Reviews() {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showMoreHours, setShowMoreHours] = useState(false);
     const [popUp, setShowPopUp] = useState(null);
     const [address, setAddress] = useState('');
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const { today, sortedHours, nextOpen } = extractHours(locationDetails?.study_location_hours);
 
     useEffect(() => {
         if (sessionStorage.getItem('showModalReview') === 'true') {
@@ -60,9 +46,15 @@ function Reviews() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const locationData = await fetchStudyLocationData(studyLocation, uniName);
+                const uniNameCity = decodeURIComponent(uniName);
+                const parts = uniNameCity.split(" ");
+                // Assuming Cities are always the last part of the name
+                let uniCity = parts.slice(-1).join(' ');
+                let universityName = parts.slice(0, -1).join(' ');
+                const locationData = await fetchStudyLocationData(studyLocation, universityName, uniCity);
                 setAddress(locationData.address + " " + locationData.city + " " + locationData.State.abr + " " + locationData.zipcode + " " + locationData.name);
                 setLocationDetails(locationData);
+
                 if (locationData) {
                     const reviewsData = await fetchAllReviews(locationData.id);
                     // Sort reviews by date
@@ -81,10 +73,12 @@ function Reviews() {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, [studyLocation, uniName, user?.id]);
 
+    const handleSuggestions = (location) => {
+        navigate(`/suggestion?location=${location}`, { state: { locationDetails } });
+    }
 
     const handleEditReview = () => {
         setShowEditModal(true);
@@ -100,7 +94,6 @@ function Reviews() {
             setShowModal(true);
             sessionStorage.setItem('showModalReview', 'true');
         } else {
-            console.log("Opening")
             setShowPopUp({
                 type: 'noAuth',
                 message: 'Please log in to write a review',
@@ -121,13 +114,16 @@ function Reviews() {
         }
     };
 
-
     const handleDeleteReview = () => {
         setReviews(prevReviews => ({
             ...prevReviews,
             userReview: []
         }));
     };
+
+    const handleViewMore = () => {
+        setShowMoreHours(!showMoreHours);
+    }
 
     const handleNewReview = async (newReview) => {
         if (newReview) {
@@ -141,10 +137,6 @@ function Reviews() {
         }
     };
 
-    if (loading) {
-        return loadingComponent("Loading Reviews...");
-    }
-
     const handleUpdateReview = (updatedReview) => {
         setReviews(prevReviews => {
             const updatedUserReview = prevReviews.userReview.map(review =>
@@ -157,38 +149,29 @@ function Reviews() {
         });
     };
 
-
     const handleFilterChange = (filter) => {
-        setReviews(prevReviews => {
-            let sortedReviews = [...prevReviews.otherReviews];
-            switch (filter) {
-                case 'Oldest':
-                    sortedReviews = sortedReviews.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-                    console.log("Oldest", sortedReviews);
-                    break;
-                case 'Newest':
-                    sortedReviews = sortedReviews.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                    console.log("Newest", sortedReviews);
-                    break;
-                case 'Highest':
-                    sortedReviews = sortedReviews.slice().sort((a, b) => b.rating - a.rating);
-                    break;
-                case 'Lowest':
-                    sortedReviews = sortedReviews.slice().sort((a, b) => a.rating - b.rating);
-                    break;
-                default:
-                    break;
-            }
-            return {
-                ...prevReviews,
-                otherReviews: sortedReviews
-            };
-        });
+        setReviews(prevReviews => ({
+            ...prevReviews,
+            otherReviews: [...prevReviews.otherReviews].sort(sortOptions[filter])
+        }));
     };
-
 
     const totalReviews = (reviews.userReview?.length || 0) + (reviews.otherReviews?.length || 0);
 
+    if (loading) {
+        return loadingComponent("Loading Reviews...");
+    }
+
+    if (error) {
+        return (
+            <ErrorPage
+                errorMessage={error}
+                customMessage="If you think this location should be added, send a location application below"
+                link="/university/request-location"
+                linkText="Send Application"
+            />
+        );
+    }
     return (
         <div className="bg-background ">
             {locationDetails && (
@@ -228,8 +211,65 @@ function Reviews() {
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
                         >{address}
                         </a>
-                        <h2 className="text-xl font-bold font-poppins pt-4">Hours</h2>
-                        <p className="italic text-red-500">Not Available</p>
+                        <div className="flex flex-row justify-between items-center">
+                            <h1 className="text-xl font-bold font-poppins pt-4">Hours</h1>
+                            <button
+                                onClick={() => handleSuggestions(locationDetails.id)}
+                                className="font-bold font-poppins pt-4 text-sm flex items-center gap-0.5 hover:underline">
+                                <HiPencilSquare /> Suggest an Edit
+                            </button>
+                        </div>
+                        <div className="flex flex-row gap-2 items-center">
+                            {today && today.length > 0 && (
+                                <div className="flex flex-col gap-2">
+                                    {today.map((data, index) => (
+                                        <div key={`today-${index}`} className="flex flex-row  items-center gap-2">
+                                            {data.isClosed ? (
+                                                <span className="text-red-700 font-bold">Closed</span>
+                                            ) : (
+                                                <>
+                                                    <span className="text-green-700 font-bold">Open</span>
+                                                    <span className="text-secondary font-lato">{data.open} - {data.close}</span>
+                                                </>
+
+                                            )}
+
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            {nextOpen && (
+                                <span className="text-secondary font-lato text-sm">Open {nextOpen.day} {nextOpen.open}</span>
+                            )}
+                            <button
+                                onClick={handleViewMore}
+                                className="text-secondary transition-transform duration-500"
+                            >
+                                <span className={`flex transition-transform duration-500`}>
+                                    <FaChevronDown />
+                                </span>
+                            </button>
+                        </div>
+                        <div
+                            className={`transition-all duration-500 ease-in-out`}
+                        >
+                            {showMoreHours && sortedHours.length > 0 && (
+                                <div className="flex flex-col gap-2">
+                                    <table>
+                                        <tbody>
+                                            {sortedHours.map((data, index) => (
+                                                <tr key={`row-${index}`}>
+                                                    <td className="py-1 pr-3">{data.abbreviation}</td>
+                                                    <td className="pr-2">{data.open} - {data.close}</td>
+
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
                     <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal}
@@ -245,14 +285,14 @@ function Reviews() {
                         <h1 className="text-darkBlue font-poppins font-bold text-xl mb-6">Amenities</h1>
                         <div className="grid grid-cols-2 pb-2 gap-y-2 text-lato font-normal sm:text-base text-xs">
                             <span className=" text-black  py-2 font-poppins border-b flex items-center gap-2">
-                                {iconMap[locationDetails.category]}{locationDetails.category}
+                                <Icon iconName={locationDetails.category} size={20} />{locationDetails.category}
                             </span>
                             {locationDetails.LocationTagList.map((Amenities, index) => {
                                 const tagName = Amenities.TagTypes?.name || 'no-name';
-                                const isLastItem = index === locationDetails.LocationTagList.length - 1;
+                                const isLastItem = index === locationDetails.LocationTagList.length;
                                 return (
-                                    <span key={`tag-${index}-${tagName}`} className={`text-secondary py-2 font-poppins flex items-center ${!isLastItem ? 'border-b' : ''}`}>
-                                        <span className="mr-2">{iconMap[tagName]}</span>{tagName}
+                                    <span key={`tag-${index}-${tagName}`} className={`text-secondary py-2 font-poppins flex items-center gap-2 ${!isLastItem ? 'border-b' : ''}`}>
+                                        <Icon iconName={tagName} size={20} />{tagName}
                                     </span>
                                 );
                             })}
@@ -282,16 +322,6 @@ function Reviews() {
                 handleDeleteReview={handleDeleteReview}
                 updateModal={handleUpdateReviewModal}
             />
-            {
-                error && (
-                    <ErrorPage
-                        errorMessage={error}
-                        customMessage=">If you think this location should be added, send a location application below"
-                        link="/university/request-location"
-                        linkText="Send Application"
-                    />
-                )
-            }
         </div >
     );
 }

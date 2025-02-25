@@ -49,10 +49,14 @@ function RequestLocationModal({ isOpen, onClose, user }) {
         setIsLoading(true);
         const formData = new FormData(event.target);
 
+        // Used more for our database, helps to santize links used to know
+        // Cities, using the hyphen as delimiters
+        const cityWithHyphen = formData.get('city').replace(/\s+/g, '-');
+
         const studyLocationData = {
             name: formData.get('name'),
             address: formData.get('address'),
-            city: formData.get('city'),
+            city: cityWithHyphen,
             state_id: selectedState ? selectedState.id : null,
             tags: selectedTags.map(tag => tag.value),
             user_id: user,
@@ -61,7 +65,8 @@ function RequestLocationModal({ isOpen, onClose, user }) {
             image: selectedFile
         };
 
-        if (!studyLocationData.name || !studyLocationData.address || !studyLocationData.city || !studyLocationData.state_id || !studyLocationData.category) {
+        if (!studyLocationData.name || !studyLocationData.address || !studyLocationData.city || !studyLocationData.state_id
+            || !studyLocationData.category || !studyLocationData.image) {
             setModal({
                 type: 'failed',
                 message: 'Please fill in all the required fields',
@@ -70,6 +75,7 @@ function RequestLocationModal({ isOpen, onClose, user }) {
             setIsLoading(false);
             return;
         }
+
 
         try {
             await requestStudyLocation(studyLocationData);
@@ -119,6 +125,18 @@ function RequestLocationModal({ isOpen, onClose, user }) {
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            setModal({
+                type: 'failed',
+                message: 'Only image files (jpeg, jpg, png) are allowed.',
+                timeout: 3000,
+                onClick: () => setModal(null)
+            });
+            return;
+        }
+
         if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
             setModal({
                 type: 'failed',
@@ -128,6 +146,7 @@ function RequestLocationModal({ isOpen, onClose, user }) {
             });
             return;
         }
+
         setSelectedFile(file);
         setImagePreview(URL.createObjectURL(file));
     };
@@ -219,9 +238,12 @@ function RequestLocationModal({ isOpen, onClose, user }) {
                             <div className="flex flex-col">
                                 <label htmlFor="university" className="text-sm font-medium">University</label>
                                 <Select
-                                    className="text-base"
+                                    className="text-base w-[25rem]"
                                     name="university"
-                                    options={universities.map(university => ({ value: university.id, label: university.name }))}
+                                    options={universities.map(university => ({
+                                        value: university.id,
+                                        label: `${university.name} (${university.city})`
+                                    }))}
                                     onChange={handleUniversity}
                                     required
                                 />
@@ -247,7 +269,7 @@ function RequestLocationModal({ isOpen, onClose, user }) {
                             <input type="file"
                                 name="image"
                                 accept="image/jpeg, image/jpg, image/png"
-                                id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} />
+                                id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={handleFileChange} required />
                             {!imagePreview &&
                                 <div className="flex flex-col space-y-2">
                                     <p className="text-sm">Drag & drop an image here, or click to select one</p>

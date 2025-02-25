@@ -7,16 +7,15 @@ function Footer() {
     return (
         <footer className="w-full">
             {location.pathname !== '/signup' && location.pathname !== '/signin' && (
-                <div className="bg-secondary   py-6 text-white ">
+                <div className="bg-secondary pt-8 pb-12 text-white ">
                     <div className="container mx-auto justify-between flex flex-col h-full">
-                        <NavLink to="/">
-                            <img src={Logo} alt="logo" className="w-32 sm:px-0 mx-4 my-4" />
-                        </NavLink>
-                        <div className="font-lato space-y-2 ">
+                        <NavLink to='/'><img src={Logo} alt="logo" className="w-32 pb-12" /></NavLink>
+                        <div className="font-lato">
                             <hr />
-                            <div className="flex flex-wrap justify-between items-center gap-4 sm:px-0 px-4">
+                            <div className="flex flex-wrap justify-between items-center gap-4 sm:px-0 px-4 pt-8">
+                                <h1 className="sm:w-fit w-full">© 2024 Study Spotter</h1>
                                 <div className="flex flex-row flex-wrap sm:gap-8 gap-4">
-                                    <h1 className="sm:w-fit w-full">© 2024 Study Spotter</h1>
+
                                     <NavLink to="/about" className="text-white flex items-center gap-1">
                                         About
                                     </NavLink>
@@ -28,7 +27,7 @@ function Footer() {
                                     </NavLink>
                                 </div>
                                 <h1 className="font-lato flex items-center">
-                                    <FaEnvelope className="mr-1" /> support_studdyspotter@gmail.com
+                                    <a href="mailto:support_studdyspotter@gmail.com"><FaEnvelope></FaEnvelope></a>
                                 </h1>
                             </div>
 

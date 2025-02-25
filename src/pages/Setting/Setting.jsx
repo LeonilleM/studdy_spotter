@@ -5,7 +5,6 @@ import Select from 'react-select';
 import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities } from '../../services/University/University.js';
 import EditImageButton from './helper/editImage.jsx';
-
 function Profile() {
     const { user, profileUpdate } = useContext(AuthContext);
     const [universities, setUniversities] = useState([]);
@@ -13,7 +12,7 @@ function Profile() {
     const [selectedUniversity, setSelectedUniversity] = useState(null);
     const [firstName, setFirstName] = useState(user.first_name);
     const [lastName, setLastName] = useState(user.last_name);
-    const [university] = useState(user.University?.name || "No University Affiliation");
+    const [university] = useState(user.University ? `${user.University.name}, ${user.University.city}` : "No University Affiliation");
 
     const handleModalOpen = () => {
         setModalOpen(true);
@@ -36,6 +35,8 @@ function Profile() {
                 console.log(error);
             });
     }, []);
+
+
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
@@ -64,23 +65,21 @@ function Profile() {
         }),
     };
 
-    const userUniversity = universities.find(uni => uni.name === university);
-    const otherUniversities = universities.filter(uni => uni.name !== university);
+    const userUniversityId = user.University?.id;
+    const otherUniversities = universities.filter(uni => uni.id !== userUniversityId);
 
-    const universityOptions = [
-        ...(userUniversity ? [{
-            value: userUniversity.id,
-            label: userUniversity.name + ", " + userUniversity.city,
-            isDisabled: true,
-        }] : []),
-        ...otherUniversities
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(uni => ({
-                value: uni.id,
-                label: uni.name + ", " + uni.city,
-                isDisabled: false,
-            }))
-    ];
+    const universityOptions = otherUniversities
+        .sort((a, b) => {
+            if (a.name === b.name) {
+                return a.city.localeCompare(b.city);
+            }
+            return a.name.localeCompare(b.name);
+        })
+        .map(uni => ({
+            value: uni.id,
+            label: `${uni.name}, ${uni.city}`,
+            isDisabled: false,
+        }));
 
     return (
         <div className="xl:h-screen flex justify-center items-center bg-background">
@@ -103,7 +102,7 @@ function Profile() {
                             <FaUser className="w-24 h-24 bg-gray-300 text-white rounded-full shadow-md border-2" />
                         )}
                         <h1 className="text-lg font-semibold mt-4">{user.first_name} {user.last_name}</h1>
-                        <span>{user.University?.name || "No University Affiliation"}</span>
+                        <span>{user.University ? `${user.University.name}, ${user.University.city}` : "No University Affiliation"}</span>
                         <button
                             type="button"
                             onClick={handleModalOpen}
@@ -123,7 +122,7 @@ function Profile() {
                         <h1 className="font-poppins font-semibold text-2xl pb-6">Edit Profile</h1>
                         <div className="flex lg:flex-row gap-4 flex-col">
                             <div className="flex flex-col w-full">
-                                <label htmlFor="firstName" className="text-sm font-semibold">First Name</label>
+                                <label className="text-sm font-semibold">First Name</label>
                                 <input
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
@@ -133,7 +132,7 @@ function Profile() {
                                 />
                             </div>
                             <div className="flex flex-col w-full">
-                                <label htmlFor="lastName" className="text-sm font-semibold">Last Name</label>
+                                <label className="text-sm font-semibold">Last Name</label>
                                 <input
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
@@ -144,7 +143,7 @@ function Profile() {
                             </div>
                         </div>
                         <div className="flex flex-col pb-6">
-                            <label htmlFor="university" className="text-sm font-semibold">University</label>
+                            <label className="text-sm font-semibold">University</label>
                             <Select
                                 name='university'
                                 placeholder={university}

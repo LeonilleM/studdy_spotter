@@ -150,7 +150,7 @@ export const fetchUniversityStudyLocations = async (uniID) => {
 }
 
 // Reteurns the Data for a given study location, used to show the reviews for a study location
-export const fetchStudyLocationData = async (studyName, universityName) => {
+export const fetchStudyLocationData = async (studyName, universityName, uniCity) => {
     const { data, error } = await supabase
         .from('StudyLocation')
         .select(`
@@ -172,22 +172,28 @@ export const fetchStudyLocationData = async (studyName, universityName) => {
                 school_hex_color,
                 city
             ),
+            study_location_hours(
+                day_of_week,
+                start_time,
+                end_time
+            ),
             State:state_id(abr)
         `)
         .eq('name', studyName)
         .eq('University.name', universityName)
+        .eq('University.city', uniCity)
         .single()
 
     if (error) {
         if (error.code === 'PGRST116') {
             // No rows returned
-            throw new Error(`${studyName} is not associated with ${universityName}`);
+            throw new Error(`${studyName} is not associated with ${universityName} ${uniCity}`);
         }
         throw error;
     }
 
     if (!data) {
-        throw new Error(`${studyName} is not associated with ${universityName}`);
+        throw new Error(`${studyName} is not associated with ${universityName} ${uniCity}`);
     }
 
     // Calculate review statistics
@@ -281,11 +287,24 @@ export const requestStudyLocation = async (studyLocationData) => {
         throw error;
     }
 
-    const studyLocationId = data.id;
-    const sanitizedFileName = `${studyLocationId}/${encodeURIComponent(studyLocationData.name.replace(/ /g, "_"))}`;
+    // Insert all tags for the study location
+    const tags = studyLocationData.tags.map(tag => ({
+        study_location_id: data.id,
+        tag_id: tag
+    }));
 
-    console.log('Uploading image:', studyLocationData.image);
-    console.log('Sanitized file name:', sanitizedFileName);
+
+    // Will insert all tags in a single request
+    const { error: tagError } = await supabase
+        .from('LocationTagList')
+        .insert(tags);
+    if (tagError) {
+        console.error('Error inserting tags:', tagError);
+        throw tagError;
+    }
+
+    const studyLocationId = data.id;
+    const sanitizedFileName = `${studyLocationId}/location_image`;
 
     try {
         const { error: imageError } = await supabase.storage
@@ -298,7 +317,7 @@ export const requestStudyLocation = async (studyLocationData) => {
         }
 
 
-        const { data: publicURL, error: publicURLError } = await supabase.storage
+        const { data: publicURL, error: publicURLError } = supabase.storage
             .from('study_location_image')
             .getPublicUrl(sanitizedFileName);
         if (publicURLError) {

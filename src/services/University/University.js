@@ -26,8 +26,6 @@ export const fetchUniversityData = async (uniName) => {
     const university = uniName.substring(0, lastIndex);
     const city = uniName.substring(lastIndex + 1);
 
-    console.log(university);
-    console.log(city);
     const { data, error } = await supabase
         .from('University')
         .select(
@@ -60,6 +58,7 @@ export const fetchStates = async () => {
 
 // Used for Requesting a campus
 export const sendCampusRequest = async (data, image) => {
+
     const { data: insertedData, error: insertError } = await supabase
         .from('University')
         .insert([
@@ -78,7 +77,7 @@ export const sendCampusRequest = async (data, image) => {
     }
 
     const universityId = insertedData.id;
-    const sanitizedFileName = `${universityId}/${encodeURIComponent(data.name.replace(/ /g, "_"))}`;
+    const sanitizedFileName = `${universityId}/university_image`;
 
     const { error: imageError } = await supabase.storage
         .from('university_images')

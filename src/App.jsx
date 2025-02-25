@@ -16,6 +16,7 @@ import ProtectedRoute from './services/Auth/ProtectedRoute';
 import AdminRoute from './services/Auth/AdminRoute';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import PrivatePrivacy from './pages/PrivatePrivacy/PrivatePrivacy';
+import Suggestion from './pages/Suggestion/Suggestion';
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/privacy-policy" element={<PrivatePrivacy />} />
         <Route path="/account/:userName" element={<ProtectedRoute Component={Account} />} />
         <Route path="/setting" element={<ProtectedRoute Component={Setting} />} />
+        <Route path="/suggestion" element={<Suggestion />} />
         <Route path="/admin-dashboard" element={<AdminRoute Component={AdminDashboard} />} />
       </Routes>
       <Footer />

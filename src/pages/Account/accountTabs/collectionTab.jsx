@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 import PropTypes from 'prop-types';
-import CreateCollectionModal from '../helper/createCollectionModal';
 import { fetchUserFavorites } from '../../../services/StudyLocation/Study';
 import { deleteCollection } from '../../../services/Collections/Collections';
 import { loadingComponent } from '../../../components/Loading.jsx';
@@ -21,7 +20,6 @@ const NO_SAVED_LOCATIONS_MESSAGE = {
 
 function CollectionTab({ userId }) {
     const [collections, setCollections] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeCollection, setActiveCollection] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -58,7 +56,6 @@ function CollectionTab({ userId }) {
     const handleLocationMoved = async (locationId, destinationCollectionId) => {
         setIsLoading(true);
         try {
-
             setActiveCollection(prevCollection => ({
                 ...prevCollection,
                 Collectionlist: prevCollection.Collectionlist.filter(
@@ -124,39 +121,29 @@ function CollectionTab({ userId }) {
 
     return (
         <>
-            <div className="mb-6 py-3 flex justify-between items-center border-b border-secondary">
-                {popUp && (
-                    <PopupModal
-                        type={popUp.type}
-                        message={popUp.message}
-                        buttonText={popUp.buttonText}
-                        onClick={popUp.onClick}
-                    />
-                )}
-                <div className="flex items-center gap-2 font-lato">
-                    {!activeCollection && <span className="font-semibold">Collections</span>}
-                    {activeCollection && (
-                        <>
-                            <span
-                                className="text-secondary cursor-pointer hover:underline font-semibold"
-                                onClick={() => setActiveCollection(null)}
-                            >
-                                Collection List
-                            </span>
-                            <FaChevronRight className="text-gray-400 font-lato" />
-                            <span className="font-semibold">{activeCollection.name}</span>
-                        </>
-                    )}
-                </div>
-                {!activeCollection && (
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-action text-white text-xs  rounded-md py-2 px-2"
-                    >
-                        Create New Collection
-                    </button>
+            {popUp && (
+                <PopupModal
+                    type={popUp.type}
+                    message={popUp.message}
+                    buttonText={popUp.buttonText}
+                    onClick={popUp.onClick}
+                />
+            )}
+            <div className="flex items-center gap-2 font-lato pt-2">
+                {activeCollection && (
+                    <>
+                        <span
+                            className="text-secondary cursor-pointer hover:underline font-semibold"
+                            onClick={() => setActiveCollection(null)}
+                        >
+                            Collection List
+                        </span>
+                        <FaChevronRight className="text-gray-400 font-lato" />
+                        <span className="font-semibold">{activeCollection.name}</span>
+                    </>
                 )}
             </div>
+
             {isLoading &&
                 (
                     <div className="relative">
@@ -208,16 +195,6 @@ function CollectionTab({ userId }) {
                 </>
             )}
 
-            {isModalOpen && (
-                <CreateCollectionModal
-                    onClose={() => setIsModalOpen(false)}
-                    userId={userId}
-                    onCollectionCreated={async () => {
-                        const collectionsData = await fetchUserFavorites(userId);
-                        setCollections(collectionsData);
-                    }}
-                />
-            )}
         </>
     );
 }

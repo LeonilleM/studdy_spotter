@@ -6,7 +6,6 @@ import { deleteReview } from '../../../services/Reviews/Reviews';
 
 function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteReview, updateModal }) {
     const [error, setError] = useState(null);
-
     if (!show) {
         return null;
     }

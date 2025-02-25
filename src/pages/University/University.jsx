@@ -100,7 +100,12 @@ function University() {
                     {uniData && uniData.map((uni) => (
                         <div key={uni.id}
                             className="2xl:h-[50vh] h-[55vh]"
-                            style={{ backgroundImage: `url(${uni.image_url})`, backgroundSize: 'cover', backgroundPosition: 'center', width: '100%' }}>
+                            style={{
+                                backgroundImage: `url(${uni.image_url})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                width: '100%'
+                            }}>
                             <div
                                 className="lg:w-1/3 w-[60%] xl:px-36 lg:px-20 h-full font-lato flex flex-col justify-center px-4 gap-2 opacity-[90%]"
                                 style={{ backgroundColor: uni.school_hex_color ? `${uni.school_hex_color}` : '#000000' }}
@@ -136,7 +141,7 @@ function University() {
                                 />
                             </div>
                             {filteredStudyLocations.length > 0 ? (
-                                <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} />
+                                <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} uniCity={uniData[0].city} />
                             ) : (
                                 <h1 className="text-2xl w-full">No study locations found for this university.</h1>
                             )}

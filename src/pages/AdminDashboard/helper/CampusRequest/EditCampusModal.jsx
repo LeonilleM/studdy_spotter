@@ -9,9 +9,15 @@ import FormFieldsSelect from '../Shared/FormFieldSelect';
 import PopUpModal from '../../../../components/shared/popupModal';
 
 function EditCampusModal({ adminId, isOpen, onClose, campus }) {
+    const [initialFormData, setInitialFormData] = useState({});
+    const [logHistory, setLogHistory] = useState([]);
+    const [states, setStates] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
+    const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         university_name: campus.name,
-        city: campus.city,
+        city: campus.city.replace(/-/g, ' '),
         state: campus.states_id,
         address: campus.address || '',
         zipcode: campus.zipcode || '',
@@ -20,13 +26,8 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         latitude: campus.latitude || '',
         longitude: campus.longitude || '',
         message: '',
+        image: null
     });
-
-    const [initialFormData, setInitialFormData] = useState({});
-    const [logHistory, setLogHistory] = useState([]);
-    const [states, setStates] = useState([]);
-    const [errors, setErrors] = useState({});
-    const [popUp, setPopUp] = useState({ isVisible: false, type: '', message: '', timeout: 0 });
 
     const hasChanges = () => {
         return Object.keys(formData).some((key) => formData[key] !== initialFormData[key]);
@@ -45,10 +46,10 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
 
     useEffect(() => {
         if (isOpen) {
-            setInitialFormData({ // Store initial form data
+            setInitialFormData({
                 university_name: campus.name,
+                city: campus.city.replace(/-/g, ' '),
                 state: campus.states_id,
-                city: campus.city,
                 address: campus.address || '',
                 zipcode: campus.zipcode || '',
                 status: campus.status,
@@ -56,6 +57,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                 latitude: campus.latitude || '',
                 longitude: campus.longitude || '',
                 message: '',
+                image: null
             })
         }
     }, [isOpen, campus]);
@@ -82,6 +84,24 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
         };
     }, [isOpen]);
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const maxSize = 5 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            setErrors({ ...errors, image: 'Image size must be less than 5MB' });
+            return;
+        }
+
+        if (file && !['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+            setErrors({ ...errors, image: 'Invalid file type. Please upload a JPEG, JPG, or PNG file.' });
+            return;
+        }
+
+        setFormData({ ...formData, image: file });
+        setImagePreview(URL.createObjectURL(file));
+        setErrors({ ...errors, image: '' });
+    }
 
     const handleEditCampus = async (event) => {
         event.preventDefault();
@@ -96,14 +116,15 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
 
         const campusData = {
             name: formData.university_name,
-            city: formData.city,
+            city: formData.city.replace(/\s+/g, '-'),
             states_id: formData.state,
             address: formData.address,
             zipcode: formData.zipcode,
             school_hex_color: formData.schoolHexColor,
             latitude: formData.latitude,
             longitude: formData.longitude,
-            message: formData.message
+            message: formData.message,
+            image: formData.image // Image will be replaced using another function
         };
 
         try {
@@ -118,6 +139,11 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
     const isFieldChanged = (fieldName, currentValue) => {
         return currentValue !== initialFormData[fieldName];
     };
+
+    const removeImage = () => {
+        setImagePreview(null);
+        setFormData({ ...formData, image: null });
+    }
 
     if (!isOpen) {
         return null;
@@ -137,7 +163,7 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
             )}
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white p-8 max-w-7xl rounded-xl overflow-y-auto h-[85vh] relative">
+                className="bg-white p-8 2xl:max-w-[80%] max-w-7xl rounded-xl overflow-y-auto h-[90vh] relative">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4  text-xl text-darkBlue hover:text-red-500 transition-colors duration-300">
@@ -225,6 +251,25 @@ function EditCampusModal({ adminId, isOpen, onClose, campus }) {
                             isFieldChanged={isFieldChanged('status', formData.status)}
                             width="100%"
                         />
+                        <div className="flex flex-col space-y-2 w-full">
+                            <label htmlFor="image" className="text-sm font-medium">Upload Image <span className="text-xs italic font-normal">(this will be the location image)</span></label>
+                            <div className="relative flex items-center  p-4 border border-l-8 border-l-accent rounded-3xl h-[5rem] hover:border-action focus:outline-none focus:ring-2 focus:ring-action"
+                                style={{ backgroundImage: imagePreview ? `url(${imagePreview})` : 'none', backgroundSize: 'fill', backgroundPosition: 'center', backgroundBlendMode: 'darken' }}>
+                                <input type="file"
+                                    name="image"
+                                    accept="image/jpeg, image/jpg, image/png"
+                                    id="image" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={handleImageChange}
+                                />
+                                {!imagePreview &&
+                                    <div className="flex flex-col space-y-2">
+                                        <p className="text-sm">Drag & drop an image here, or click to select one</p>
+                                    </div>
+                                }
+                            </div>
+                            {imagePreview && <button type="button" className="text-sm text-red-500 mt-2 t" onClick={removeImage}>Remove Image</button>}
+                        </div>
+
                         {!hasChanges() && <p className="text-red-500 text-sm mt-1 w-full">No changes, requires one field to be changed to update.</p>}
                         <div className="flex flex-col w-full">
                             <label className="text-gray-700 font-medium">Update Reason</label>

@@ -4,15 +4,12 @@ import { createCollection } from '../../../services/Collections/Collections';
 import Modal from '../../../components/shared/popupModal.jsx';
 import { loadingComponent } from '../../../components/Loading.jsx';
 
-
-
 function CreateCollectionModal({ onClose, userId, onCollectionCreated }) {
     const [collectionName, setCollectionName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [modal, setModal] = useState(false);
 
     const handleCreateCollection = async () => {
-
         if (collectionName === '') return;
         setIsLoading(true);
 
@@ -34,7 +31,8 @@ function CreateCollectionModal({ onClose, userId, onCollectionCreated }) {
             setTimeout(() => {
                 onClose();
             }, 500);
-            onCollectionCreated();
+            if (onCollectionCreated)
+                onCollectionCreated();
 
         } catch (error) {
             setModal({
@@ -99,7 +97,7 @@ function CreateCollectionModal({ onClose, userId, onCollectionCreated }) {
 CreateCollectionModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     userId: PropTypes.string.isRequired,
-    onCollectionCreated: PropTypes.func.isRequired,
+    onCollectionCreated: PropTypes.func,
 };
 
 export default CreateCollectionModal;
