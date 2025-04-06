@@ -7,7 +7,6 @@ import ErrorPage from '../../components/shared/ErrorPage';
 import StudyLocationList from './StudyLocationList';
 import Filter from './helper/filter';
 import SelectedTags from './helper/selectedTags';
-import PopularLocations from './helper/popuarLocations';
 
 function University() {
     const [uniData, setUniData] = useState(null);
@@ -118,12 +117,11 @@ function University() {
                         </div>
                     ))}
                     <section className="font-secondary lg:px-0 px-4 text-darkBlue pb-32">
-                        <div className="container mx-auto flex flex-col gap-4 py-8 mt-12 relative">
-                            <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
+                        <div className="container mx-auto flex flex-col gap-4 py-8 relative">
+                            {/* <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
                             {uniData && uniData[0] && (
                                 <PopularLocations universityID={uniData[0].id} />
-                            )}
-
+                            )} */}
                             <div className="flex sm:flex-row flex-wrap justify-between w-full items-center mt-12 mb-2">
                                 <Filter
                                     searchQuery={searchQuery}

@@ -144,7 +144,7 @@ const AuthProvider = ({ children }) => {
             throw error;
         }
     };
-
+    
     const logout = async () => {
         try {
 

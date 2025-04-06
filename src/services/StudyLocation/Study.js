@@ -122,7 +122,6 @@ export const fetchUniversityStudyLocations = async (uniID) => {
             UserReview (
                 rating
             ),
-
             LocationTagList (
                 TagTypes:tag_id (name)
             )

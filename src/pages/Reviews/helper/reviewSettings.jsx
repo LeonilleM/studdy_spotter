@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { FaTrash } from 'react-icons/fa';
 import { deleteReview } from '../../../services/Reviews/Reviews';
 
+
 function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteReview, updateModal }) {
     const [error, setError] = useState(null);
     if (!show) {
@@ -35,12 +36,18 @@ function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteRe
                         Update
                     </button>
                     <button
+                        className="text-action border-t px-4 py-3 rounded hover:bg-slate-300 w-full "
+                    >
+                        Upload Images
+                    </button>
+                    <button
                         onClick={handleDelete}
                         className="text-red-500 border-t py-3 px-4  hover:bg-slate-300 w-full"
                     >
                         <FaTrash className="inline-block mr-2" />
                         Delete Review
                     </button>
+
                     <button
                         type="button"
                         onClick={handleClose}

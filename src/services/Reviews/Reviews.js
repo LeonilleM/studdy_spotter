@@ -8,7 +8,6 @@ export const fetchAllReviews = async (studyLocationID) => {
             id,
             description,
             rating,
-            
             created_at,
             updated_at,
             Users:user_id (
@@ -24,8 +23,10 @@ export const fetchAllReviews = async (studyLocationID) => {
     if (error) {
         throw error
     }
+
     return data
 }
+
 
 // Returns all the users reviews
 export const fetchUserReviews = async (userID) => {
@@ -126,9 +127,6 @@ export const updateReview = async (userId, studyLocationId, rating, review, imag
 
     if (error) {
         throw error
-    }
-
-    if (image) {
     }
 
     return data

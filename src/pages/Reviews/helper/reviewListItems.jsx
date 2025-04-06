@@ -4,7 +4,6 @@ import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import { BsThreeDots } from 'react-icons/bs';
 import { useState } from 'react';
-
 function ReviewListItems({ review, isUserReview, onEditReview }) {
     const [showFullText, setShowFullText] = useState(false);
     const MAX_LENGTH = 200; // Character count
@@ -20,13 +19,12 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
         return `${text.substring(0, MAX_LENGTH)}...`;
     };
 
-
     return (
         <div className="flex flex-col space-y-2 ">
             <div className="flex flex-col font-lato w-full">
                 <div className="flex flex-row justify-between items-center mt-6">
                     <div className="flex flex-row gap-4">
-                        {review.Users.image_url ? (
+                        {review.Users?.image_url ? (
                             <img
                                 src={review.Users.image_url}
                                 alt="avatar"
@@ -37,10 +35,12 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                         )}
                         <div className="flex flex-col justify-center">
                             <p className="font-bold">
-                                {review.Users.first_name} {review.Users.last_name}
+                                {review.Users
+                                    ? `${review.Users.first_name} ${review.Users.last_name}`
+                                    : "Anonymous"}
                             </p>
                             <p className="text-sm text-gray-500">
-                                {review.Users.University?.name || 'No School Affiliation'}
+                                {review.Users?.University?.name || "No School Affiliation"}
                             </p>
                         </div>
                     </div>
@@ -64,7 +64,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                             onClick={toggleShowFullText}
                             className="text-action hover:underline cursor-pointer flex"
                         >
-                            {showFullText ? 'Show Less' : 'Read More'}
+                            {showFullText ? "Show Less" : "Read More"}
                         </span>
                     )}
                 </p>
@@ -73,7 +73,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
                         Updated {formatDistanceToNow(new Date(review.updated_at))} ago
                     </p>
                 )}
-                {!isUserReview && (<hr className="w-full border-[1px] border-[#3c3c3c] mt-14 mb-12" />)}
+                {!isUserReview && <hr className="w-full border-[1px] border-[#3c3c3c] mt-14 mb-12" />}
             </div>
         </div>
     );

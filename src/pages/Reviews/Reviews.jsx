@@ -12,7 +12,7 @@ import ReviewList from './ReviewList';
 import ErrorPage from '../../components/shared/ErrorPage';
 import PopUpModal from '../../components/shared/popupModal';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaArrowUp } from "react-icons/fa";
 import { HiPencilSquare } from "react-icons/hi2";
 import Icon from '../../components/shared/IconMapping';
 import { extractHours } from '../../components/shared/TimeUtility';
@@ -38,6 +38,7 @@ function Reviews() {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const { today, sortedHours, nextOpen } = extractHours(locationDetails?.study_location_hours);
+    const [showBackToTop, setShowBackToTop] = useState(false);
 
     useEffect(() => {
         if (sessionStorage.getItem('showModalReview') === 'true') {
@@ -62,8 +63,8 @@ function Reviews() {
                         new Date(b.created_at) - new Date(a.created_at)
                     );
 
-                    const userReview = sortedReviews.filter(review => review.Users.id === user?.id);
-                    const otherReviews = sortedReviews.filter(review => review.Users.id !== user?.id);
+                    const userReview = sortedReviews.filter(review => review.Users?.id === user?.id);
+                    const otherReviews = sortedReviews.filter(review => review.Users?.id !== user?.id || review.Users === null);
                     setReviews({ userReview, otherReviews });
 
                 }
@@ -75,6 +76,22 @@ function Reviews() {
         };
         fetchData();
     }, [studyLocation, uniName, user?.id]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowBackToTop(window.scrollY > 300); // Show button after scrolling 300px
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleSuggestions = (location) => {
         navigate(`/suggestion?location=${location}`, { state: { locationDetails } });
@@ -131,8 +148,8 @@ function Reviews() {
             const sortedReviews = newReviews.sort((a, b) =>
                 new Date(b.created_at) - new Date(a.created_at)
             );
-            const userReview = sortedReviews.filter(review => review.Users.id === user?.id);
-            const otherReviews = sortedReviews.filter(review => review.Users.id !== user?.id);
+            const userReview = sortedReviews.filter(review => review.Users?.id === user?.id);
+            const otherReviews = sortedReviews.filter(review => review.Users?.id !== user?.id || !review.Users);
             setReviews({ userReview, otherReviews });
         }
     };
@@ -174,6 +191,7 @@ function Reviews() {
     }
     return (
         <div className="bg-background ">
+
             {locationDetails && (
                 <LocationDetails locationDetails={locationDetails} totalReviews={totalReviews} />
             )}
@@ -322,6 +340,15 @@ function Reviews() {
                 handleDeleteReview={handleDeleteReview}
                 updateModal={handleUpdateReviewModal}
             />
+            {showBackToTop && (
+                <button
+                    onClick={scrollToTop}
+                    className="fixed bottom-8 right-8 bg-accent text-white p-3 rounded-full shadow-lg hover:bg-accent2 transition duration-300 z-50"
+                    aria-label="Back to Top"
+                >
+                    <FaArrowUp size={20} />
+                </button>
+            )}
         </div >
     );
 }
