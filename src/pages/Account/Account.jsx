@@ -53,7 +53,7 @@ function Account() {
                                 <FaUser className="w-20 h-20 bg-gray-300 text-white rounded-full shadow-md border-2" />
                             )}
                             <span className="mt-4 font-bold text-lg text-white">{user.first_name} {user.last_name}</span>
-                            <span className="text-sm text-white">{user.University?.name || "No University Affiliation"}, {user.University.city}</span>
+                            <span className="text-sm text-white">{user.University?.name || "No University Affiliation"}, {user.University?.city}</span>
                             {user.role.name === 'Admin' ? (
                                 <span className="text-sm text-[#FF90D6] mt-1">Admin</span>
                             ) : (

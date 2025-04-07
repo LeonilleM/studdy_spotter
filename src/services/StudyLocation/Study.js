@@ -1,5 +1,76 @@
 import { supabase } from '../supabase/supabase'
 
+// Returns the most popular reviewed study locations
+export const fetchMostPopularStudyLocations = async () => {
+    const { data, error } = await supabase
+        .from('StudyLocation')
+        .select(`
+            id,
+            name,
+            image_url,
+            University(
+                name,
+                city
+            ),
+            UserReview (
+                rating
+            )
+        `);
+
+    if (error) {
+        throw error;
+    }
+
+    // Calculate total reviews and average rating for each study location
+    const studyLocationsWithReviewData = data.map((location) => {
+        const reviews = location.UserReview || [];
+        const total_reviews = reviews.length;
+
+        // Calculate the average rating
+        const average_rating = total_reviews > 0
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / total_reviews
+            : 0;
+
+        return {
+            id: location.id,
+            name: location.name,
+            image_url: location.image_url,
+            university_name: location.University.name + " " + location.University.city,
+            total_reviews,
+            avg_rating: average_rating ? Number(average_rating.toFixed(1)) : 0, // Round to 1 decimal place
+        };
+    });
+
+    // Filter out locations with zero reviews
+    const filteredLocations = studyLocationsWithReviewData.filter(
+        (location) => location.total_reviews >= 2
+    );
+
+    // Sort study locations by total reviews and average rating in descending order
+    filteredLocations.sort((a, b) => {
+        if (b.total_reviews === a.total_reviews) {
+            return b.avg_rating - a.avg_rating; // Sort by rating if reviews are equal
+        }
+        return b.total_reviews - a.total_reviews;
+    });
+
+    return filteredLocations.slice(0, 12);
+};
+
+// Fetches total amount of locations currently active to be rated
+export const fetchTotalLocations = async () => {
+    const { count, error } = await supabase
+        .from('StudyLocation')
+        .select('id', { count: 'exact' })
+    if (error) {
+        throw error
+    }
+
+    return count
+}
+
+
+
 // Lets a user favorite a study location
 export const toggleFavorite = async (studyLocationID, userID) => {
     // First check if the favorite exists

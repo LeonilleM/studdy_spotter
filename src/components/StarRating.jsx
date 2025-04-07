@@ -55,7 +55,7 @@ const StarRating = ({ rating, starSize = 24, noRating = true }) => {
     };
 
     return (
-        <div className="flex flex-row    gap-1 font-poppins">
+        <div className="flex flex-row items-center gap-1 font-poppins">
             {renderStars(rating)} {noRating && <span className="text-xs ml-2">({rating.toFixed(1)})</span>}
         </div>
     );

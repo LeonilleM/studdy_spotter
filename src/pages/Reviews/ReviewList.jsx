@@ -6,13 +6,13 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
     const [visibleReviews, setVisibleReviews] = useState(10); // Number of reviews to show initially
 
     const loadMoreReviews = () => {
-        setVisibleReviews((prev) => prev + 10); // Load 10 more reviews
+        setVisibleReviews((prev) => prev + 8); // Load 10 more reviews
     };
 
     return (
         <>
             {reviews.userReview.length > 0 && (
-                <div key="user-reviews">
+                <div key="user-reviews" className="mb-10">
                     <h1 className="font-bold text-3xl font-poppins text-heading">Your Review</h1>
                     {reviews.userReview.map((review, index) => (
                         <ReviewListItems
@@ -24,7 +24,7 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
                     ))}
                 </div>
             )}
-            <div className="sticky top-0 bg-background pt-10 border-b border-gray-300 pb-2 z-10">
+            <div className="sticky top-0 bg-background  pb-4 mb-4 border-b border-gray-300  z-10">
                 <h1 className="font-bold text-3xl font-poppins text-heading">Reviews</h1>
                 <ReviewFilter onFilterChange={onFilterChange} />
             </div>

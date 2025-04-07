@@ -1,4 +1,6 @@
-import { fetchUniversities, fetchUniversitiesWithMostReviews, fetchMostPopularStudyLocations, fetchTotalReviews } from '../../services/University/University';
+import { fetchUniversities, fetchUniversitiesWithMostReviews } from '../../services/University/University';
+import { fetchTotalReviews, fetchRecentReviews } from '../../services/Reviews/Reviews';
+import { fetchTotalLocations, fetchMostPopularStudyLocations } from '../../services/StudyLocation/Study';
 import { useEffect, useState } from 'react';
 import Select, { components } from 'react-select';
 import { NavLink } from 'react-router-dom';
@@ -6,43 +8,47 @@ import { IoSearchOutline, IoChevronBack, IoChevronForward } from "react-icons/io
 import { FaUniversity } from "react-icons/fa";
 import PropTypes from 'prop-types';
 import StarRating from '../../components/StarRating';
+import { formatDistanceToNow } from 'date-fns';
+import { FaUser } from 'react-icons/fa';
 
 function Home() {
     const [universities, setUniversities] = useState([]);
     const [topUniversities, setTopUniversities] = useState([]);
     const [topStudyLocations, setTopStudyLocations] = useState([]);
-    const [totalCount, setTotalCount] = useState()
-
-    console.log(totalCount)
+    const [totalLocationCount, setTotalLocationCount] = useState(0)
+    const [totalCount, setTotalCount] = useState(0)
+    const [recentReviews, setRecentReviews] = useState([])
 
     useEffect(() => {
-        // Fetch all universities for the search dropdown
-        fetchUniversities()
-            .then(data => {
-                setUniversities(data);
-            })
-            .catch(error => console.error(error));
+        const batchFetch = async () => {
+            try {
+                const [
+                    recentReviewData,
+                    universitiesData,
+                    topUniversitiesData,
+                    topStudyLocationsData,
+                    totalLocationsData,
+                    totalReviewsData
+                ] = await Promise.all([
+                    fetchRecentReviews(),
+                    fetchUniversities(),
+                    fetchUniversitiesWithMostReviews(),
+                    fetchMostPopularStudyLocations(),
+                    fetchTotalLocations(),
+                    fetchTotalReviews()
+                ]);
+                setRecentReviews(recentReviewData)
+                setUniversities(universitiesData);
+                setTopUniversities(topUniversitiesData);
+                setTopStudyLocations(topStudyLocationsData);
+                setTotalLocationCount(totalLocationsData);
+                setTotalCount(totalReviewsData);
+            } catch (error) {
+                console.error('Error during batch fetch:', error);
+            }
+        };
 
-        // Fetch universities with the most reviews
-        fetchUniversitiesWithMostReviews()
-            .then(data => {
-                setTopUniversities(data);
-            })
-            .catch(error => console.error(error));
-
-        // Fetch popular locations
-        fetchMostPopularStudyLocations()
-            .then(data => {
-                setTopStudyLocations(data)
-            })
-            .catch(error => console.error(error))
-
-        // fetch total count
-        fetchTotalReviews()
-            .then(data => {
-                setTotalCount(data)
-            })
-            .catch(error => console.error(error))
+        batchFetch();
     }, []);
 
     const options = universities.map(university => ({
@@ -73,7 +79,6 @@ function Home() {
             </components.Option>
         );
     };
-
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -131,10 +136,33 @@ function Home() {
                             to='/allschools'
                             className="font-lato pt-3 italic">Don&apos;t see your school? <span className='font-bold text-accent2'>Request here</span></NavLink>
                     </div>
-                    <h1 className="pt-4 font-lato italic text-center">Join now and add onto these existing reviews: {totalCount} reviews</h1>
+
                 </div>
             </section>
-            <section className="bg-secondary h-24 w-full"></section>
+            <section className="bg-secondary py-24 text-background">
+                <div className="container mx-auto px-4 text-center font-lato">
+                    <h1 className=" font-bold text-3xl font-poppins">Our Impact</h1>
+                    <div className="flex justify-around my-6 ">
+                        <div>
+                            <h2 className="text-4xl font-bold">{universities.length}</h2>
+                            <p>Universities</p>
+                        </div>
+                        <div>
+                            <h2 className="text-4xl font-bold">{totalLocationCount}</h2>
+                            <p>Study Locations</p>
+                        </div>
+                        <div>
+                            <h2 className="text-4xl font-bold">{totalCount}</h2>
+                            <p>Reviews</p>
+                        </div>
+                    </div>
+                    <h2 className="text-xl font-bold mt-4">Join and Rate Study Spots</h2>
+                    <p className="mt-2">
+                        Share your experiences, find new places to learn, and connect with study partners
+                        across campuses nationwide.
+                    </p>
+                </div>
+            </section>
             <section className="bg-background py-24 font-lato">
                 <div className="container mx-auto  px-4 space-y-24">
                     <div className="justify-center flex flex-col gap-4">
@@ -203,7 +231,6 @@ function Home() {
                             >
                                 <IoChevronBack size={24} />
                             </button>
-
                             <div className="flex overflow-x-scroll gap-12 mb-4 w-full hide-scrollbar scroll-container-university">
                                 {topUniversities.map((university) => {
                                     const universityUrl = `/university/${encodeURIComponent(university.name)} ${encodeURIComponent(university.city)}`;
@@ -228,7 +255,6 @@ function Home() {
                                     );
                                 })}
                             </div>
-
                             <button
                                 className="absolute md:-right-8 right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
                                 onClick={() => {
@@ -240,9 +266,52 @@ function Home() {
                             </button>
                         </div>
                     </div>
+                    <div>
+                        <h1 className="text-accent font-bold text-3xl font-poppins">Recent Reviews</h1>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+                            {recentReviews.map((review) => {
+                                const url = `university/${review.StudyLocation.University.name} ${review.StudyLocation.University.city}/${review.StudyLocation.name}`;
+                                return (
+                                    <div key={review.id} className="border border-gray-300 rounded-md p-4 font-lato">
+                                        <div className="flex flex-row items-center space-x-4 mb-4">
+                                            {review.Users?.image_url ? (
+                                                <img
+                                                    src={review.Users.image_url}
+                                                    alt="avatar"
+                                                    className="w-14 h-14 rounded-full"
+                                                />
+                                            ) : (
+                                                <FaUser className="w-14 h-14 text-white bg-gray-300 rounded-full" />
+                                            )}
+                                            <div>
+                                                <p className="font-bold">
+                                                    {review.Users
+                                                        ? `${review.Users.first_name} ${review.Users.last_name}`
+                                                        : "Anonymous"}
+                                                </p>
+                                                <div className="flex items-center mt-2">
+                                                    <StarRating rating={review.rating} starSize={16} />
+                                                    <p className="ml-2 text-sm text-gray-500">
+                                                        Posted {formatDistanceToNow(new Date(review.created_at))} ago
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr className="border-gray-300  w-full my-5" />
 
+                                        <NavLink
+                                            to={url}
+                                            className="hover:underline font-bold text-lg ">{review.StudyLocation.name}
+                                        </NavLink>
+                                        <p className="text-sm text-gray-600">{review.description.slice(0, 100)}...</p>
+
+                                    </div>
+                                )
+
+                            })}
+                        </div>
+                    </div>
                 </div>
-
             </section >
         </>
     );

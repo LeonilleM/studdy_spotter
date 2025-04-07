@@ -17,7 +17,7 @@ const Filter = ({ searchQuery, setSearchQuery, selectedTags, setSelectedTags, lo
             </NavLink>
             <div className="flex sm:flex-row flex-wrap justify-between w-full  pb-6 gap-2 pt-4">
                 <div className="flex sm:flex-row flex-col gap-2">
-                    <div className="relative flex sm:w-[25vw] w-[90vw] h-10 gap-0.5 ">
+                    <div className="relative flex md:flex-row flex-col sm:w-[35vw] w-[92vw] h-10 gap-0.5 ">
                         <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                             <IoSearchOutline className="text-darkBlue w-8 h-5 border-r border-gray-400" />
                         </div>
@@ -28,16 +28,23 @@ const Filter = ({ searchQuery, setSearchQuery, selectedTags, setSelectedTags, lo
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <div className="relative">
+                        <div className="flex gap-0.5 relative">
                             <button
                                 type="button"
-                                className="h-full bg-white text-sm text-darkBlue px-4 rounded-r-lg font-lato font-bold flex items-center gap-2 border border-gray-300 active:bg-gray-300 transition duration-500 ease-in-out"
+                                className="h-10 w-28 bg-white text-sm text-darkBlue px-4 font-lato font-bold flex items-center gap-2 border border-gray-300 active:bg-gray-300 transition duration-500 ease-in-out"
+                            >
+                                <VscThreeBars />
+                                Sort By
+                            </button>
+
+                            <button
+                                type="button"
+                                className="h-10 bg-white text-sm text-darkBlue px-4 rounded-r-lg font-lato font-bold flex items-center gap-2 border border-gray-300 active:bg-gray-300 transition duration-500 ease-in-out"
 
                                 onClick={() => setIsSelectVisible(!isSelectVisible)}
                             >
                                 <VscThreeBars />
                                 Filter
-
                             </button>
                             {isSelectVisible && (
                                 <div className="absolute top-10 right-0 bg-white rounded-md shadow-lg p-2 min-w-[150px] z-50 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
@@ -65,7 +72,7 @@ const Filter = ({ searchQuery, setSearchQuery, selectedTags, setSelectedTags, lo
                             )}
                         </div>
                     </div>
-                    <div className="flex gap-2 h-10 text-xs ">
+                    <div className="flex gap-2 text-xs sm:mt-0 mt-9 h-10 ">
                         <button
                             className={`px-3 py-1 rounded-xl font-bold ${filterMode === 'AND' ? 'bg-accent text-white' : 'bg-gray-200 border border-gray-300 text-secondary'}`}
                             onClick={() => setFilterMode('AND')}
