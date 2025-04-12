@@ -3,6 +3,7 @@ import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities } from '../../services/University/University';
 import { NavLink } from 'react-router-dom';
 import RequestSchoolModal from './helper/RequestSchoolModal';
+import uwQuad from '../../assets/uw-quad.jpg';
 
 function AllSchools() {
     const [uniData, setUniData] = useState(null);
@@ -59,8 +60,8 @@ function AllSchools() {
                         </div>
                     </div>
                     <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-                        <div className="h-[363px] w-[381px] bg-gray-200 flex flex-col items-center py-12 rounded-lg">
-                        </div>
+                        <img src={uwQuad} className="h-full w-full flex flex-col items-center py-12 rounded-lg" alt="University Quad">
+                        </img>
                     </div>
                 </section>
                 <hr className="border-black border-2 rounded-full" />
