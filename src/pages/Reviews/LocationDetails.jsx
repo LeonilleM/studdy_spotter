@@ -9,18 +9,14 @@ function LocationDetails({ locationDetails, totalReviews }) {
                 backgroundImage: `url(${locationDetails.image_url})`,
                 backgroundPosition: 'center',
                 backgroundRepeat: 'repeat',
-                height: '50vh'
+                height: '55vh'
             }}>
-            <div className="flex h-full py-">
-                <div className={`lg:w-1/3 w-[60%] xl:px-36 lg:px-20 px-4 font-lato flex flex-col py-8 text-white justify-between  opacity-[90%]`} style={{ backgroundColor: locationDetails.University.school_hex_color }}>
-                    <section className="flex flex-col gap-2 py-24">
-                        <BackButton color="white" />
-                        <h1 className="lg:text-4xl text-2xl font-poppins font-bold">{locationDetails.name}</h1>
-                        <div className="flex flex-row gap-4 items-center">
-                            <StarRating rating={locationDetails.rating} starSize={14} color="primary" />
-                            <p className="text-xs">({totalReviews} reviews)</p>
-                        </div>
-                    </section>
+            <div className={`lg:w-[40%] w-[60%]  sm:px-20 px-4  font-lato flex flex-col space-y-2 pt-36 pb-4 text-white   opacity-90 h-full `} style={{ backgroundColor: locationDetails.University.school_hex_color }}>
+                <BackButton color="white" />
+                <h1 className="lg:text-4xl text-2xl font-poppins font-bold">{locationDetails.name}</h1>
+                <div className="flex flex-row gap-4 items-center">
+                    <StarRating rating={locationDetails.rating} starSize={14} color="primary" />
+                    <p className="text-xs">({totalReviews} reviews)</p>
                 </div>
             </div>
         </div>

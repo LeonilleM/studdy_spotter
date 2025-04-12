@@ -88,6 +88,10 @@ export const fetchUserReviews = async (userID) => {
             rating,
             created_at,
             updated_at,
+            post_images(
+                image_url,
+                description
+            ),
             StudyLocation:study_location_id (
                 id,
                 name,
@@ -113,6 +117,7 @@ export const fetchUserReviews = async (userID) => {
 
 // Helper function to upload an image to the storage bucket
 const uploadImage = async (file, reviewData) => {
+
     console.log(reviewData, file)
     const { error } = await supabase.storage
         .from('post_images')
@@ -130,7 +135,7 @@ const uploadImage = async (file, reviewData) => {
     if (publicUrlError || !publicUrlData) {
         throw new Error('Failed to retrieve public URL for the uploaded image.');
     }
-
+    console.log("Succesffully added image")
     return publicUrlData.publicUrl;
 };
 
@@ -139,7 +144,6 @@ export const insertUploadedImages = async (file, reviewData, captions) => {
     try {
         // Upload the image and get its public URL
         const imageUrl = await uploadImage(file, reviewData);
-
 
         // Insert the image details into the database
         const { data: insertData, error: insertError } = await supabase
@@ -156,7 +160,6 @@ export const insertUploadedImages = async (file, reviewData, captions) => {
             throw insertError;
         }
 
-        console.log('Image uploaded and inserted successfully:', insertData);
         return { imageUrl, insertData };
     } catch (error) {
         console.error('Error uploading and inserting image:', error);
@@ -185,21 +188,30 @@ export const createReview = async (studyLocationID, userID, rating, review) => {
 }
 
 // Let's a user Delete a review for a given study location
-export const deleteReview = async (userID, studyLocationID) => {
-    const { data, error } = await supabase
+export const deleteReview = async (userID, review_id) => {
+    console.log(userID, review_id)
+    // Delete User Review
+    const { error } = await supabase
         .from('UserReview')
         .delete()
-        .eq('user_id', userID)
-        .eq('study_location_id', studyLocationID)
-
+        .eq('id', review_id)
     if (error) {
         throw error
     }
 
-    return data
+    // Then delete the path file
+    const filePath = `${userID}/${review_id}`
+    console.log("Deleting from", filePath)
+    const { data, fileError } = await supabase.storage
+        .from('post_images')
+        .remove(filePath)
+    if (error) {
+        throw fileError
+    }
+    console.log(data)
+    console.log("Successfully deleted")
+    return "Succesfully Deleted"
 }
-
-
 
 // Let's a user update a review for a given study location
 export const updateReview = async (userId, studyLocationId, rating, review) => {

@@ -3,9 +3,9 @@ import StarRating from '../../../components/StarRating';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import { BsThreeDots } from 'react-icons/bs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function ReviewListItems({ review, isUserReview, onEditReview }) {
+function ReviewListItems({ review, isUserReview, onEditReview, }) {
     const [showFullText, setShowFullText] = useState(false);
     const MAX_LENGTH = 200;
     const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -40,6 +40,17 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
         }
         return `${text.substring(0, MAX_LENGTH)}...`;
     };
+
+    useEffect(() => {
+        if (lightboxOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        return () => {
+            document.body.style.overflow = 'auto'; // Cleanup on unmount
+        };
+    }, [lightboxOpen]);
 
     return (
         <div className="flex flex-col space-y-2 ">
@@ -117,7 +128,7 @@ function ReviewListItems({ review, isUserReview, onEditReview }) {
             {/* Lightbox */}
             {lightboxOpen && (
                 <div className="fixed inset-0 -top-2 bg-black bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="relative container mx-auto px-4 flex items-center justify-center">
+                    <div className="relative container mx-auto p-36 flex items-center justify-center">
                         <div className="relative p-10">
                             <button
                                 onClick={closeLightbox}

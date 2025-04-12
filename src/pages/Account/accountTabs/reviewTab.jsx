@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import ReviewModal from '../../Reviews/helper/reviewModal'; // Adjust the import path as needed
 import ReviewSetting from '../../Reviews/helper/reviewSettings'; // Adjust the import path as needed
 import { fetchUserReviews } from '../../../services/Reviews/Reviews';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import StarRating from '../../../components/StarRating'; // Adjust the import path as needed
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
+import ImageUpload from '../../Reviews/helper/ImageUpload';
 
 function ReviewTab({ userId }) {
     const [reviews, setReviews] = useState([]);
@@ -15,9 +16,35 @@ function ReviewTab({ userId }) {
     const [showFullText, setShowFullText] = useState({});
     const [showEditModal, setShowEditModal] = useState(false);
     const [showSettingMenu, setShowSettingMenu] = useState(false);
+    const [showUploadImageModal, setUploadImageModal] = useState(false)
     const [reviewToEdit, setReviewToEdit] = useState(null);
-    const reviewsPerPage = 3;
+    const [selectedReview, setSelectedReview] = useState(null);
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const reviewsPerPage = 5;
     const MAX_LENGTH = 200;
+
+    const openLightbox = (review, index) => {
+        setSelectedReview(review);
+        setCurrentImageIndex(index);
+        setLightboxOpen(true);
+    };
+    const closeLightbox = () => {
+        setLightboxOpen(false);
+    };
+
+    const showNextImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            (prevIndex + 1) % selectedReview.post_images.length
+        );
+    };
+
+    const showPrevImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            (prevIndex - 1 + selectedReview.post_images.length) % selectedReview.post_images.length
+        );
+    };
+
 
     const toggleShowFullText = (reviewId) => {
         setShowFullText((prevState) => ({
@@ -33,8 +60,12 @@ function ReviewTab({ userId }) {
         return `${text.substring(0, MAX_LENGTH)}...`;
     };
 
+    const handleUploadImage = (review) => {
+        setReviewToEdit(review);
+        setUploadImageModal(true);
+    };
+
     const handleEditReview = (review) => {
-        console.log("Review", review);
         setReviewToEdit(review);
         setShowSettingMenu(true);
     };
@@ -62,8 +93,13 @@ function ReviewTab({ userId }) {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
+
                 const reviewsData = await fetchUserReviews(userId);
-                setReviews(reviewsData);
+                const sortedData = reviewsData.sort((a, b) =>
+                    new Date(b.created_at) - new Date(a.created_at)
+                );
+
+                setReviews(sortedData);
             } catch (error) {
                 console.error(error);
             }
@@ -75,10 +111,12 @@ function ReviewTab({ userId }) {
         setCurrentPage(pageNumber);
     };
 
+
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
     const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
     const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+    console.log(currentReviews)
 
     return (
         <div>
@@ -111,6 +149,7 @@ function ReviewTab({ userId }) {
                                             <BsThreeDots />
                                         </div>
                                     </div>
+
                                     <div className="flex flex-row flex-wrap gap-1 pt-2 text-white">
                                         <span className="text-xs font-bold bg-white text-black py-1 px-3 align-center">{review.StudyLocation.category}</span>
                                         {review.StudyLocation.LocationTagList.map((tag, index) => {
@@ -127,11 +166,7 @@ function ReviewTab({ userId }) {
                             <div className="flex flex-wrap items-center gap-2 pt-5 font-lato">
                                 <StarRating rating={review.rating} />
                                 <span className="text-sm font-poppins sm:ml-2">
-                                    Posted On {new Date(review.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: '2-digit'
-                                    })}
+                                    Posted On {format(new Date(review.created_at), 'MMMM dd, yyyy')}
                                 </span>
                             </div>
                             <p className="mt-4 whitespace-pre-wrap font-lato">
@@ -145,13 +180,24 @@ function ReviewTab({ userId }) {
                                     </span>
                                 )}
                             </p>
-                            {
-                                review.updated_at && (
-                                    <p className="text-xs text-gray-500 mt-4 font-lato">
-                                        Updated {formatDistanceToNow(new Date(review.updated_at))} ago
-                                    </p>
-                                )
+                            {review.post_images && review.post_images.length > 0 &&
+                                <div className="flex gap-4 mt-4 overflow-x-scroll">
+                                    {review.post_images.map((image, index) => (
+                                        <img
+                                            onClick={() => openLightbox(review, index)}
+                                            key={index}
+                                            src={image.image_url}
+                                            alt={image.description || `Review Image ${index + 1}`}
+                                            className="w-52 object-cover rounded-lg"
+                                        />
+                                    ))}
+                                </div>
                             }
+                            {review.updated_at && (
+                                <p className="text-xs text-gray-500 mt-4 font-lato">
+                                    Updated {formatDistanceToNow(new Date(review.updated_at))} ago
+                                </p>
+                            )}
                             <hr className="border-[1px] border-black mt-14" />
                         </div >
                     );
@@ -184,6 +230,44 @@ function ReviewTab({ userId }) {
                     <FaChevronRight />
                 </button>
             </div>
+            {lightboxOpen && selectedReview && (
+                <div className="fixed inset-0 -top-2 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="relative container mx-auto p-36 flex items-center justify-center">
+                        <div className="relative p-10">
+                            <button
+                                onClick={closeLightbox}
+                                className="absolute top-0 left-4 text-white text-3xl"
+                            >
+                                &times;
+                            </button>
+                            <img
+                                src={selectedReview.post_images[currentImageIndex].image_url}
+                                alt={selectedReview.post_images[currentImageIndex].description || 'Review Image'}
+                                className="w-full h-full object-contain"
+                            />
+                            <p className="text-white text-center mt-4">
+                                {selectedReview.post_images[currentImageIndex].description}
+                            </p>
+                        </div>
+                        {selectedReview.post_images.length > 1 && (
+                            <>
+                                <button
+                                    onClick={showPrevImage}
+                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl"
+                                >
+                                    &#10094;
+                                </button>
+                                <button
+                                    onClick={showNextImage}
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl"
+                                >
+                                    &#10095;
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
             {showSettingMenu && (
                 <ReviewSetting
                     show={showSettingMenu}
@@ -194,6 +278,7 @@ function ReviewTab({ userId }) {
                     userID={userId}
                     studyLocationID={reviewToEdit.StudyLocation?.id}
                     updateModal={openReviewModal}
+                    uploadImageModal={() => handleUploadImage(reviewToEdit)}
                 />
             )}
             {showEditModal && (
@@ -206,6 +291,22 @@ function ReviewTab({ userId }) {
                     review={reviewToEdit}
                 />
             )}
+            {showUploadImageModal && (
+                <ImageUpload
+                    show={showUploadImageModal}
+                    reviewData={
+                        reviewToEdit
+                            ? {
+                                review_id: reviewToEdit.id,
+                                user_id: userId,
+                                study_location_id: reviewToEdit.StudyLocation?.id || null,
+                            }
+                            : null
+                    }
+                    handleClose={() => setUploadImageModal(false)}
+                />
+            )}
+
         </div >
     );
 }

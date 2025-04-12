@@ -88,7 +88,7 @@ function University() {
             {error ? (
                 <ErrorPage
                     errorMessage={error}
-                    customMessage="If you think this university should be added, send a university application below"
+                    customMessage="If you think this university should be added, send a university application below, please don't forget we need your University Name + City it's in"
                     link="/allschools"
                     linkText="Send Application"
                 />
@@ -98,7 +98,7 @@ function University() {
                 <>
                     {uniData && uniData.map((uni) => (
                         <div key={uni.id}
-                            className="2xl:h-[50vh] h-[55vh]"
+                            className="h-[55vh]"
                             style={{
                                 backgroundImage: `url(${uni.image_url})`,
                                 backgroundSize: 'cover',

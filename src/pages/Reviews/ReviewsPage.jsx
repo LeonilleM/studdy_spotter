@@ -42,14 +42,6 @@ function Reviews() {
     const { today, sortedHours, nextOpen } = extractHours(locationDetails?.study_location_hours)
     const [showBackToTop, setShowBackToTop] = useState(false)
 
-    const handleOpenImageUploadModal = () => {
-        setShowImageUploadModal(true);
-    };
-
-    const handleCloseImageUploadModal = () => {
-        setShowImageUploadModal(false);
-    };
-
     useEffect(() => {
         if (sessionStorage.getItem('showModalReview') === 'true') {
             setShowModal(true)
@@ -92,7 +84,7 @@ function Reviews() {
 
     useEffect(() => {
         const handleScroll = () => {
-            setShowBackToTop(window.scrollY > 1000)
+            setShowBackToTop(window.scrollY > 800)
         }
 
         window.addEventListener('scroll', handleScroll)
@@ -109,6 +101,15 @@ function Reviews() {
     const handleSuggestions = (location) => {
         navigate(`/suggestion?location=${location}`, { state: { locationDetails } })
     }
+
+    const handleOpenImageUploadModal = () => {
+        setShowEditModal(false)
+        setShowImageUploadModal(true);
+    };
+
+    const handleCloseImageUploadModal = () => {
+        setShowImageUploadModal(false);
+    };
 
     const handleEditReview = () => {
         setShowEditModal(true)
@@ -334,12 +335,7 @@ function Reviews() {
                         </div>
 
                     </div>
-                    <button
-                        onClick={handleOpenImageUploadModal}
-                        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                    >
-                        Test Image Upload
-                    </button>
+
                 </div>
             </div >
             {showBackToTop && (
@@ -351,25 +347,19 @@ function Reviews() {
                     <FaArrowUp size={20} />
                 </button>
             )}
-            {showImageUploadModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                        <button
-                            onClick={handleCloseImageUploadModal}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-                        >
-                            Close
-                        </button>
-                        <ImageUpload
-                            reviewData={{
-                                review_id: reviews.userReview[0].id,
-                                user_id: user.id,
-                                study_location_id: locationDetails.id,
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
+            <ImageUpload
+                show={showImageUploadModal}
+                reviewData={
+                    reviews.userReview?.length > 0
+                        ? {
+                            review_id: reviews.userReview[0].id,
+                            user_id: user?.id || null,
+                            study_location_id: locationDetails?.id || null,
+                        }
+                        : null
+                }
+                handleClose={handleCloseImageUploadModal}
+            />
             <ReviewModal
                 show={showModal}
                 locationId={locationDetails.id}
@@ -381,15 +371,15 @@ function Reviews() {
                 }}
                 handleNewReview={handleNewReview}
                 handleUpdateReview={handleUpdateReview}
-                review={reviews.userReview[0]}
-
+                review={reviews?.userReview[0]}
             />
             <EditReview
                 show={showEditModal}
                 handleClose={() => { setShowEditModal(false) }}
                 userID={user ? user.id : null}
-                studyLocationID={locationDetails.id}
+                reviewID={reviews.userReview[0]?.id}
                 handleDeleteReview={handleDeleteReview}
+                uploadImageModal={handleOpenImageUploadModal}
                 updateModal={handleUpdateReviewModal}
             />
         </div >

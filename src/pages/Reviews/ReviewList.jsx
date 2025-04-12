@@ -3,10 +3,10 @@ import ReviewListItems from './helper/reviewListItems';
 import ReviewFilter from './helper/reviewFilter';
 import PropTypes from 'prop-types'
 function ReviewList({ reviews, handleEditReview, onFilterChange }) {
-    const [visibleReviews, setVisibleReviews] = useState(10); // Number of reviews to show initially
+    const [visibleReviews, setVisibleReviews] = useState(10);
 
     const loadMoreReviews = () => {
-        setVisibleReviews((prev) => prev + 8); // Load 10 more reviews
+        setVisibleReviews((prev) => prev + 8);
     };
 
     return (
@@ -51,7 +51,7 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
 ReviewList.propTypes = {
     reviews: PropTypes.object.isRequired,
     handleEditReview: PropTypes.func.isRequired,
-    onFilterChange: PropTypes.func.isRequired
+    onFilterChange: PropTypes.func.isRequired,
 };
 
 

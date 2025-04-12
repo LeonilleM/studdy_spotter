@@ -1,20 +1,12 @@
 import PropTypes from 'prop-types';
 import { insertUploadedImages } from '../../../services/Reviews/Reviews';
-import useImageUpload from './useImageUploads'; // Ensure the correct path
-import { useState } from 'react'
+import useImageUpload from './useImageUploads';
+import { useState } from 'react';
 
-
-const ImageUpload = ({ reviewData }) => {
+const ImageUpload = ({ show, reviewData, handleClose }) => {
     const {
         images,
-        currentIndex,
-        dragging,
-        handleDrop,
-        handleDragOver,
-        handleDragLeave,
-        handleFileChange,
-        handleNextImage,
-        handlePrevImage,
+        setImages,
     } = useImageUpload();
 
     const [captions, setCaptions] = useState([]);
@@ -26,6 +18,24 @@ const ImageUpload = ({ reviewData }) => {
         setCaptions(newCaptions);
     };
 
+    const handleDeleteImage = (index) => {
+        const updatedImages = images.filter((_, i) => i !== index);
+        setCaptions((prevCaptions) => prevCaptions.filter((_, i) => i !== index));
+        setImages(updatedImages);
+    };
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        const newImages = files.map((file) => ({
+            file,
+            preview: URL.createObjectURL(file),
+        }));
+
+        const updatedImages = [...images, ...newImages].slice(0, 4);
+        setImages(updatedImages);
+        setCaptions((prevCaptions) => [...prevCaptions, ...new Array(newImages.length).fill('')]);
+    };
+
     const handleUpload = async () => {
         try {
             setUploadStatus('Uploading...');
@@ -35,61 +45,27 @@ const ImageUpload = ({ reviewData }) => {
                 await insertUploadedImages(file, reviewData, caption);
             }
             setUploadStatus('Upload successful!');
-            console.log('All images uploaded successfully');
+            handleClose();
         } catch (error) {
             console.error('Image upload failed:', error);
             setUploadStatus('Upload failed.');
         }
     };
 
+    if (!show) {
+        return null;
+    }
+
     return (
-        <div>
-            <div
-                className={`relative bg-gray-100 border border-dashed border-gray-300 rounded-lg h-60 flex items-center justify-center hover:border-secondary hover:scale-105 duration-500 transition ease-in-out focus-within:border-primary focus-within:scale-105 ${dragging ? 'bg-gray-200' : ''
-                    }`}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-            >
-                {images.length > 0 ? (
-                    <div className="relative w-full h-full">
-                        <img
-                            src={images[currentIndex].preview}
-                            alt={`Uploaded ${currentIndex + 1}`}
-                            className="w-full h-full object-cover rounded-lg"
-                        />
-                        {images.length > 1 && (
-                            <div className="absolute inset-0 flex justify-between items-center px-4">
-                                <button
-                                    type="button"
-                                    onClick={handlePrevImage}
-                                    className="text-white bg-gray-800 bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition"
-                                >
-                                    &#10094;
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleNextImage}
-                                    className="text-white bg-gray-800 bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition"
-                                >
-                                    &#10095;
-                                </button>
-                            </div>
-                        )}
-                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                            {images.map((_, index) => (
-                                <div
-                                    key={index}
-                                    className={`w-2 h-2 rounded-full ${index === currentIndex ? 'bg-primary' : 'bg-gray-300'
-                                        }`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ) : (
+        <div className="fixed inset-0 flex items-center justify-center z-50 px-4 font-semibold">
+            <div className="fixed inset-0 bg-black opacity-75" onClick={handleClose}></div>
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-2/3 w-full py-6 sm:px-12">
+                <div
+                    className={`relative bg-gray-100 border border-dashed border-gray-300 rounded-lg h-60 flex items-center justify-center hover:border-secondary hover:scale-105 duration-500 transition ease-in-out`}
+                >
                     <label
                         htmlFor="image-upload"
-                        className="flex flex-col items-center cursor-pointer"
+                        className={`flex flex-col items-center cursor-pointer ${images.length >= 4 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -113,38 +89,57 @@ const ImageUpload = ({ reviewData }) => {
                             className="hidden"
                             multiple
                             onChange={handleFileChange}
+                            disabled={images.length >= 4}
                         />
                     </label>
-                )}
-            </div>
-            {images.map((image, index) => (
-                <div key={index} className="mt-4">
-                    <input
-                        type="text"
-                        placeholder="Enter caption"
-                        value={captions[index] || ''}
-                        onChange={(event) => handleCaptionChange(event, index)}
-                        className="border p-2 rounded w-full"
-                    />
                 </div>
-            ))}
-            <button
-                onClick={handleUpload}
-                className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-            >
-                Upload
-            </button>
-            {uploadStatus && <p>{uploadStatus}</p>}
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                    {images.map((image, index) => (
+                        <div key={index} className="relative">
+                            <img
+                                src={image.preview}
+                                alt={`Uploaded ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <input
+                                type="text"
+                                placeholder="Enter caption"
+                                value={captions[index] || ''}
+                                onChange={(event) => handleCaptionChange(event, index)}
+                                className="border p-2 rounded w-full mt-2"
+                            />
+                            <button
+                                onClick={() => handleDeleteImage(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <p className="text-gray-500 mt-2">
+                    {4 - images.length} slots remaining
+                </p>
+                <button
+                    onClick={handleUpload}
+                    className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                >
+                    Upload
+                </button>
+                {uploadStatus && <p>{uploadStatus}</p>}
+            </div>
         </div>
     );
 };
 
 ImageUpload.propTypes = {
+    show: PropTypes.bool,
     reviewData: PropTypes.shape({
         review_id: PropTypes.number.isRequired,
         user_id: PropTypes.string.isRequired,
         study_location_id: PropTypes.string.isRequired,
     }),
+    handleClose: PropTypes.func,
 };
 
 export default ImageUpload;
