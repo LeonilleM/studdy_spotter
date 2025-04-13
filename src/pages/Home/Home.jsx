@@ -169,7 +169,7 @@ function Home() {
                         <h1 className="text-accent font-bold text-3xl font-poppins">Top Study Spots Across the Nation</h1>
                         <div className="relative">
                             <button
-                                className="absolute md:-left-8 left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
+                                className="absolute md:-left-8 -left-3 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
                                 onClick={() => {
                                     const container = document.querySelector(".scroll-container");
                                     container.scrollBy({ left: -250, behavior: "smooth" });
@@ -208,7 +208,7 @@ function Home() {
                             </div>
 
                             <button
-                                className="absolute md:-right-8 right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
+                                className="absolute md:-right-8 -right-3 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
                                 onClick={() => {
                                     const container = document.querySelector(".scroll-container");
                                     container.scrollBy({ left: 250, behavior: "smooth" });
@@ -223,7 +223,7 @@ function Home() {
                         <div className="relative">
 
                             <button
-                                className="absolute md:-left-8 left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
+                                className="absolute md:-left-8 -left-3 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
                                 onClick={() => {
                                     const container = document.querySelector(".scroll-container-university");
                                     container.scrollBy({ left: -250, behavior: "smooth" });
@@ -256,7 +256,7 @@ function Home() {
                                 })}
                             </div>
                             <button
-                                className="absolute md:-right-8 right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
+                                className="absolute md:-right-8 -right-3 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
                                 onClick={() => {
                                     const container = document.querySelector(".scroll-container-university");
                                     container.scrollBy({ left: 250, behavior: "smooth" });

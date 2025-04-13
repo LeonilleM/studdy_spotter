@@ -59,10 +59,9 @@ function AllSchools() {
                             </button>
                         </div>
                     </div>
-                    <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-                        <img src={uwQuad} className="h-full w-full flex flex-col items-center py-12 rounded-lg" alt="University Quad">
-                        </img>
-                    </div>
+
+                    <img src={uwQuad} className="h-full w-full rounded-lg  sm:w-[40%] " alt="University of Washington, the Quad" />
+
                 </section>
                 <hr className="border-black border-2 rounded-full" />
                 <h1 className="font-poppins text-3xl font-bold text-heading mb-10 mt-16 text-center">Partnered Campuses</h1>

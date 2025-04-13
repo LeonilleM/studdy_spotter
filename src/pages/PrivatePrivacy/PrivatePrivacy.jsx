@@ -29,11 +29,7 @@ function PrivatePrivacy() {
                             <span className="font-bold"> support_studdyspotter@gmail.com</span>
                         </p>
                     </div>
-
-                    <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-                        <img src={Panda} className="h-full w-full flex flex-col items-center py-12 rounded-lg" alt="University Quad">
-                                                </img>
-                    </div>
+                    <img src={Panda} className="h-full  sm:w-[40%] w-full rounded-lg" alt="Panda in a prison cell" />
                 </div>
             </section >
         </div >

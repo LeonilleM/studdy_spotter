@@ -309,7 +309,7 @@ function Reviews() {
                     </div>
                     <div className="mt-4 flex flex-row gap-4 font-bold">
                         <button onClick={handleOpenModal}
-                            className={`bg-accent text-white py-3 px-4 rounded-lg w-full ${reviews.userReview.length > 0 ? 'bg-red-700 hover:bg-red-600 transition duration-300 ease-in-out' : 'bg-accent'}`}>
+                            className={`bg-accent text-white py-3 px-4 rounded-lg w-full ${reviews.userReview.length > 0 ? 'bg-red-700 hover:bg-red-600 transition duration-300 ease-in-out' : 'bg-accent hover:opacity-80  transition duration-300 ease-in-out'}`}>
                             {reviews.userReview.length > 0 ? 'Edit Review' : 'Write Review'}
                         </button>
                         <FavoriteButton

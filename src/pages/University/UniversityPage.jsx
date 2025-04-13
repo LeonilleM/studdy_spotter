@@ -17,6 +17,8 @@ function University() {
     const [selectedTags, setSelectedTags] = useState([]);
     const [locationTags, setLocationTags] = useState([]);
     const [filterMode, setFilterMode] = useState('AND');
+    const [sortBy, setSortBy] = useState('name');
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,7 +72,19 @@ function University() {
         );
 
         return matchesSearchQuery && matchesTags;
-    }) : [];
+    })
+
+        .sort((a, b) => {
+            // Apply sorting based on the selected option
+            if (sortBy === 'name') {
+                return a.name.localeCompare(b.name); // Sort by name (A-Z)
+            } else if (sortBy === 'reviews') {
+                return b.review_count - a.review_count; // Sort by number of reviews (descending)
+            } else if (sortBy === 'rating') {
+                return b.rating - a.rating; // Sort by rating (descending)
+            }
+            return 0;
+        }) : [];
 
 
     const handleTagRemove = (tag) => {
@@ -122,22 +136,23 @@ function University() {
                             {uniData && uniData[0] && (
                                 <PopularLocations universityID={uniData[0].id} />
                             )} */}
-                            <div className="flex sm:flex-row flex-wrap justify-between w-full items-center mt-12 mb-2">
-                                <Filter
-                                    searchQuery={searchQuery}
-                                    setSearchQuery={setSearchQuery}
-                                    selectedTags={selectedTags}
-                                    setSelectedTags={setSelectedTags}
-                                    locationTags={locationTags}
-                                    filterMode={filterMode}
-                                    setFilterMode={setFilterMode}
-                                />
-                                <SelectedTags
-                                    selectedTags={selectedTags}
-                                    handleTagRemove={handleTagRemove}
-                                    clearAllTags={clearAllTags}
-                                />
-                            </div>
+
+                            <Filter
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                selectedTags={selectedTags}
+                                setSelectedTags={setSelectedTags}
+                                locationTags={locationTags}
+                                filterMode={filterMode}
+                                setFilterMode={setFilterMode}
+                                setSortBy={setSortBy}
+                            />
+                            <SelectedTags
+                                selectedTags={selectedTags}
+                                handleTagRemove={handleTagRemove}
+                                clearAllTags={clearAllTags}
+                            />
+
                             {filteredStudyLocations.length > 0 ? (
                                 <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} uniCity={uniData[0].city} />
                             ) : (
