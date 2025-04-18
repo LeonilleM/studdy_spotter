@@ -220,7 +220,6 @@ function EditLocationModal({ adminId, isOpen, onClose, location }) {
                             label="State"
                             value={formData.state}
                             onChange={(e) => {
-                                console.log('Selected State ID:', e.target.value);
                                 setFormData({ ...formData, state: e.target.value });
                             }}
                             options={states}

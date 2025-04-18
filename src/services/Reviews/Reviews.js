@@ -117,8 +117,6 @@ export const fetchUserReviews = async (userID) => {
 
 // Helper function to upload an image to the storage bucket
 const uploadImage = async (file, reviewData) => {
-
-    console.log(reviewData, file)
     const { error } = await supabase.storage
         .from('post_images')
         .upload(`${reviewData.user_id}/${reviewData.review_id}/${file.name}`, file);
@@ -135,7 +133,7 @@ const uploadImage = async (file, reviewData) => {
     if (publicUrlError || !publicUrlData) {
         throw new Error('Failed to retrieve public URL for the uploaded image.');
     }
-    console.log("Succesffully added image")
+
     return publicUrlData.publicUrl;
 };
 
@@ -189,7 +187,6 @@ export const createReview = async (studyLocationID, userID, rating, review) => {
 
 // Let's a user Delete a review for a given study location
 export const deleteReview = async (userID, review_id) => {
-    console.log(userID, review_id)
     // Delete User Review
     const { error } = await supabase
         .from('UserReview')
@@ -201,15 +198,13 @@ export const deleteReview = async (userID, review_id) => {
 
     // Then delete the path file
     const filePath = `${userID}/${review_id}`
-    console.log("Deleting from", filePath)
-    const { data, fileError } = await supabase.storage
+    const { fileError } = await supabase.storage
         .from('post_images')
         .remove(filePath)
     if (error) {
         throw fileError
     }
-    console.log(data)
-    console.log("Successfully deleted")
+
     return "Succesfully Deleted"
 }
 

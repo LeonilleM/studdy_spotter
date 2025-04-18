@@ -128,6 +128,12 @@ export const sendCampusRequest = async (data, image) => {
         .single();
 
     if (insertError) {
+        // Check if the error is related to RLS
+        if (insertError.message.includes('violates row-level security policy')) {
+            throw new Error('You do not have permission to perform this action. Please contact support.');
+        }
+
+        // Throw the original error for other cases
         throw insertError;
     }
 

@@ -1,15 +1,21 @@
 import { FaUser } from 'react-icons/fa';
 import StarRating from '../../../components/StarRating';
+import { AuthContext } from '../../../services/Auth/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import { BsThreeDots } from 'react-icons/bs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { MdEdit } from 'react-icons/md';
+import ConfirmationModal from './adminReviewSetting'
+import { deleteOtherReview } from '../../../services/Admin/Admin';
 
 function ReviewListItems({ review, isUserReview, onEditReview, }) {
     const [showFullText, setShowFullText] = useState(false);
-    const MAX_LENGTH = 200;
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { isAdmin, user } = useContext(AuthContext)
+    const MAX_LENGTH = 200;
 
     const openLightbox = (index) => {
         setCurrentImageIndex(index);
@@ -39,6 +45,25 @@ function ReviewListItems({ review, isUserReview, onEditReview, }) {
             return text;
         }
         return `${text.substring(0, MAX_LENGTH)}...`;
+    };
+
+    const handleDeleteClick = () => {
+        setIsModalOpen(true); // Open the confirmation modal
+    };
+
+    const handleConfirmDelete = async () => {
+        setIsModalOpen(false); // Close the modal
+        try {
+            await deleteOtherReview(review.id, user.id); // Call the delete function
+            alert('Review deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting review:', error.message);
+            alert('Failed to delete the review.');
+        }
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false); // Close the modal without deleting
     };
 
     useEffect(() => {
@@ -77,14 +102,20 @@ function ReviewListItems({ review, isUserReview, onEditReview, }) {
                             </p>
                         </div>
                     </div>
-                    {isUserReview && (
+                    {isUserReview ? (
+                        // Button for the user's own review
                         <BsThreeDots
                             onClick={() => {
                                 onEditReview(review);
                             }}
                             className="text-secondary h-5 w-5 hover:cursor-pointer hover:text-black"
                         />
-                    )}
+                    ) : isAdmin() ? (
+                        <MdEdit
+                            onClick={handleDeleteClick}
+                            className="text-primary h-5 w-5 hover:cursor-pointer hover:text-black"
+                        />
+                    ) : null}
                 </div>
                 <div className="flex flex-row gap-4 items-center font-poppins text-sm text-light mt-4 md:justify-normal justify-between">
                     <StarRating rating={review.rating} starSize={20} />
@@ -167,6 +198,14 @@ function ReviewListItems({ review, isUserReview, onEditReview, }) {
                     </div>
                 </div>
             )}
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCancel}
+                onConfirm={handleConfirmDelete}
+                message="Are you sure you want to delete this review? Please confirm that this review violates the terms and conditions."
+            />
         </div>
     );
 }

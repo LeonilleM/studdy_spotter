@@ -1,5 +1,4 @@
-import { NavLink } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../services/Auth/AuthContext';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
@@ -137,9 +136,9 @@ function SignIn() {
                     </form>
                     {/* Sign up link */}
                     <NavLink to='/signup'>
-                    <p className="py-10 text-secondary text-center">Need an account?{' '} 
-                         <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Register</span>
-                    </p>
+                        <p className="py-10 text-secondary text-center">Need an account?{' '}
+                            <span className="text-action font-bold underline hover:text-black ease-in-out duration-500">Register</span>
+                        </p>
                     </NavLink>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 // Used to store fetching for Request Forms for Study Locations & Universities
 // Also stores all approval functions
-
 import { supabase } from '../supabase/supabase'
+
 
 export const fetchStudyRequest = async () => {
     // Fetch data from studylocationrequest
@@ -13,6 +13,34 @@ export const fetchStudyRequest = async () => {
     }
     return data
 }
+
+export const deleteOtherReview = async (reviewId, userId) => {
+    const { data: userRole, error: roleError } = await supabase
+        .from('Users')
+        .select('Roles:role_id(name)')
+        .eq('id', userId)
+        .single();
+
+    if (roleError) {
+        throw roleError;
+    }
+
+    if (userRole.Roles.name !== 'Admin') {
+        throw new Error('Unauthorized: Only admins can delete reviews.');
+    }
+
+    // Proceed with the delete request
+    const { error } = await supabase
+        .from('UserReview')
+        .delete()
+        .eq('id', reviewId);
+
+    if (error) {
+        throw error;
+    }
+
+    return 'Review deleted successfully.';
+};
 
 export const fetchUniversityRequest = async () => {
     const { data, error } = await supabase
@@ -93,9 +121,6 @@ const studyLocationImageUpdate = async (studyLocationID, studyLocationData) => {
 
 // Used for updating the image of a university, and then return the new URL created to be inserted into the database
 const universityImageUpdate = async (uniID, uniData) => {
-    console.log("University ID", uniID);
-    console.log("University Name", uniData.name);
-
     const filePath = `${uniID}/university_image`; // Use a consistent file name
 
     if (uniData.image) {
@@ -208,8 +233,6 @@ export const studyRequestCommand = async (id, status, data, oldStudyLocationDeta
 export const uniRequestCommand = async (id, status, data, oldCampusDetails, adminId) => {
     // Track changes
     const changes = {};
-    console.log("Data", data);
-
     if (data.name !== oldCampusDetails.name) {
         changes.status = { old: oldCampusDetails.name, new: data.name };
     }
@@ -264,7 +287,6 @@ export const uniRequestCommand = async (id, status, data, oldCampusDetails, admi
         }
     }
 
-    console.log("Image URL", imageUrl);
 
     // Update the University table
     const { error: updateError } = await supabase

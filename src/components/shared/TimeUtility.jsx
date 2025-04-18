@@ -1,6 +1,6 @@
 import { format, parse } from 'date-fns';
 
-const dayOrder = {
+export const dayOrder = {
     'Monday': { order: 1, abr: 'Mon' },
     'Tuesday': { order: 2, abr: 'Tue' },
     'Wednesday': { order: 3, abr: 'Wed' },

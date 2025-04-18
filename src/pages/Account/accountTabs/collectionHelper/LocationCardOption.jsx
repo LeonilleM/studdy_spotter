@@ -9,7 +9,6 @@ const LocationCardOption = ({ collectionName, item, userFavorite, isOpen, setIsO
     const [availableCollections, setAvailableCollections] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
-    console.log(item);
 
     useEffect(() => {
         setFetching(true);
@@ -81,8 +80,6 @@ const LocationCardOption = ({ collectionName, item, userFavorite, isOpen, setIsO
                                     } else {
                                         //delete location
                                     }
-
-
                                 }}
                                 disabled={isLoading || collection.name === collectionName}
                                 className={`text-sm px-4 py-2 rounded

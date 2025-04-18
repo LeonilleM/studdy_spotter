@@ -116,7 +116,6 @@ function ReviewTab({ userId }) {
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
     const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
     const totalPages = Math.ceil(reviews.length / reviewsPerPage);
-    console.log(currentReviews)
 
     return (
         <div>
