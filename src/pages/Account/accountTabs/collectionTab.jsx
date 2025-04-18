@@ -97,10 +97,8 @@ function CollectionTab({ userId }) {
 
 
     const handleDeleteCollection = async (collectionId) => {
-        console.log(collectionId);
         setIsLoading(true);
         try {
-            console.log("deleting")
             await deleteCollection(collectionId, userId);
             showPopup('success', 'Collection deleted successfully');
             setTimeout(() => {

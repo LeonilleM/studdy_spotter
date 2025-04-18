@@ -33,10 +33,10 @@ const FavoriteButton = ({ studyLocationID, userID, onClick }) => {
                 className={`border flex flex-row items-center justify-center py-3 px-4 rounded-lg 
                     transition-all duration-200
                     ${isFavorite
-                        ? 'border-action text-white font-bold bg-action '
+                        ? 'border-accent text-accent font-bold  '
                         : 'border-gray-300 text-secondary bg-white'
                     }
-                    ${isOnCooldown ? 'opacity-75 cursor-not-allowed ' : 'hover:opacity-90 '}
+                    ${isOnCooldown ? 'opacity-75 cursor-not-allowed bg-red-700 text-white ' : 'hover:opacity-80 '}
                  
                 `}
             >

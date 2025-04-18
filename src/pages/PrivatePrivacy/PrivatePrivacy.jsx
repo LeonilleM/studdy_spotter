@@ -1,4 +1,5 @@
 import BackButton from '../../components/shared/BackButton';
+import Panda from '../../assets/panda.jpg';
 
 function PrivatePrivacy() {
     return (
@@ -28,11 +29,7 @@ function PrivatePrivacy() {
                             <span className="font-bold"> support_studdyspotter@gmail.com</span>
                         </p>
                     </div>
-
-                    <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-                        <div className="h-[363px] w-[381px] bg-gray-200 flex flex-col items-center py-12 rounded-lg">
-                        </div>
-                    </div>
+                    <img src={Panda} className="h-full  sm:w-[40%] w-full rounded-lg" alt="Panda in a prison cell" />
                 </div>
             </section >
         </div >

@@ -3,6 +3,7 @@ import BackButton from '../../components/shared/BackButton';
 import { fetchUniversities } from '../../services/University/University';
 import { NavLink } from 'react-router-dom';
 import RequestSchoolModal from './helper/RequestSchoolModal';
+import uwQuad from '../../assets/uw-quad.jpg';
 
 function AllSchools() {
     const [uniData, setUniData] = useState(null);
@@ -58,10 +59,9 @@ function AllSchools() {
                             </button>
                         </div>
                     </div>
-                    <div className="flex items-center justify-center sm:w-[40%] w-full  sm:pt-0 pt-12">
-                        <div className="h-[363px] w-[381px] bg-gray-200 flex flex-col items-center py-12 rounded-lg">
-                        </div>
-                    </div>
+
+                    <img src={uwQuad} className="h-full w-full rounded-lg  sm:w-[40%] " alt="University of Washington, the Quad" />
+
                 </section>
                 <hr className="border-black border-2 rounded-full" />
                 <h1 className="font-poppins text-3xl font-bold text-heading mb-10 mt-16 text-center">Partnered Campuses</h1>

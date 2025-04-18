@@ -1,18 +1,18 @@
+import { useState } from 'react';
 import ReviewListItems from './helper/reviewListItems';
-import PropTypes from 'prop-types';
 import ReviewFilter from './helper/reviewFilter';
-
+import PropTypes from 'prop-types'
 function ReviewList({ reviews, handleEditReview, onFilterChange }) {
-    if (!reviews) {
-        return (
-            <p className="text-center text-secondary font-bold">No reviews currently</p>
-        );
-    }
+    const [visibleReviews, setVisibleReviews] = useState(10);
+
+    const loadMoreReviews = () => {
+        setVisibleReviews((prev) => prev + 8);
+    };
 
     return (
         <>
             {reviews.userReview.length > 0 && (
-                <div key="user-reviews" className="pb-20">
+                <div key="user-reviews" className="mb-10">
                     <h1 className="font-bold text-3xl font-poppins text-heading">Your Review</h1>
                     {reviews.userReview.map((review, index) => (
                         <ReviewListItems
@@ -24,19 +24,25 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
                     ))}
                 </div>
             )}
-            <h1 className="font-bold text-3xl font-poppins text-heading ">Reviews</h1>
-            <ReviewFilter
-                onFilterChange={onFilterChange}
-            />
-            {reviews.otherReviews.length > 0 ? (
-                reviews.otherReviews.map((review, index) => (
-                    <ReviewListItems
-                        key={review.id || `review-${index}`}
-                        review={review}
-                    />
-                ))
-            ) : (
-                <p className="text-center text-secondary font-semibold pt-12 font-poppins text-lg">No other reviews currently</p>
+            <div className="sticky top-0 bg-background  pb-4 mb-4 border-b border-gray-300  z-10">
+                <h1 className="font-bold text-3xl font-poppins text-heading">Reviews</h1>
+                <ReviewFilter onFilterChange={onFilterChange} />
+            </div>
+
+            {reviews.otherReviews.slice(0, visibleReviews).map((review, index) => (
+                <ReviewListItems
+                    key={review.id || `review-${index}`}
+                    review={review}
+                />
+            ))}
+
+            {visibleReviews < reviews.otherReviews.length && (
+                <button
+                    onClick={loadMoreReviews}
+                    className="mt-6 mx-auto block bg-accent text-white py-2 px-4 rounded-lg  transition duration-300"
+                >
+                    Load More
+                </button>
             )}
         </>
     );
@@ -45,7 +51,7 @@ function ReviewList({ reviews, handleEditReview, onFilterChange }) {
 ReviewList.propTypes = {
     reviews: PropTypes.object.isRequired,
     handleEditReview: PropTypes.func.isRequired,
-    onFilterChange: PropTypes.func.isRequired
+    onFilterChange: PropTypes.func.isRequired,
 };
 
 

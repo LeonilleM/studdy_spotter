@@ -7,7 +7,6 @@ import ErrorPage from '../../components/shared/ErrorPage';
 import StudyLocationList from './StudyLocationList';
 import Filter from './helper/filter';
 import SelectedTags from './helper/selectedTags';
-import PopularLocations from './helper/popuarLocations';
 
 function University() {
     const [uniData, setUniData] = useState(null);
@@ -18,6 +17,8 @@ function University() {
     const [selectedTags, setSelectedTags] = useState([]);
     const [locationTags, setLocationTags] = useState([]);
     const [filterMode, setFilterMode] = useState('AND');
+    const [sortBy, setSortBy] = useState('name');
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,7 +72,19 @@ function University() {
         );
 
         return matchesSearchQuery && matchesTags;
-    }) : [];
+    })
+
+        .sort((a, b) => {
+            // Apply sorting based on the selected option
+            if (sortBy === 'name') {
+                return a.name.localeCompare(b.name); // Sort by name (A-Z)
+            } else if (sortBy === 'reviews') {
+                return b.review_count - a.review_count; // Sort by number of reviews (descending)
+            } else if (sortBy === 'rating') {
+                return b.rating - a.rating; // Sort by rating (descending)
+            }
+            return 0;
+        }) : [];
 
 
     const handleTagRemove = (tag) => {
@@ -89,7 +102,7 @@ function University() {
             {error ? (
                 <ErrorPage
                     errorMessage={error}
-                    customMessage="If you think this university should be added, send a university application below"
+                    customMessage="If you think this university should be added, send a university application below, please don't forget we need your University Name + City it's in"
                     link="/allschools"
                     linkText="Send Application"
                 />
@@ -99,7 +112,7 @@ function University() {
                 <>
                     {uniData && uniData.map((uni) => (
                         <div key={uni.id}
-                            className="2xl:h-[50vh] h-[55vh]"
+                            className="h-[55vh]"
                             style={{
                                 backgroundImage: `url(${uni.image_url})`,
                                 backgroundSize: 'cover',
@@ -118,28 +131,28 @@ function University() {
                         </div>
                     ))}
                     <section className="font-secondary lg:px-0 px-4 text-darkBlue pb-32">
-                        <div className="container mx-auto flex flex-col gap-4 py-8 mt-12 relative">
-                            <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
+                        <div className="container mx-auto flex flex-col gap-4 py-8 relative">
+                            {/* <h1 className="font-poppins font-bold text-4xl">Popular Study Spots</h1>
                             {uniData && uniData[0] && (
                                 <PopularLocations universityID={uniData[0].id} />
-                            )}
+                            )} */}
 
-                            <div className="flex sm:flex-row flex-wrap justify-between w-full items-center mt-12 mb-2">
-                                <Filter
-                                    searchQuery={searchQuery}
-                                    setSearchQuery={setSearchQuery}
-                                    selectedTags={selectedTags}
-                                    setSelectedTags={setSelectedTags}
-                                    locationTags={locationTags}
-                                    filterMode={filterMode}
-                                    setFilterMode={setFilterMode}
-                                />
-                                <SelectedTags
-                                    selectedTags={selectedTags}
-                                    handleTagRemove={handleTagRemove}
-                                    clearAllTags={clearAllTags}
-                                />
-                            </div>
+                            <Filter
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                selectedTags={selectedTags}
+                                setSelectedTags={setSelectedTags}
+                                locationTags={locationTags}
+                                filterMode={filterMode}
+                                setFilterMode={setFilterMode}
+                                setSortBy={setSortBy}
+                            />
+                            <SelectedTags
+                                selectedTags={selectedTags}
+                                handleTagRemove={handleTagRemove}
+                                clearAllTags={clearAllTags}
+                            />
+
                             {filteredStudyLocations.length > 0 ? (
                                 <StudyLocationList studyLocations={filteredStudyLocations} uniName={uniData[0].name} uniCity={uniData[0].city} />
                             ) : (

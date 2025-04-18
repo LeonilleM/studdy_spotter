@@ -96,9 +96,7 @@ const AuthProvider = ({ children }) => {
         };
     }, []);
 
-    const isAdmin = () => {
-        return state.user && state.user.role.name === 'Admin';
-    }
+
 
     const signup = async (email, password, firstName, lastName) => {
         dispatch({ type: 'SET_LOADING', payload: true });
@@ -157,6 +155,11 @@ const AuthProvider = ({ children }) => {
             throw error
         }
     }
+
+    const isAdmin = () => {
+        const result = state.user && state.user.role && state.user.role.name === 'Admin';
+        return result;
+    };
 
     // Is delete relates to the flag if a user is deleting their image
     const profileUpdate = async (profileData, isDeleteImage) => {

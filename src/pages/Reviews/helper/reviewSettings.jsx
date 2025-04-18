@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { FaTrash } from 'react-icons/fa';
 import { deleteReview } from '../../../services/Reviews/Reviews';
 
-function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteReview, updateModal }) {
+
+function EditReview({ show, handleClose, userID, reviewID, handleDeleteReview, updateModal, uploadImageModal }) {
     const [error, setError] = useState(null);
     if (!show) {
         return null;
@@ -12,7 +13,7 @@ function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteRe
 
     const handleDelete = async () => {
         try {
-            await deleteReview(userID, studyLocationID);
+            await deleteReview(userID, reviewID);
             handleClose();
             handleDeleteReview();
         } catch (error) {
@@ -35,12 +36,19 @@ function EditReview({ show, handleClose, userID, studyLocationID, handleDeleteRe
                         Update
                     </button>
                     <button
+                        onClick={uploadImageModal}
+                        className="text-action border-t px-4 py-3 rounded hover:bg-slate-300 w-full "
+                    >
+                        Upload Images
+                    </button>
+                    <button
                         onClick={handleDelete}
                         className="text-red-500 border-t py-3 px-4  hover:bg-slate-300 w-full"
                     >
                         <FaTrash className="inline-block mr-2" />
                         Delete Review
                     </button>
+
                     <button
                         type="button"
                         onClick={handleClose}
@@ -60,9 +68,10 @@ EditReview.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     userID: PropTypes.string,
-    studyLocationID: PropTypes.string,
+    reviewID: PropTypes.number,
     handleDeleteReview: PropTypes.func.isRequired,
     updateModal: PropTypes.func.isRequired,
+    uploadImageModal: PropTypes.func
 };
 
 

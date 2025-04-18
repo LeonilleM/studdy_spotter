@@ -26,7 +26,6 @@ export const deleteAllUserFavoritesInCollection = async (userFavorites) => {
 }
 
 export const deleteCollection = async (collectionID, userID) => {
-    console.log("Deleting collection:", "CollectionID", collectionID, userID)
     const { data, error } = await supabase
         .from('Collections')
         .delete()

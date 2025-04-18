@@ -19,7 +19,7 @@ function StudyLocationList({ studyLocations, uniName, uniCity }) {
                         <img
                             src={studyLocation.image_url}
                             alt="placeholder"
-                            className="w-full sm:h-56 object-cover rounded-l-xl group-hover:opacity-85"
+                            className="w-full h-56 object-cover rounded-l-xl group-hover:opacity-85"
                         />
                         <div className="bg-white rounded-r-xl items-center justify-between text-center relative overflow-hidden flex flex-col py-6 px-2">
                             <h1 className="sm:text-2xl  px-2 transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:scale-110 pt-2">
